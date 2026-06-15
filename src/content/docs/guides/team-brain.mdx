@@ -1,0 +1,142 @@
+---
+title: Team Brain
+description: Deploy and operate the AIOS Team Brain — the shared hub that receives pushes from all workspace repos and answers natural-language questions.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+The Team Brain is a Next.js + Supabase service. One instance per team. It receives tier-tagged content from every contributor's workspace via the `aios` CLI and exposes a dashboard + query interface.
+
+---
+
+## Architecture
+
+```
+Contributor workspaces (N×)
+        │
+        │  aios push  (POST /api/v1/items)
+        ▼
+  ┌─────────────┐
+  │  Team Brain  │  Next.js 16 + Supabase Postgres
+  │              │  RLS default-deny on every table
+  │  ingest lib  │  Narrow audited write path (service role)
+  │  query lib   │  FTS + structured context + LLM streaming
+  │  dashboard   │  Tasks · Decisions · Deliverables · Transcripts
+  └─────────────┘
+```
+
+**Auth model:**
+- People authenticate with magic-link or OAuth (invite-only — admin creates the member row first)
+- Machines authenticate with per-member API keys (`aios_<key_id>_<secret>`, SHA-256 at rest, shown once at creation)
+- Sync writes go through the service role via the narrow `lib/ingest` module
+- Everything the dashboard reads goes through RLS
+
+---
+
+## Self-hosting
+
+<Steps>
+
+1. **Clone and install**
+
+   ```bash
+   git clone https://github.com/AIOS-alpha/aios-team-brain
+   cd aios-team-brain
+   npm install
+   ```
+
+2. **Start the Supabase local stack**
+
+   ```bash
+   supabase start
+   supabase status -o env   # outputs all env vars
+   ```
+
+3. **Configure environment**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Required variables:
+   ```sh
+   NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<from supabase status>
+   SUPABASE_SERVICE_ROLE_KEY=<from supabase status>
+   ANTHROPIC_API_KEY=<your key>
+   ```
+
+4. **Seed demo data**
+
+   ```bash
+   npx tsx --conditions react-server scripts/seed-demo.ts
+   ```
+
+   The seed prints a demo API key once. Save it.
+
+5. **Run the dev server**
+
+   ```bash
+   npm run dev
+   # → http://localhost:3000
+   ```
+
+</Steps>
+
+---
+
+## Pluggable LLM
+
+The brain queries use Anthropic by default. To run fully on-machine (no API cost):
+
+```sh
+# .env.local
+LLM_BASE_URL=http://localhost:11434/v1   # Ollama endpoint
+LLM_MODEL=llama3.1                       # any local model
+```
+
+Any OpenAI-compatible endpoint works — Ollama, Hermes, llama.cpp. No rebuild required.
+
+See [docs/PROVIDERS.md](https://github.com/AIOS-alpha/aios-team-brain/blob/main/docs/PROVIDERS.md) for reranker configuration and local workstation setup.
+
+---
+
+## Deploying to production
+
+The brain is self-host portable — plain SQL migrations, Postgres-backed rate limiting, no Vercel-only dependencies. Deploy anywhere that runs Next.js and can connect to a Postgres database.
+
+To deploy on Vercel + Supabase Cloud:
+1. Create a Supabase project and run `supabase db push`
+2. Add all required env vars to your Vercel project
+3. Deploy the `aios-team-brain` repo to Vercel
+
+Once deployed, point your workspace `aios.yaml` at the production URL.
+
+---
+
+## Access tiers on the brain
+
+The brain enforces tier filtering on all reads:
+
+| Tier | Who can query it |
+|------|-----------------|
+| `team` | All authenticated team members |
+| `external` | All team members (it's the outward surface) |
+| `admin` | Rejected at the API with 422 — never stored |
+
+<Aside type="danger">
+  Admin-tier content is rejected at the ingest API with a 422 status code. It is never written to the database. If you see a 422, check the `audience` frontmatter of the file you're trying to push.
+</Aside>
+
+---
+
+## Query API
+
+The brain exposes a natural-language query endpoint that streams a cited answer:
+
+```bash
+aios query "what decisions were made about auth in sprint 1?"
+# → SSE stream: delta chunks, source citations, done signal
+```
+
+The pipeline: FTS retrieval over tier-filtered content → structured context injection (decisions, tasks, OKF entities) → LLM streaming with per-member and per-team daily cost guards.

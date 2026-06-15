@@ -1,0 +1,116 @@
+---
+title: Your Workspace
+description: The numbered spine, access tiers, governance conventions, validators, and harnesses that make up an AIOS workspace.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+An AIOS workspace is a git repo you clone once and work in every day. It's structured to be:
+
+- **Context-first** — frontmatter on every file declares what it is and who can see it
+- **Tier-enforced** — content is default-private; you promote it deliberately
+- **Agent-native** — Claude Code harnesses do real operational work inside the repo
+
+---
+
+## The numbered spine
+
+Every workspace uses the same six-folder pipeline, regardless of context (consultant or employee):
+
+| Folder | Purpose | Default tier | Syncs? |
+|--------|---------|-------------|--------|
+| `0-context/` | Charter, scope, or role/OKRs | `team` | Yes |
+| `1-inbox/` | Raw inputs, transcripts, brain pulls | `admin` | Never |
+| `2-work/` | Deliverables, working documents | `team` | Yes |
+| `3-log/` | Decision log, task list, hours | `admin` | Never |
+| `4-shared/` | Client-facing or company output | `external` | Yes |
+| `5-personal/` | Private scratch space | `admin` | Never |
+
+Content moves through the pipeline deliberately — raw capture in `1-inbox`, refined work in `2-work`, promoted output in `4-shared`. Nothing jumps tiers automatically.
+
+---
+
+## Access tiers
+
+Every file in the workspace has an audience tag in its YAML frontmatter:
+
+```yaml
+---
+title: Sprint 1 retrospective
+audience: team
+---
+```
+
+The friendly names map to canonical sync tiers:
+
+| Friendly | Canonical | Who sees it |
+|----------|-----------|------------|
+| `private`, `personal` | `admin` | You only — never leaves your machine |
+| `team` | `team` | All team members on the brain |
+| `client`, `company` | `external` | External stakeholders |
+
+<Aside type="caution">
+  The Team Brain rejects `admin`-tier content with a 422 at the API boundary. It never enters the database. This is a hard invariant enforced in code, not a convention.
+</Aside>
+
+---
+
+## Validators
+
+Pure-shell validators you can run against any workspace:
+
+```bash
+# Run all validators
+validation/validate-all.sh /path/to/your-workspace
+
+# Individual checks
+validation/check-structure.sh .      # numbered spine + required files
+validation/check-frontmatter.sh .    # YAML frontmatter on every file
+validation/check-secrets.sh .        # API keys, tokens (hard fail)
+```
+
+Validators are wired into CI — a push that fails `check-secrets.sh` is blocked.
+
+---
+
+## Guard hook
+
+`hooks/team-ops-guard.sh` is a Claude Code `PreToolUse` hook that fires on every Write and Edit. It blocks:
+
+1. Files containing secrets (API keys, tokens, `.env` content)
+2. Admin-tier content written into team-tier directories
+3. Markdown deliverables missing frontmatter
+
+Prevention at authoring time — before anything reaches version control.
+
+---
+
+## Harnesses (skills)
+
+Harnesses are Claude Code skills that live in `.claude/skills/` of your scaffolded workspace. They run multi-agent workflows with adversarial verification and rubric-gated self-correction.
+
+| Skill | What it does |
+|-------|-------------|
+| `/decision-audit` | Governance audit of the decision log — one verifier per rule + adversarial pass |
+| `/scope-creep` | Classify deliverables against scope baseline, adversarial re-grade to remove false positives |
+| `/transcript-decisions` | Fan-out extraction from transcripts → dedup → grounding → decision-log rows |
+| `/weekly-synthesis` | Rubric-gated weekly digest — revises until the rubric passes or budget is spent |
+| `/aios-sync` | Review what's staged to push, decide what to promote, run `aios push` |
+| `/okf-traverse` | Answer a question by traversing the local OKF bundle — works offline, no brain required |
+
+---
+
+## The OKF (Open Knowledge Framework)
+
+The workspace maintains a structured link graph (`aios pull-bundle` fetches it from the brain). Every file can carry `links:` in its frontmatter pointing to related decisions, tasks, or documents. `/okf-traverse` uses this graph to answer questions by following links rather than full-text search.
+
+---
+
+## Two context skins
+
+The scaffold asks once: are you a consultant or an employee?
+
+- **Consultant**: `0-context/` holds engagement charter + client scope; `4-shared/` is the client-facing surface
+- **Employee**: `0-context/` holds role definition + OKRs; `4-shared/` is the company-facing surface
+
+The spine structure is identical. Only the framing and folder labels inside `0-context/` and `4-shared/` differ.

@@ -1,0 +1,81 @@
+---
+title: Contributing
+description: How to contribute to AIOS — the open-source AI transformation toolkit.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+AIOS is an open-source project built and maintained by **John Dass** and **Chetan**. Contributions are welcome.
+
+---
+
+## Repos
+
+| Repo | What to contribute |
+|------|--------------------|
+| [`aios-workspace`](https://github.com/AIOS-alpha/aios-workspace) | CLI, scaffold, validators, harness skills, Tauri GUI |
+| [`aios-team-brain`](https://github.com/AIOS-alpha/aios-team-brain) | Next.js dashboard, ingest pipeline, query layer, Supabase migrations |
+| [`aios-alpha.github.io`](https://github.com/AIOS-alpha/aios-alpha.github.io) | Docs, guides, this site |
+
+---
+
+## The API contract
+
+`aios-workspace/docs/brain-api.md` is the pinned sync contract. **Changes to the sync protocol must be a versioned change in that file first.** Open an issue to discuss breaking changes before coding them.
+
+---
+
+## Development setup
+
+### Workspace
+
+```bash
+git clone https://github.com/AIOS-alpha/aios-workspace
+cd aios-workspace
+npm install
+
+# Run validators against the example workspace
+validation/validate-all.sh examples/sample-engagement
+```
+
+### Team Brain
+
+```bash
+git clone https://github.com/AIOS-alpha/aios-team-brain
+cd aios-team-brain
+npm install
+supabase start
+cp .env.example .env.local
+# fill in from `supabase status -o env`
+npm run dev:seed   # seeds demo data
+npm run dev
+```
+
+### E2E test
+
+```bash
+cd aios-team-brain
+bash scripts/e2e.sh
+# → resets, seeds, pushes from sample workspace, pulls, queries, checks 422 guard
+```
+
+---
+
+## Before you open a PR
+
+- Run `validation/validate-all.sh` on any workspace changes
+- Run `npm run test` in the repo you changed
+- For brain-api.md changes: bump the version in the file header and note it in the PR
+- For new harness skills: include a rubric in `.claude/rubrics/` and a sample output in `examples/`
+
+---
+
+## Code of conduct
+
+Be kind. This project started from real work with real teams. Contributions that make it more useful for teams doing serious AI work are the north star.
+
+---
+
+<Aside type="note">
+  Questions? Open an issue or reach out to John at iamjohndass@pm.me.
+</Aside>

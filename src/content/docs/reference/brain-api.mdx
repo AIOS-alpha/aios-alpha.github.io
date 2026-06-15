@@ -1,0 +1,140 @@
+---
+title: Brain API v1
+description: The pinned sync contract between AIOS workspaces and the Team Brain. Both repos build against this spec.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="note">
+  The authoritative source of this contract is `aios-workspace/docs/brain-api.md` in the workspace repo. This page is a rendered version — if they diverge, the `.md` file wins.
+</Aside>
+
+## Authentication
+
+All requests require a Bearer token (the per-member API key) and a team identifier header:
+
+```http
+Authorization: Bearer aios_<key_id>_<secret>
+X-AIOS-Team: <team-slug>
+```
+
+API keys are `aios_<key_id>_<secret>` format, SHA-256 hashed at rest. Keys are shown once at creation.
+
+---
+
+## Endpoints
+
+### `POST /api/v1/items`
+
+Upsert one or more content items from a workspace push.
+
+**Request body:**
+
+```json
+{
+  "items": [
+    {
+      "row_key": "2-work/sprint-1-retro.md",
+      "content": "# Sprint 1 Retro\n...",
+      "frontmatter": {
+        "title": "Sprint 1 retrospective",
+        "audience": "team",
+        "date": "2025-06-01"
+      },
+      "tier": "team",
+      "checksum": "sha256:abc123..."
+    }
+  ]
+}
+```
+
+**Response:**
+
+```json
+{ "accepted": 3, "rejected": 0, "errors": [] }
+```
+
+**Errors:**
+- `422` — Item has `admin` tier. Admin content is never accepted. Fix the `audience` frontmatter.
+- `401` — Invalid or missing API key.
+- `403` — Team not found or key not authorized for this team.
+
+---
+
+### `GET /api/v1/items`
+
+Pull team-tier content since a given timestamp (for `aios pull`).
+
+**Query parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `since` | ISO 8601 | Return items updated after this time |
+| `cursor` | string | Keyset pagination cursor from previous response |
+| `limit` | int | Page size (default 50, max 200) |
+
+**Response:**
+
+```json
+{
+  "items": [...],
+  "next_cursor": "eyJpZCI6MTIzfQ==",
+  "has_more": true
+}
+```
+
+---
+
+### `GET /api/v1/tasks`
+
+Pull task rows materialized from decision/task logs since a given timestamp. Used by `aios pull` to write back task updates.
+
+Same pagination parameters as `/api/v1/items`.
+
+---
+
+### `POST /api/v1/query`
+
+Natural-language query over the team's shared memory. Returns a server-sent event (SSE) stream.
+
+**Request body:**
+
+```json
+{ "q": "what decisions were made about auth in sprint 1?" }
+```
+
+**SSE event types:**
+
+| Event | Payload |
+|-------|---------|
+| `delta` | `{ "text": "..." }` — incremental LLM output |
+| `sources` | `[{ "row_key": "...", "title": "...", "tier": "team" }]` — cited items |
+| `done` | `{}` — stream complete |
+
+---
+
+## Row keys
+
+`row_key` is the relative path from the workspace root (e.g. `2-work/sprint-1-retro.md`). It is the stable identifier used for diff-sync — a push with the same `row_key` and a new checksum updates the existing record; same checksum is a no-op.
+
+---
+
+## Rate limits
+
+Rate limits are enforced per-member and per-team in the `query_log` table. Defaults:
+
+| Scope | Limit |
+|-------|-------|
+| Per-member daily query cost | Configurable via `DAILY_MEMBER_CAP_USD` |
+| Per-team daily query cost | Configurable via `DAILY_TEAM_CAP_USD` |
+| Sync writes per minute | 60 items/min per key |
+
+---
+
+## Tier vocabulary
+
+| Friendly name | Canonical (wire format) | Accepted by brain? |
+|---------------|------------------------|-------------------|
+| `private`, `personal` | `admin` | No — 422 |
+| `team` | `team` | Yes |
+| `client`, `company` | `external` | Yes |

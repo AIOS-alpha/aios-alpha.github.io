@@ -1,0 +1,152 @@
+---
+title: Quickstart
+description: Get AIOS running in under 10 minutes — scaffold your workspace and connect it to a Team Brain.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+AIOS has two parts that you set up independently. Start with your individual workspace.
+
+## Part 1 — Your Workspace
+
+<Steps>
+
+1. **Clone the workspace repo**
+
+   ```bash
+   git clone https://github.com/AIOS-alpha/aios-workspace
+   cd aios-workspace
+   npm install
+   ```
+
+2. **Pick your context and scaffold**
+
+   Are you a consultant working on an engagement, or an employee inside a company?
+
+   <Tabs>
+     <TabItem label="Consultant">
+     ```bash
+     scripts/scaffold-project.sh \
+       --context consultant \
+       --slug acme-workspace \
+       --stakeholder "Acme Corp" \
+       --owner your-name \
+       --team "you,colleague1,colleague2" \
+       --org AIOS-alpha \
+       --output ~/Projects/acme-workspace
+     ```
+     </TabItem>
+     <TabItem label="Employee">
+     ```bash
+     scripts/scaffold-project.sh \
+       --context employee \
+       --slug my-workspace \
+       --stakeholder "Your Company" \
+       --owner your-name \
+       --team "you,teammate" \
+       --org AIOS-alpha \
+       --output ~/Projects/my-workspace
+     ```
+     </TabItem>
+   </Tabs>
+
+3. **Open the scaffolded workspace**
+
+   ```bash
+   cd ~/Projects/acme-workspace   # or wherever you pointed --output
+   ```
+
+   You'll find the numbered spine already in place:
+   ```
+   0-context/    scope and framing
+   1-inbox/      raw inputs land here
+   2-work/       deliverables live here
+   3-log/        decisions, tasks, hours
+   4-shared/     what goes to the client or company
+   5-personal/   private scratch, never syncs
+   ```
+
+4. **Validate the structure**
+
+   ```bash
+   /path/to/aios-workspace/validation/validate-all.sh .
+   ```
+
+   All checks should pass on a fresh scaffold.
+
+5. **Run a harness**
+
+   Try the weekly synthesis harness:
+   ```bash
+   # Inside Claude Code, in your scaffolded workspace:
+   /weekly-synthesis
+   ```
+
+</Steps>
+
+---
+
+## Part 2 — Team Brain (optional, team setup)
+
+<Aside type="note">
+  One person on the team sets up the brain. Everyone else just runs `aios push` from their workspace.
+</Aside>
+
+<Steps>
+
+1. **Clone the brain repo**
+
+   ```bash
+   git clone https://github.com/AIOS-alpha/aios-team-brain
+   cd aios-team-brain
+   npm install
+   ```
+
+2. **Start Supabase and seed demo data**
+
+   ```bash
+   supabase start
+   cp .env.example .env.local
+   # Fill in values from `supabase status -o env` + your Anthropic key
+   npx tsx --conditions react-server scripts/seed-demo.ts
+   npm run dev
+   ```
+
+3. **Copy the API key printed during seed**
+
+   The seed script prints a demo API key once:
+   ```
+   AIOS_API_KEY=aios_<key_id>_<secret>
+   ```
+
+4. **Wire up your workspace**
+
+   In your scaffolded workspace, edit `aios.yaml`:
+   ```yaml
+   brain_url: http://localhost:3000   # or your deployed brain URL
+   api_key: aios_<your-key>
+   ```
+
+5. **Push your first content**
+
+   ```bash
+   cd ~/Projects/acme-workspace
+   aios status      # preview what would sync
+   aios push        # send team-tier content to the brain
+   ```
+
+6. **Query the brain**
+
+   ```bash
+   aios query "what decisions did we make this week?"
+   ```
+
+</Steps>
+
+---
+
+## Next steps
+
+- [Understand the workspace spine](/guides/workspace/) — tiers, frontmatter, the numbered folders
+- [Team Brain deep-dive](/guides/team-brain/) — architecture, auth, self-hosting
+- [Brain API reference](/reference/brain-api/) — sync contract for the `aios` CLI

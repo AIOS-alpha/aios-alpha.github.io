@@ -1,0 +1,120 @@
+---
+title: CLI Reference
+description: All aios CLI commands — push, pull, query, status, and more.
+---
+
+The `aios` CLI is a zero-dependency Node.js script (`scripts/aios.mjs`, Node ≥ 18). Install it from `aios-workspace`:
+
+```bash
+# From inside an aios-workspace clone:
+npm link   # or add to PATH: export PATH="$PWD/bin:$PATH"
+```
+
+Configure your workspace's `aios.yaml`:
+
+```yaml
+version: 1
+brain_url: https://your-brain.example.com
+api_key: aios_<key_id>_<secret>
+team: your-team-slug
+sync:
+  tiers: [team, external]
+  include:
+    - 0-context
+    - 2-work
+    - 3-log
+    - 4-shared
+```
+
+---
+
+## Commands
+
+### `aios status`
+
+Preview what would be pushed without sending anything.
+
+```bash
+aios status
+# → Lists files that are new, modified, or unchanged since last push
+```
+
+---
+
+### `aios push`
+
+Push tier-eligible content to the Team Brain.
+
+```bash
+aios push                    # push everything eligible
+aios push --dry-run          # preview only (same as status)
+aios push 2-work/retro.md   # push specific path(s)
+```
+
+Only files whose frontmatter `audience` maps to `team` or `external` are sent. Files without frontmatter are skipped with a warning.
+
+---
+
+### `aios pull`
+
+Fetch team updates from the brain into `1-inbox/from-brain/`.
+
+```bash
+aios pull
+# → Downloads items updated since last pull, writes to 1-inbox/from-brain/
+# → Also fetches task rows and writes them to 3-log/tasks-from-brain.md
+```
+
+---
+
+### `aios query`
+
+Natural-language query against the Team Brain. Streams the answer.
+
+```bash
+aios query "what blocked sprint 1?"
+aios query "who owns the auth decision?"
+```
+
+---
+
+### `aios export-okf`
+
+Export a tier-filtered OKF (Open Knowledge Framework) bundle from the brain to a local directory.
+
+```bash
+aios export-okf              # exports to .aios/okf/
+aios export-okf ./my-bundle  # exports to specified directory
+```
+
+---
+
+### `aios pull-bundle`
+
+Pull the OKF link graph from the brain into `.aios/bundle.json` for offline traversal.
+
+```bash
+aios pull-bundle
+# → Use /okf-traverse inside Claude Code to query offline
+```
+
+---
+
+### `aios graph`
+
+Traverse the local OKF bundle and print the link graph.
+
+```bash
+aios graph
+aios graph --from 2-work/retro.md   # start from a specific node
+```
+
+---
+
+## Environment variables
+
+| Variable | Description |
+|----------|-------------|
+| `AIOS_API_KEY` | Overrides `api_key` in `aios.yaml` |
+| `AIOS_BRAIN_URL` | Overrides `brain_url` in `aios.yaml` |
+| `AIOS_TEAM` | Overrides `team` in `aios.yaml` |

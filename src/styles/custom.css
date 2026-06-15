@@ -1,0 +1,122 @@
+/* =====================================================================
+   AIOS docs theme — maps the canonical design tokens (design-tokens.css)
+   onto Starlight's --sl-* variables.
+   The brand is dark-only ("no white or light backgrounds"), so the light
+   theme is overridden to the same dark palette and the toggle is hidden.
+   ===================================================================== */
+
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/600.css';
+@import '@fontsource/space-grotesk/700.css';
+@import '@fontsource/plus-jakarta-sans/400.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import './design-tokens.css';
+
+/* ---- Palette: applied to both themes (brand is dark-only) ----
+   Shared values reference the --aios-* tokens; the neutral gray ramp and
+   a few derived tints are docs-only and stay local. */
+:root,
+:root[data-theme='light'] {
+  color-scheme: dark;
+
+  /* Accent — violet primary */
+  --sl-color-accent-low: #1c1530;            /* docs-only derived violet tint */
+  --sl-color-accent: var(--aios-violet);
+  --sl-color-accent-high: var(--aios-violet-bright);
+
+  /* Neutral scale (docs-only ramp tuned to the foundation) */
+  --sl-color-white: var(--aios-foreground);
+  --sl-color-gray-1: #ececec;
+  --sl-color-gray-2: #d2d2d2;
+  --sl-color-gray-3: #9a9a9a;
+  --sl-color-gray-4: #5c5c5c;
+  --sl-color-gray-5: #2a2a2a;
+  --sl-color-gray-6: #1a1a1a;
+  --sl-color-gray-7: #141414;
+  --sl-color-black: var(--aios-bg);
+
+  /* Semantic surfaces */
+  --sl-color-bg: var(--aios-bg);
+  --sl-color-bg-nav: rgba(5, 5, 5, 0.85);
+  --sl-color-bg-sidebar: var(--aios-surface);
+  --sl-color-bg-inline-code: var(--aios-muted);
+  --sl-color-bg-accent: var(--aios-violet);
+
+  /* Text */
+  --sl-color-text: #d2d2d2;
+  --sl-color-text-accent: var(--aios-violet-light);   /* link color */
+  --sl-color-text-invert: #000000;
+
+  /* Hairlines — borders are separation, barely perceptible */
+  --sl-color-hairline: var(--aios-border);
+  --sl-color-hairline-light: rgba(255, 255, 255, 0.06);
+  --sl-color-hairline-shade: rgba(255, 255, 255, 0.06);
+  --sl-color-backdrop-overlay: rgba(5, 5, 5, 0.7);
+
+  /* Fonts — Space Grotesk handled per-heading below */
+  --sl-font: var(--aios-font-sans);
+  --sl-font-mono: var(--aios-font-mono);
+}
+
+/* Dark-only: hide the (now no-op) light/dark toggle */
+starlight-theme-select {
+  display: none;
+}
+
+/* ---- Typography: Space Grotesk for all headings, tight tracking ---- */
+:is(h1, h2, h3, h4, h5, h6),
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--aios-font-display);
+  letter-spacing: -0.02em;
+  color: var(--sl-color-white);
+}
+
+/* ---- Glass nav, hairline separators ---- */
+.header {
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+/* ---- Active sidebar entry: lime "live" marker ---- */
+.sidebar-content a[aria-current='page'] {
+  color: var(--sl-color-white);
+  background: var(--sl-color-accent-low);
+  border-left: 2px solid var(--aios-lime);
+}
+
+.sl-markdown-content a:hover {
+  color: var(--sl-color-accent-high);
+}
+
+/* ---- Inline code: muted surface, mono, subtle hairline ---- */
+.sl-markdown-content :not(pre) > code {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: var(--aios-radius-sm);
+  color: var(--aios-foreground);
+}
+
+/* ---- Cards (used in docs content) — border, not shadow ---- */
+.card {
+  border-radius: var(--aios-radius-xl);
+}
+.card p.title {
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+  font-family: var(--aios-font-display);
+}
+
+/* ---- Hero (Starlight splash, if ever used) — collapse empty image well ---- */
+.hero {
+  padding-block: 2rem !important;
+}
+.hero > .hero-html,
+.hero > img,
+.hero > picture {
+  display: none;
+}
+.hero .tagline {
+  font-size: 1.25rem;
+  max-width: 48ch;
+}

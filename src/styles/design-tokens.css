@@ -1,0 +1,47 @@
+/* =====================================================================
+   AIOS design tokens — the SINGLE SOURCE OF TRUTH for the palette,
+   type, radii and gradients defined in DESIGN.md.
+
+   Consumed by both styling surfaces:
+     - src/styles/global.css  → mapped into Tailwind @theme (landing page)
+     - src/styles/custom.css  → mapped into Starlight --sl-* vars (docs)
+
+   Change a value here and it propagates to both. Do not redefine these
+   hex values anywhere else.
+   ===================================================================== */
+:root {
+  /* ---- Palette ---- */
+  --aios-bg: #050505;
+  --aios-surface: #0a0a0a;
+  --aios-surface-elevated: #141414;
+  --aios-muted: #1a1a1a;
+  --aios-border: rgba(255, 255, 255, 0.1);
+  --aios-border-visible: rgba(255, 255, 255, 0.15);
+  --aios-foreground: #fafafa;
+  --aios-muted-foreground: rgba(255, 255, 255, 0.5);
+  --aios-violet: #8b5cf6;          /* primary */
+  --aios-violet-hover: #7c3aed;
+  --aios-violet-light: #a78bfa;    /* links */
+  --aios-violet-bright: #c4b5fd;   /* high-contrast accent */
+  --aios-lime: #84cc16;            /* accent / labels / live state */
+  --aios-emerald: #10b981;
+  --aios-code-bg: #0a0a0a;
+
+  /* ---- Type ---- */
+  --aios-font-display: 'Space Grotesk', system-ui, sans-serif;
+  --aios-font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --aios-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* ---- Radii ---- */
+  --aios-radius-sm: 4px;
+  --aios-radius-md: 6px;
+  --aios-radius-lg: 10px;
+  --aios-radius-xl: 14px;
+  --aios-radius-2xl: 20px;
+  --aios-radius-full: 9999px;
+
+  /* ---- Gradients (derived from the palette above) ---- */
+  --aios-gradient-prism: linear-gradient(135deg, var(--aios-violet) 0%, var(--aios-emerald) 50%, var(--aios-lime) 100%);
+  --aios-gradient-primary: linear-gradient(135deg, var(--aios-violet) 0%, var(--aios-lime) 100%);
+  --aios-gradient-text: linear-gradient(135deg, var(--aios-violet-light) 0%, var(--aios-lime) 100%);
+}
