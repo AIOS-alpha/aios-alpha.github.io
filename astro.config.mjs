@@ -40,6 +40,7 @@ export default defineConfig({
                   label: 'Guides',
                   items: [
                       { label: 'Your Workspace', slug: 'guides/workspace' },
+                      { label: 'The Cockpit', slug: 'guides/cockpit' },
                       { label: 'Team Brain', slug: 'guides/team-brain' },
                   ],
               },
@@ -50,6 +51,7 @@ export default defineConfig({
                       { label: 'CLI Commands', slug: 'reference/cli' },
                   ],
               },
+              { label: 'Changelog', slug: 'changelog' },
               { label: 'Contributing', slug: 'contributing' },
           ],
           customCss: ['./src/styles/custom.css'],
