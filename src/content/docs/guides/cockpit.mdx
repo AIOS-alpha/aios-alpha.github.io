@@ -113,6 +113,14 @@ The scan is **advisory** — scanners can be bypassed, so provenance and your ow
 review remain the real trust anchor. Official skills stay one-click.
 </Aside>
 
+### Marketplace skills (first-party)
+
+The **marketplace** tier installs first-party Anthropic skills from
+`claude-plugins-official` via **fetch-on-install**: the skill is fetched at a pinned
+`repo@commit` and its bytes are **verified against a declared hash** before anything is
+copied in (install is refused on mismatch). It sits between official (vendored,
+one-click) and community (scanned, typed-consent) in the trust order.
+
 ## Onboarding: draft your profile from a link
 
 On first run, the cockpit can set up your profile for you. Under *or draft it
@@ -120,8 +128,12 @@ from a link*, paste a company or profile URL and click **Draft →**.
 
 The agent reads that **one** page with the `firecrawl-direct` skill (via
 Firecrawl) and extracts structured facts — who you are, your company, your focus
-areas, the tools you use — then **drafts** your `.claude/CLAUDE.md`. You
-**confirm before anything is written**.
+areas, the tools you use — then **drafts** your durable memory
+(`.claude/memory/USER.md` + `WORKSPACE.md`). You **confirm before anything is written**.
+
+It also **matches the tools it detected to connectable integrations** and offers to
+connect them in the Integrations tab — advisory, and only ever for integrations that
+can actually be connected. It never connects anything for you.
 
 <Aside type="caution">
 Scraped page content is treated as **facts to confirm, never as instructions**,

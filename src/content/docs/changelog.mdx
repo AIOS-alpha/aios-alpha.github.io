@@ -12,6 +12,27 @@ The Team Brain **sync contract** (`Brain API`) is versioned separately and is
 **unchanged** by the release below — still **v1**, no protocol change.
 </Aside>
 
+## v0.4.0 — 2026-06-17
+
+### Onboarding & memory
+- **Onboarding from a link** now drafts into **two-axis durable memory**
+  (`.claude/memory/USER.md` + `WORKSPACE.md`) — confirm before write.
+- **Suggested integrations** — after a link-draft, the agent matches detected tools to
+  connectable integrations and offers to connect them (advisory; never auto-connects).
+- **Update memory on request** ("remember that …", "update my tooling") and an opt-out
+  **background memory reviewer** that conservatively saves durable facts with undo.
+
+### Skills
+- **Marketplace tier** — install first-party Anthropic skills from
+  `claude-plugins-official` via fetch-on-install with byte-diff authenticity (alongside
+  the official and community tiers).
+
+### Runtimes & security
+- **BYOA: OpenClaw** on the ACP adapter (hardened stdout) + recorded-transcript CI gates.
+- **Encrypted `.env`** — connector secrets are encrypted at rest via dotenvx.
+
+The Team Brain sync contract is unchanged (still **v1**).
+
 ## v0.3.0 — 2026-06-17 — The cockpit overhaul
 
 The local cockpit (`npm run gui`) becomes a real workspace cockpit. No change to
