@@ -93,6 +93,18 @@ Same pagination parameters as `/api/v1/items`.
 
 ---
 
+### `GET /api/v1/decisions`
+
+Pull decision rows created or edited **in the dashboard** since a given `?since=` timestamp. Used by `aios pull` to write dashboard decisions back into `3-log/decision-log.md`. **Tier-scoped** — an `external`-tier key receives only `audience: "external"` rows. (Additive in v1; clients tolerate a `404` from an older brain.)
+
+---
+
+### `GET /api/v1/projects`
+
+List the team's projects (team-tier keys only) so `aios pull` can register **brain-created** projects (created in the dashboard, never pushed) as local marker files. Returns `{ "projects": [{ "slug", "name", "brain_only" }] }`. (Additive in v1; clients tolerate a `404`.)
+
+---
+
 ### `POST /api/v1/query`
 
 Natural-language query over the team's shared memory. Returns a server-sent event (SSE) stream.
