@@ -1,0 +1,93 @@
+---
+title: Self-Assessment
+description: Place yourself, your codebase, and your team on the maturity model using concrete, mostly-measurable signals — then turn the weakest axis into a practice plan.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Three rubrics, one for each scope. Each places the subject on a **Spine level (L1–L5)** and scores each **Axis (0–4)**. The Spine level is **capped at L3 if Verification is at the bottom** — the core rule: no real agentic maturity without verification.
+
+<Aside type="note">
+You can run all three by hand today with the tables below. In an AIOS workspace these are designed to be driven by a guided self-assessment and an automated codebase scan; this page is the rubric they share.
+</Aside>
+
+---
+
+## 1. Individual (workstation)
+
+**Spine placement** — pick the highest statement that is reliably true under pressure (not your best day):
+
+- **L1** — I type requests into a chat and use what comes back; I rarely read diffs.
+- **L2** — I keep reusable prompts (roles, examples, format constraints) and review diffs before accepting.
+- **L3** — I maintain a personal/project CLAUDE.md, curate my tools/MCPs, and manage context deliberately.
+- **L4** — I run agents in a loop against a written spec + a check they can run, and I review every diff. A meaningful share of my work is delegated-and-verified.
+- **L5** — I orchestrate multiple/parallel agents, run my own evals, and feed learnings back across sessions.
+
+**Axis scores** (0 = absent, 4 = strong):
+
+| Axis | 0 | 2 | 4 |
+|---|---|---|---|
+| **Verification** | Eyeballs output | Runs tests/build manually before merge | Agent runs its own check; personal eval harness |
+| **Context hygiene** | One long session for everything | Clears between tasks | Curated CLAUDE.md + subagents isolate exploration + compaction |
+| **Autonomy / leash** | Approves everything, or blindly auto-accepts | Auto-accepts low-risk behind a check | Dials leash per risk; earns it via proven checks; sandboxes the rest |
+| **Learning** | Repeats the same corrections | Adds fixes to CLAUDE.md sometimes | Corrections + memory feed back systematically; builds skills |
+| **Cost & governance** | No cost sense | Aware of token cost | Token-efficient tooling; respects tier/permission discipline |
+
+A useful north star: the **delegation ratio** — the share of your work that is *delegated-and-verified* to agents. The "and-verified" is what separates L4 from fast L1.
+
+---
+
+## 2. Codebase (repo) — the automatable one
+
+This scope is mostly **binary, file-existence checks**. Score = the % of checks passed, mapped to a level. A repo must pass ~80% of a level's checks to claim it.
+
+| Pillar | Concrete signal (pass/fail) |
+|---|---|
+| **Agent instructions** | A CLAUDE.md / AGENTS.md exists at root, is non-trivial, references example files |
+| **Testing** | A test suite exists; CI runs it on PRs (the agent's feedback loop) |
+| **Build / validation** | Reproducible build; linter + formatter + type-checker configured (guardrails) |
+| **Docs** | README + setup/contributing docs present |
+| **Dev environment** | One-command setup (a Makefile, devcontainer, or script) |
+| **Code quality** | Pre-commit / pre-push hooks enforce style |
+| **Observability** | Logging/monitoring so agent actions are inspectable |
+| **Security / governance** | Secret scanning; ignore-hygiene; access conventions |
+| **Evals** *(unlocks L4+)* | An eval suite or LLM-as-judge harness lives in the repo |
+
+**Level mapping:**
+
+| Level | Meaning |
+|---|---|
+| **L1 Functional** | A human can build and run it |
+| **L2 Structured** | + CLAUDE.md, linter/formatter, basic tests |
+| **L3 Agent-ready** *(target)* | + CI-on-PR, type-checker, one-command setup, secret scanning, docs |
+| **L4 Measured** | + eval harness, observability, pre-commit gates |
+| **L5 Self-improving** | + a compounding CLAUDE.md, shared skills/commands, agent-readable docs |
+
+<Aside type="caution" title="The one metric to subordinate">
+"% of code AI-authored" is an *activity* metric, not a *quality* one. Track it if you like, but never let it outrank eval coverage and agent-readiness. A repo that is 90% AI-authored with no tests is L1, not L5.
+</Aside>
+
+---
+
+## 3. Team / org
+
+A maturity **radar**, not a single number. Dimensions borrowed from DORA's 2025 AI Capabilities Model:
+
+| Dimension | Signal |
+|---|---|
+| **AI stance** | A documented, communicated policy on permitted tools/usage |
+| **Data ecosystem** | Internal data/docs are high-quality, unified, and AI-accessible |
+| **Version control & batch size** | Strong VCS discipline; small, frequent changes |
+| **Internal platform** | Shared agent harnesses/skills; a quality internal platform |
+| **Throughput & stability** | Delivery metrics tracked — watch change-fail rate as throughput rises |
+| **Trust** | The share of developers who trust AI-generated code (closing the gap *is* maturity) |
+| **Adoption depth** | % of repos at L3+; % of workflows with eval coverage |
+| **Org learning loop** | Do evals/learnings feed back into *shared* prompts, skills, and conventions? |
+
+---
+
+## From assessment to practice
+
+1. **Place** the subject (Spine level + Axis scores), applying the Verification cap.
+2. **Prescribe** — take the weakest axis and pick the matching practices from the [Pattern Library](/agentic/patterns/).
+3. **Re-assess** over time — quarterly for people, per-PR for repos, per-quarter for teams — and track the progression.

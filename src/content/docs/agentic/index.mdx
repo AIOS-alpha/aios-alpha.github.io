@@ -1,0 +1,62 @@
+---
+title: Agentic Engineering Maturity
+description: An open framework for becoming demonstrably better at working with AI — across people, codebases, and teams. The model, a reusable pattern library, and the practitioners to learn from.
+---
+
+import { Card, CardGrid, Aside, LinkCard } from '@astrojs/starlight/components';
+
+Working well with AI is a **craft with a learnable progression** — not a question of *whether* you use AI (almost everyone does) but *how*. The Agentic Engineering Maturity (AEM) framework makes that progression explicit, so individuals, codebases, and teams can see where they are and what to practice next.
+
+It was distilled from how the best practicing agentic engineers actually work — Boris Cherny (creator of Claude Code), Andrej Karpathy, Thariq Shihipar and the Anthropic engineering team, Simon Willison, Armin Ronacher, Geoffrey Huntley, Thorsten Ball, and others — cross-checked against established maturity-model literature (the Capability Maturity Model, DeepMind's Levels of AGI, SAE autonomy levels, Factory.ai's Agent Readiness, and DORA 2025).
+
+---
+
+## The framework in one breath
+
+- **A 5-level Spine** — your default mode of working with AI: `Prompting → Prompt Engineering → Context Engineering → Agentic Engineering → Agentic Orchestration`. Maturity is picking the *right* level for the task, not always the highest.
+- **5 cross-cutting Axes** — capabilities that deepen at every level: Verification, Context hygiene, Autonomy/Leash, Learning/Compounding, and Cost & Governance.
+- **3 Scopes** — Individual (workstation), Codebase (repo), Team (org).
+
+<Aside type="tip" title="The one rule that ties it together">
+Verification is the differentiator — the line between "vibe coding" and engineering. You can't exceed Level 3 on the Spine with bottom-tier verification. **You don't climb to autonomy; you earn it through verification.**
+</Aside>
+
+---
+
+## The five levels
+
+<CardGrid>
+  <Card title="L1 · Prompting">
+    *Ask and accept.* You type a request and take what comes back. Great for throwaways; no repeatability or review.
+  </Card>
+  <Card title="L2 · Prompt Engineering">
+    *Reusable, structured asks.* Roles, examples, format constraints. You review diffs. Still stateless — each prompt is an island.
+  </Card>
+  <Card title="L3 · Context Engineering">
+    *Build the system that feeds the model.* A maintained CLAUDE.md, a curated tool set, deliberate context management. The hinge from prompt to system.
+  </Card>
+  <Card title="L4 · Agentic Engineering">
+    *Delegate, verify, stay in the loop.* Agents act in a loop against a spec and a check; you review every diff. Quality is never optional.
+  </Card>
+  <Card title="L5 · Agentic Orchestration">
+    *Coordinate fleets, close the loops.* Multiple agents, evals, and learning loops that improve without you re-engineering each cycle.
+  </Card>
+</CardGrid>
+
+---
+
+## Explore the framework
+
+<CardGrid>
+  <LinkCard title="The Maturity Model" href="/agentic/maturity-model/" description="The Spine, the Axes, the Scopes, and the design lineage." />
+  <LinkCard title="Pattern Library" href="/agentic/patterns/" description="24 reusable patterns from the best engineers, tagged by level and axis." />
+  <LinkCard title="Self-Assessment" href="/agentic/assessment/" description="Place yourself, your repo, and your team — with concrete signals." />
+  <LinkCard title="Who to Learn From" href="/agentic/watchlist/" description="The practitioners worth following and how to track them." />
+  <LinkCard title="Reading List" href="/agentic/reading/" description="The canonical posts, talks, and papers behind the framework." />
+</CardGrid>
+
+---
+
+## Why this exists
+
+AIOS is an open toolkit for working with AI in a structured, agent-native way. AEM is the part that answers *"am I getting better at this, and how do I improve?"* — a shared vocabulary and a set of practices anyone can adopt, whether you're a solo developer, a founder, or a team lead.

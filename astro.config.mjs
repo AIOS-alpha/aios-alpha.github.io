@@ -45,6 +45,17 @@ export default defineConfig({
                   ],
               },
               {
+                  label: 'Agentic Engineering',
+                  items: [
+                      { label: 'Maturity Framework', slug: 'agentic' },
+                      { label: 'The Maturity Model', slug: 'agentic/maturity-model' },
+                      { label: 'Pattern Library', slug: 'agentic/patterns' },
+                      { label: 'Self-Assessment', slug: 'agentic/assessment' },
+                      { label: 'Who to Learn From', slug: 'agentic/watchlist' },
+                      { label: 'Reading List', slug: 'agentic/reading' },
+                  ],
+              },
+              {
                   label: 'Reference',
                   items: [
                       { label: 'Brain API v1', slug: 'reference/brain-api' },

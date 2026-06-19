@@ -1,0 +1,120 @@
+---
+title: Pattern Library
+description: 24 reusable, named patterns distilled from the best agentic engineers — each something you can apply tomorrow, tagged by the maturity level it unlocks and the axis it strengthens.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Reusable patterns distilled from the best practicing agentic engineers. Each is something you can *do tomorrow*. Patterns are tagged by the **level** they move you toward and the **axis** they strengthen, so you can pick the right next practice.
+
+---
+
+## A. Foundation patterns (L2 → L3: prompt → context)
+
+**A1 — CLAUDE.md as compounding infrastructure** · *unlocks L3 · context, learning*
+Keep a short, git-checked-in CLAUDE.md (or AGENTS.md) with your conventions, gotchas, and "good example" files. After every correction, tell the agent to update it so it won't repeat the mistake. Keep it ruthlessly short — *would removing this line cause a mistake? If not, cut it.* The whole team commits to it; it gets more agent-friendly every day.
+
+**A2 — Just-in-time context, not kitchen-sink** · *unlocks L3 · context, cost*
+Don't pre-load everything. Keep lightweight identifiers (paths, URLs, IDs) and let the agent retrieve on demand. Clear context between unrelated tasks. If you've corrected the agent more than twice on the same thing, start fresh with a sharper prompt — a clean session beats a long polluted one.
+
+**A3 — Point at examples, name the files** · *unlocks L2 · verification, context*
+Be specific: reference the relevant files, name a good pattern to copy, and describe the symptom + likely location + what "fixed" looks like. Vague asks produce confidently wrong work.
+
+**A4 — Voice your prompts** · *unlocks L2*
+Dictate instead of type. You speak ~3× faster than you type, and your prompts get far more detailed — more detail in, better first-shot out.
+
+---
+
+## B. The core loop patterns (L3 → L4: the heart of agentic engineering)
+
+**B1 — Explore → Plan → Code → Commit** · *unlocks L4 · verification, context*
+For anything non-trivial, start in plan mode and pour energy into the plan so the agent can one-shot the implementation. Skip planning only for one-sentence diffs. When a run goes sideways, switch back to planning — don't keep pushing a bad thread.
+
+**B2 — Give it a check it can run** *(the single most important pattern)* · *unlocks L4 · verification, autonomy*
+Give the agent a check it can run itself — tests, a build, a screenshot to compare. It's the difference between a session you watch and one you walk away from, and it reportedly yields 2–3× quality. The check is also what lets you safely lengthen the leash. Strengthen it progressively: in-prompt criteria → a goal condition re-checked each turn → a stop hook that blocks until the check passes → an adversarial reviewer.
+
+**B3 — Spec-first: let the agent interview you** · *unlocks L4 · verification, context*
+Have the agent ask *you* clarifying questions, write a SPEC.md, then execute in a fresh session against that spec. This counters the #1 agent failure: making wrong assumptions on your behalf and running with them. (A nice variant: write the plan as HTML mockups, not markdown, so human review is richer.)
+
+**B4 — Declarative over imperative** · *unlocks L4 · verification*
+Don't dictate steps — give success criteria and let it loop. Get it to write tests first and then pass them; put it in a loop with a browser; write the naive correct algorithm first, then ask it to optimize while preserving correctness. LLMs are exceptionally good at looping until they meet a specific goal.
+
+**B5 — Watch it like a hawk (generation vs. discrimination)** · *unlocks L4 · verification*
+Agent errors are no longer syntax errors — they're subtle conceptual errors a hasty junior would make. Keep a real IDE open beside the agent and review every diff for code you care about. Writing and reviewing are different skills — guard your review skill; it's your moat as oversight.
+
+**B6 — The autonomy slider / leash length** · *unlocks L4–L5 · autonomy*
+Don't pick "manual" or "full auto" — dial it per task and per risk. Human-in-the-loop for risky/irreversible actions, on-the-loop for routine work behind a verification gate, off-the-loop only where a strong check makes it safe. Move the slider right *as* the model and your harness prove reliable.
+
+**B7 — Adversarial prompting** · *unlocks L4 · verification*
+Make the agent argue against its own work: *"Grill me on these changes and don't open a PR until I pass your test." · "Prove to me this works."* After a mediocre fix: *"Knowing everything you know now, scrap this and implement the elegant solution."*
+
+---
+
+## C. Automation & harness patterns (L4: build your own tools)
+
+**C1 — If you do it twice a day, make it a command/skill** · *unlocks L4 · learning, cost*
+Turn repeated inner-loops into reusable slash-commands and skills, checked into git. Precompute deterministic state (like git status) inline to save model round-trips.
+
+**C2 — Subagents for investigation (context isolation)** · *unlocks L4–L5 · context*
+Push file-reading and research into a separate subagent with its own context window that reports back a short summary — keeps your main window clean.
+
+**C3 — Parallel sessions / git worktrees** *(biggest throughput unlock)* · *unlocks L4–L5 · cost*
+Run several agents at once across worktrees, each its own task. A writer/reviewer split — one session writes, a *fresh* session reviews — catches more, because the reviewer isn't biased toward code it just wrote.
+
+**C4 — Hooks for what must happen every time** · *unlocks L4 · verification, governance*
+Use lifecycle hooks for determinism: auto-format after edits, load context at session start, route permission requests for approval, block completion until a check passes.
+
+**C5 — Fan-out / headless loops for scale** · *unlocks L5*
+For migrations and repetitive edits, loop the headless CLI over a file list. Test on a few files first.
+
+**C6 — The Ralph loop (autonomous while-loop)** · *unlocks L5 · autonomy · advanced*
+Run an agent in a loop against a goal + a verification gate, letting it grind autonomously. Powerful, but only safe behind a strong check, a sandbox, and cost limits.
+
+---
+
+## D. Multi-agent & evaluation patterns (L5: coordination + loops)
+
+**D1 — The five workflow patterns** · *unlocks L5*
+Start simple; add structure only when it measurably helps. **Prompt chaining** (sequential calls with gates), **routing** (classify then dispatch), **parallelization** (sectioning or voting), **orchestrator-workers** (a lead decomposes and delegates), **evaluator-optimizer** (one generates, one critiques, loop).
+
+**D2 — Orchestrator-worker with isolated context** · *unlocks L5 · context, cost*
+A lead agent spawns parallel subagents, each with a self-contained task and a fresh context window. Scale effort to query complexity. Reserve for high-value, parallelizable work — it costs far more tokens.
+
+**D3 — Eval-driven development (EDD)** · *unlocks L4–L5 · verification*
+Make verification a first-class artifact: realistic tasks paired with verifiable outcomes, run as simple loops, with accuracy/runtime/token/error metrics. Start with error analysis on real transcripts before building elaborate harnesses.
+
+**D4 — LLM-as-judge / Agent-as-judge** · *unlocks L5 · verification*
+Score outputs against a rubric for scale; for stateful tasks use end-state evaluation (judge the outcome, not the path) and an agent-as-judge that reads the action log. Keep humans in the loop for edge cases; use held-out sets to avoid overfitting.
+
+**D5 — Tool / ACI design (build tools *for* agents)** · *unlocks L4–L5 · cost, verification*
+Invest in the agent-computer interface as much as the prompt: consolidate to high-impact tools, namespace them, return semantic names not IDs, make errors actionable, and document them like onboarding a new hire. Then let the agent improve its own tools from eval transcripts.
+
+**D6 — Autoresearch swarm** · *unlocks L5 · learning · advanced*
+Any metric you care about that's cheap to evaluate can be hill-climbed by an agent swarm running many experiments. Ask whether your problem has a cheap, automatable metric — if so, an overnight swarm can improve it.
+
+---
+
+## E. Meta-patterns (apply at every level)
+
+- **E1 — Use the smartest model with thinking.** You steer it less and it's better at tool use, so it's often faster and cheaper in the end.
+- **E2 — Demo vs. product.** A demo is `works.any()`; a product is `works.all()`. The gap is the whole job.
+- **E3 — Build for agents.** Agents are a third consumer of your docs/APIs (after humans and programs). Ship agent-readable docs (`llms.txt`) and clean structured output.
+- **E4 — Speedup is really expansion.** The big win isn't doing the same work faster — it's doing things that wouldn't have been worth coding before.
+- **E5 — Earn the leash.** You don't *climb* to autonomy — you *earn* it through verification.
+
+---
+
+## Which pattern next?
+
+<Aside type="tip">
+Use this to pick your next practice based on where you are. The full placement rubric is on the [Self-Assessment](/agentic/assessment/) page.
+</Aside>
+
+| If you are… | Practice these next |
+|---|---|
+| L1, accepting unread diffs | A3, B5 (start reviewing), A1 (start a CLAUDE.md) |
+| L2, strong prompts but stateless | A1, A2 (build context discipline), B1 |
+| L3, good context but no verification | **B2 (highest priority)**, B3, D3 |
+| L4, verifies but works serially | C3, C2, then D1/D2 |
+| L4 with weak evals | D3, D4, B7 |
+| L5, ready to compound | C6, D6, and a team-level learning loop |

@@ -1,0 +1,98 @@
+---
+title: The Maturity Model
+description: The AEM model in full — a 5-level Spine of how you work with AI, crossed with 5 cross-cutting Axes, applied across 3 scopes (individual, codebase, team).
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The model separates three things people usually conflate: **the Spine** (what mode you work in), **the Axes** (how deep each capability runs), and **the Scope** (who or what is being assessed).
+
+```
+   THE SPINE                  ×   THE AXES                 @  THE SCOPE
+   (what mode you work in)        (how deep each capability)   (who/what is assessed)
+
+   L1 Prompting                   Verification                 Individual (workstation)
+   L2 Prompt Engineering          Context hygiene              Codebase (repo)
+   L3 Context Engineering         Autonomy / leash             Team (org)
+   L4 Agentic Engineering         Learning / compounding
+   L5 Agentic Orchestration       Cost & governance
+```
+
+<Aside type="note" title="Design lineage">
+The 5-level shape is the **Capability Maturity Model** (Ad-hoc → Repeatable → Defined → Measured → Optimizing). The *autonomy-as-a-separate-axis* idea comes from **DeepMind's Levels of AGI** and **SAE's levels of driving automation** — a level is about the division of responsibility between human and machine, not the cleverness of the machine. The codebase rubric borrows **Factory.ai's Agent Readiness** (binary, file-existence signals); the team layer borrows **DORA's 2025 AI Capabilities Model**.
+</Aside>
+
+---
+
+## The Spine — five modes of working with AI
+
+Each level is defined by **the one new skill that distinguishes it from the level below**. Most people are "spiky" — high on a familiar repo, low on an unfamiliar one. Your level is your *reliable default under pressure*, not your best day.
+
+### L1 — Prompting · *"Ask and accept"*
+You type a request and take what comes back. In coding this is "vibe coding": you accept diffs unread and iterate by pasting errors back in. Real value — it raises the floor — but no repeatability, no review, no trust. Fine for throwaways, not production.
+
+### L2 — Prompt Engineering · *"Reusable, structured asks"*
+You write prompts deliberately: roles, few-shot examples, output-format constraints. You save and reuse prompts, and you read the diff before accepting. Still **stateless** — each prompt is an island with no memory, tools, or system around it.
+
+### L3 — Context Engineering · *"Build the system that feeds the model"*
+You stop optimizing the *string* and start engineering the *system* around the model — curating the optimal set of tokens at each step. The guiding rule: the **smallest set of high-signal tokens** that maximize the odds of the outcome, because context is finite even with huge windows. A maintained CLAUDE.md, a curated tool/MCP set, deliberate context management. This is the hinge: prompt engineering is fine for demos; context engineering is what gets deployed.
+
+### L4 — Agentic Engineering · *"Delegate, verify, stay in the loop"*
+The model now **acts in a loop** — uses tools, takes multi-step actions toward a goal — and you supervise. The job shifts from author to **compute allocator + reviewer**. The distinguishing skill is running agents against **specs + verifiable success criteria**, reviewing every diff, and never letting quality become optional. The milestone is inverting from mostly hand-writing code to mostly delegating-and-verifying it — *without* dropping quality.
+
+### L5 — Agentic Orchestration · *"Coordinate fleets, close the loops"*
+You run **multiple agents** (orchestrator-worker, parallel subagents with isolated context), wire **feedback loops** (evals, LLM/agent-as-judge), and build **learning loops** (memory write-back, compounding instructions). The skill is decomposition, managing context boundaries across agents, and building systems that improve without you re-engineering them each cycle. Multi-agent burns far more tokens — maturity includes *knowing when not to.*
+
+<Aside type="caution">
+L5 is not "better" in all cases. A mature engineer drops to L2 for a one-line fix and L1 for a throwaway script. Maturity is **choosing the right level for the task**, not always running the highest one.
+</Aside>
+
+---
+
+## The Axes — five capabilities that deepen at every level
+
+The Spine tells you *which mode* you work in. The Axes tell you *how well*.
+
+| Axis | What it measures | Immature → Mature |
+|---|---|---|
+| **Verification** *(the differentiator)* | Can the work check itself? | Eyeball it → tests/build/screenshot the agent runs itself → eval suites & LLM/agent-as-judge → end-state evals on held-out sets |
+| **Context hygiene** | Signal-to-noise of what the model sees | Kitchen-sink session → clear between tasks → curated CLAUDE.md + just-in-time retrieval → subagents isolate exploration → compaction & structured notes |
+| **Autonomy / leash** | Division of responsibility, set by risk | Human-in-the-loop → on-the-loop (monitor + intervene) → off-the-loop (autonomous, monitored). A longer leash is *earned* through proven reliability, set per-decision by risk — never global. |
+| **Learning / compounding** | Does the system get better on its own? | Same mistakes repeat → corrections added to CLAUDE.md once → shared, git-tracked rules updated weekly → memory/eval results feed back automatically |
+| **Cost & governance** | Is it efficient, safe, and in-bounds? | No idea of cost → cost-per-task awareness → token-efficient tool design → tier/permission discipline, secret scanning, sandboxed autonomy |
+
+<Aside type="tip" title="Verification is special">
+Every serious definition of agentic engineering makes verification the boundary between vibe coding and engineering. In AEM, **you cannot score above L3 on the Spine if your Verification axis is at the bottom** — running agents in a loop with no way to check them is not L4, it's fast L1.
+</Aside>
+
+---
+
+## The Scopes — three things you can assess
+
+The same Spine × Axes apply to three subjects. The [Self-Assessment](/agentic/assessment/) page has the full rubrics.
+
+- **Individual (workstation)** — *Where is this person on their craft journey?* Signals are about habits and setup: do they keep a CLAUDE.md, review diffs, run agents against specs and verify, and what leash have they *safely* earned?
+- **Codebase (repo)** — *Is this repo ready for agents to work in it effectively?* The most measurable scope — mostly binary, file-existence checks (CLAUDE.md, tests + CI, linter/formatter/types, docs, one-command setup, secret scanning, an eval harness). A repo's score is the % of criteria passed.
+- **Team (org)** — *Does the organization amplify or waste its AI capability?* A documented AI stance, healthy/AI-accessible internal data, a quality internal platform of shared harnesses, and whether evals/learnings feed back into shared assets.
+
+---
+
+## The model on one card
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  AGENTIC ENGINEERING MATURITY                                                │
+│                                                                              │
+│  SPINE  L1 Prompting → L2 Prompt Eng → L3 Context Eng →                       │
+│         L4 Agentic Eng → L5 Agentic Orchestration                            │
+│         (maturity = choosing the right level for the task)                    │
+│                                                                              │
+│  AXES   Verification* · Context hygiene · Autonomy/Leash ·                    │
+│         Learning/Compounding · Cost & Governance                             │
+│         (*can't exceed L3 on the Spine with bottom-tier Verification)         │
+│                                                                              │
+│  SCOPE  Individual (habits) · Codebase (file signals) · Team (DORA + trust)   │
+│                                                                              │
+│  RULE   You don't climb to autonomy. You earn it through verification.        │
+└─────────────────────────────────────────────────────────────────────────────┘
+```

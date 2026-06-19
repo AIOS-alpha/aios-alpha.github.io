@@ -1,0 +1,52 @@
+---
+title: Who to Learn From
+description: The practicing agentic engineers worth following, their single best practical piece, and concrete mechanisms for tracking them as the field moves.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The fastest way to get better is to watch people who are visibly good at it and steal their patterns. This is the watchlist behind the [Pattern Library](/agentic/patterns/) — ranked by practical signal density (concrete wisdom you can apply tomorrow).
+
+---
+
+## Tier 1 — Core (track everything)
+
+| Name | Where | Distinctive contribution | Best single piece |
+|---|---|---|---|
+| **Simon Willison** | [simonwillison.net](https://simonwillison.net) · [@simonw](https://x.com/simonw) | The most prolific, reliably-practical chronicler of LLM tooling | [Agentic Coding](https://simonwillison.net/2025/Jun/29/agentic-coding/) |
+| **Armin Ronacher** | [lucumr.pocoo.org](https://lucumr.pocoo.org) · [@mitsuhiko](https://x.com/mitsuhiko) | Flask creator → the most-cited agentic-coding methodologist | [Agentic Coding Recommendations](https://lucumr.pocoo.org/2025/6/12/agentic-coding/) |
+| **Geoffrey Huntley** | [ghuntley.com](https://ghuntley.com) · [@GeoffreyHuntley](https://x.com/GeoffreyHuntley) | Originator of the Ralph / agent-loop pattern | [Ralph Wiggum as a software engineer](https://ghuntley.com/ralph/) |
+| **Peter Steinberger** | [steipete.me](https://steipete.me) · [@steipete](https://x.com/steipete) | Curates the field's best "essential reading" roundups | [Just Talk To It](https://steipete.me/posts/just-talk-to-it) |
+| **Thorsten Ball** | [registerspill](https://registerspill.thorstenball.com) · [@thorstenball](https://x.com/thorstenball) | Demystified agent internals for a generation | [How to Build an Agent](https://ampcode.com/notes/how-to-build-an-agent) |
+
+## Tier 2 — High-value
+
+| Name | Where | Distinctive contribution | Best single piece |
+|---|---|---|---|
+| **Shawn "swyx" Wang** | [latent.space](https://latent.space) · [@swyx](https://x.com/swyx) | Coined "AI Engineer"; runs the field's trend radar | [The Rise of the AI Engineer](https://www.latent.space/p/ai-engineer) |
+| **Mitchell Hashimoto** | [mitchellh.com](https://mitchellh.com) · [@mitchellh](https://x.com/mitchellh) | "Always have an agent doing something"; turn mistakes into lint rules | [Ghostty & His Agentic Workflow](https://fragmentedpodcast.com/episodes/310/) |
+| **Steve Yegge** | [@Steve_Yegge](https://x.com/Steve_Yegge) | Big-picture labor/skill-shift essays | [Revenge of the Junior Developer](https://sourcegraph.com/blog/revenge-of-the-junior-developer) |
+| **Hamel Husain** | [hamel.dev](https://hamel.dev) · [@HamelHusain](https://x.com/HamelHusain) | The definitive practical voice on LLM evals / error analysis | [Your AI Product Needs Evals](https://hamel.dev/blog/posts/evals/) |
+| **Boris Cherny** | [howborisusesclaudecode.com](https://howborisusesclaudecode.com) · [@bcherny](https://x.com/bcherny) | Created Claude Code; the source on how it's meant to be used | [How Boris Uses Claude Code](https://howborisusesclaudecode.com/) |
+| **Cat Wu** | [@_catwu](https://x.com/_catwu) | "Delegate to it like an engineer, don't pair-program" | [How Anthropic's product team moves faster](https://www.lennysnewsletter.com/p/how-anthropics-product-team-moves) |
+| **Thariq Shihipar** | [thariq.io](https://www.thariq.io) · [@trq212](https://x.com/trq212) | Best voice on general-agent (non-code) workflows + skills | [Claude Code is All You Need](https://x.com/trq212/status/1944877527044120655) |
+
+## Tier 3 — Specialist / emerging
+
+Sid Bidasaria ([sidb.io](https://www.sidb.io)) · Mario Zechner ([@badlogicgames](https://x.com/badlogicgames)) · Jeremy Howard ([@jeremyphoward](https://x.com/jeremyphoward), the `llms.txt` standard) · Orta Therox ([@orta](https://x.com/orta)) · Kenton Varda ([@KentonVarda](https://x.com/KentonVarda)) · Eric Provencher ([@pvncher](https://x.com/pvncher), Repo Prompt).
+
+---
+
+## How to track them
+
+X has no feed, but almost everything else does. Make open feeds the backbone:
+
+- **RSS / Atom** — most of the blogs above publish a feed (Simon Willison's `atom/everything/`, Armin's `feed.atom`, Substacks via `/feed`). This is the highest-signal, most stable layer.
+- **GitHub releases** — append `releases.atom` to a repo URL to follow ships.
+- **Hacker News** — keyword feeds via `hnrss.org` (e.g. `?q=Claude+Code&points=50`) catch posts even when you miss the blog.
+- **Newsletters** — Latent Space, Register Spill, Simon's, Hamel's.
+- **X** — build one list of the handles above; there's no native feed, so this is the one surface that needs a scraper.
+
+<Aside type="tip">
+The point of tracking isn't volume — it's curation. As the field's output explodes, the value is in selecting the few genuinely new techniques and folding them into your own practice (and pattern library).
+</Aside>
