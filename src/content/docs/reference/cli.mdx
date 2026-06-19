@@ -111,6 +111,42 @@ aios graph --from 2-work/retro.md   # start from a specific node
 
 ---
 
+### `aios assess-codebase`
+
+Score a repo's AEM **agent-readiness** (L0–L5) offline; optionally record the scan in the Team Brain.
+
+```bash
+aios assess-codebase                 # score the current repo (offline)
+aios assess-codebase ./path          # score another repo
+aios assess-codebase --push          # also POST to /api/v1/codebases (team-tier key)
+```
+
+---
+
+### `aios analyze`
+
+Build an **Agentic Engineering Maturity** report from your local agent-session logs (Claude, Codex, Cursor): it computes structural signals (delegation, verification, cost, …) and places you on the AEM Spine. With `--push`, the daily aggregate goes to the brain — ratios and counts only, never raw session text.
+
+```bash
+aios analyze                         # last 7 days, printed
+aios analyze --since 30d --report     # longer window + full report
+aios analyze --push                  # also POST to /api/v1/metrics (team-tier key)
+```
+
+---
+
+### `aios relay`
+
+Run an automated Opus ↔ Cursor plan/review loop over a task: Opus plans, Cursor executes, Opus reviews, repeating for N rounds (default 3).
+
+```bash
+aios relay "add rate-limit tests"            # 3 rounds, /review-plan
+aios relay "refactor parser" --rounds 2       # custom round count
+aios relay "tidy imports" --dry-run           # plan/review without writing
+```
+
+---
+
 ## Environment variables
 
 | Variable | Description |

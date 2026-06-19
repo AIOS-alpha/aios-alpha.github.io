@@ -125,6 +125,88 @@ Natural-language query over the team's shared memory. Returns a server-sent even
 
 ---
 
+### `POST /api/v1/codebases`
+
+Ingest a codebase scan (raw metrics + an optional AEM agent-readiness score) from `aios assess-codebase --push`. **Team-tier only** — an `external`-tier key is rejected. (Additive in v1; clients tolerate a `404` from an older brain.)
+
+**Request body:**
+
+```json
+{
+  "codebase": { "slug": "my-repo", "full_name": "org/my-repo", "provider": "github" },
+  "metrics": {
+    "head_sha": "abc123…",
+    "has_claude_md": true,
+    "has_agents_md": false,
+    "skills_count": 7,
+    "commands_count": 3,
+    "readiness_level": "L3",
+    "readiness_pct": 67.0,
+    "readiness_pillars": { "testing": { "passed": 2, "total": 2 } },
+    "readiness_rubric_version": "1.0.0"
+  }
+}
+```
+
+The `readiness_*` fields are scored **scanner-side** and persisted as-is; the brain computes a separate heuristic `agentic_score` at ingest.
+
+**Response:**
+
+```json
+{ "status": "ok", "codebase_id": "uuid", "metrics_id": "uuid", "contributions": 0, "issues": 0 }
+```
+
+Idempotent: the codebase is keyed by `(team, slug)` and each scan point by `(codebase, head_sha)` — re-pushing the same commit updates in place.
+
+**Errors:**
+- `403` (`forbidden_tier`) — codebase metrics are team-tier only.
+- `429` — rate limit, 60 scans/min per key.
+
+---
+
+### `POST /api/v1/metrics`
+
+Ingest one day's **Agentic Engineering Maturity (AEM)** individual snapshot from `aios analyze --push`. **Team-tier only** — an `external`-tier key is rejected. Only ratios and counts cross the boundary; **raw session content never leaves the machine**. (Additive in v1; clients tolerate a `404`.)
+
+**Request body:**
+
+```json
+{
+  "member": "alex",
+  "metric": "aem-individual",
+  "date": "2026-06-19",
+  "window_days": 1,
+  "signals": {
+    "delegation_ratio": 0.18, "correction_loop_avg": 1.4, "error_rate": 0.05,
+    "cost_per_task": 0.42, "tokens_per_task": 31000, "cache_hit_rate": 0.71,
+    "tool_diversity": 9.0, "verify_tool_rate": 0.22, "subagent_usage": 0.06
+  },
+  "provisional": {
+    "spine": "L3",
+    "axes": { "verification": 3.1, "context_hygiene": 3.8, "autonomy": 2.4, "learning": 3.0, "cost_governance": 3.6 }
+  },
+  "sessions": 41,
+  "tasks": 137
+}
+```
+
+`provisional` is the client's local placement (provenance only); the brain **recomputes the canonical** axes/Spine from `signals` so team rollups have a single authority. `member` is optional and defaults to the key's member.
+
+**Response:**
+
+```json
+{ "status": "ok", "snapshot_id": "uuid", "member_id": "uuid", "canonical": { "spine": "L3", "axes": { "verification": 3 } } }
+```
+
+Idempotent per `(team, member, date, metric)` — re-pushing the same day updates in place.
+
+**Errors:**
+- `403` (`forbidden_tier`) — agentic-maturity metrics are team-tier only.
+- `422` — supplied `member` is not on the caller's team.
+- `429` — rate limit, 60 snapshots/min per key.
+
+---
+
 ## Row keys
 
 `row_key` is the relative path from the workspace root (e.g. `2-work/sprint-1-retro.md`). It is the stable identifier used for diff-sync — a push with the same `row_key` and a new checksum updates the existing record; same checksum is a no-op.
