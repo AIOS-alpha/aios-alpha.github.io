@@ -12,6 +12,28 @@ The Team Brain **sync contract** (`Brain API`) is versioned separately and is
 **unchanged** by the release below — still **v1**, no protocol change.
 </Aside>
 
+## v0.5.0 — 2026-06-19
+
+### Agentic Engineering Maturity (AEM)
+- **Individual maturity** — `aios analyze` builds an AEM report from your local
+  agent-session logs (Claude/Codex/Cursor) and, with `--push`, sends a daily aggregate
+  to the brain. Only ratios and counts cross the boundary — **raw session content never
+  leaves your machine**; the brain recomputes the canonical Spine/axes so team rollups
+  have one authority.
+- **Codebase agent-readiness** — `aios assess-codebase` scores a repo's agent-readiness
+  (L0–L5) against the shared rubric; `--push` records the scan in the brain. A
+  scanner-side Python scorer applies the same rubric on the ingestion path.
+
+### Team Brain
+- **New endpoints** (additive — the sync contract stays **v1**): `POST /api/v1/codebases`
+  (codebase scan ingest) and `POST /api/v1/metrics` (AEM individual daily aggregate).
+  Both are **team-tier only** — an `external`-tier key gets `403 forbidden_tier`, and the
+  metrics endpoint persists aggregates only (never raw session text).
+
+### Tooling
+- **`aios relay`** — an automated Opus ↔ Cursor plan/review loop: Opus plans, Cursor
+  executes, Opus reviews, repeating for N rounds (default 3).
+
 ## v0.4.0 — 2026-06-17
 
 ### Onboarding & memory
