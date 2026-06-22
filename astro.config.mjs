@@ -16,6 +16,16 @@ export default defineConfig({
               replacesTitle: true,
           },
           favicon: '/favicon.svg',
+          // Mirror Starlight's data-theme onto the `.dark` class so the
+          // @aios/design dark palette (keyed off `.dark`) engages. Runs
+          // synchronously in <head> before paint, so no flash.
+          head: [
+              {
+                  tag: 'script',
+                  content:
+                      "(function(){var d=document.documentElement;function s(){d.classList.toggle('dark',d.dataset.theme!=='light');}s();new MutationObserver(s).observe(d,{attributes:true,attributeFilter:['data-theme']});})();",
+              },
+          ],
           description: 'An open-source AI transformation toolkit — structured agent workspaces and a shared team memory service.',
           expressiveCode: {
               themes: ['github-dark'],

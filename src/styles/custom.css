@@ -1,8 +1,11 @@
 /* =====================================================================
-   AIOS docs theme — maps the canonical design tokens (design-tokens.css)
-   onto Starlight's --sl-* variables.
-   The brand is dark-only ("no white or light backgrounds"), so the light
-   theme is overridden to the same dark palette and the toggle is hidden.
+   AIOS docs theme — maps the canonical design tokens (design-tokens.css,
+   sourced from @aios-alpha/design) onto Starlight's --sl-* variables.
+
+   Dual-mode: dark is the brand default (AIOS near-black palette); light
+   uses Starlight's clean light ramp with the AIOS violet accent + fonts.
+   The .dark class is mirrored from Starlight's data-theme (see the head
+   script in astro.config.mjs) so the @aios-alpha/design dark palette engages.
    ===================================================================== */
 
 @import '@fontsource/space-grotesk/400.css';
@@ -14,19 +17,29 @@
 @import '@fontsource/jetbrains-mono/400.css';
 @import './design-tokens.css';
 
-/* ---- Palette: applied to both themes (brand is dark-only) ----
-   Shared values reference the --aios-* tokens; the neutral gray ramp and
-   a few derived tints are docs-only and stay local. */
-:root,
-:root[data-theme='light'] {
-  color-scheme: dark;
-
-  /* Accent — violet primary */
-  --sl-color-accent-low: #1c1530;            /* docs-only derived violet tint */
+/* ---- Brand: applied in BOTH themes. Accent resolves per-mode through the
+   design tokens (deeper #7c3aed on light, #8b5cf6 on dark). ---- */
+:root {
   --sl-color-accent: var(--aios-violet);
   --sl-color-accent-high: var(--aios-violet-bright);
+  --sl-color-accent-low: color-mix(in srgb, var(--aios-violet) 18%, transparent);
+  --sl-color-text-accent: var(--aios-violet-light);   /* link color */
 
-  /* Neutral scale (docs-only ramp tuned to the foundation) */
+  /* Fonts — Space Grotesk handled per-heading below */
+  --sl-font: var(--aios-font-sans);
+  --sl-font-mono: var(--aios-font-mono);
+
+  /* Surfaces + hairlines map to mode-aware tokens in both themes */
+  --sl-color-bg: var(--aios-bg);
+  --sl-color-bg-sidebar: var(--aios-surface);
+  --sl-color-bg-inline-code: var(--aios-muted);
+  --sl-color-hairline: var(--aios-border);
+}
+
+/* ---- Dark theme — the AIOS near-black palette (brand default) ---- */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
   --sl-color-white: var(--aios-foreground);
   --sl-color-gray-1: #ececec;
   --sl-color-gray-2: #d2d2d2;
@@ -37,32 +50,21 @@
   --sl-color-gray-7: #141414;
   --sl-color-black: var(--aios-bg);
 
-  /* Semantic surfaces */
-  --sl-color-bg: var(--aios-bg);
   --sl-color-bg-nav: rgba(5, 5, 5, 0.85);
-  --sl-color-bg-sidebar: var(--aios-surface);
-  --sl-color-bg-inline-code: var(--aios-muted);
-  --sl-color-bg-accent: var(--aios-violet);
-
-  /* Text */
   --sl-color-text: #d2d2d2;
-  --sl-color-text-accent: var(--aios-violet-light);   /* link color */
   --sl-color-text-invert: #000000;
-
-  /* Hairlines — borders are separation, barely perceptible */
-  --sl-color-hairline: var(--aios-border);
   --sl-color-hairline-light: rgba(255, 255, 255, 0.06);
   --sl-color-hairline-shade: rgba(255, 255, 255, 0.06);
   --sl-color-backdrop-overlay: rgba(5, 5, 5, 0.7);
-
-  /* Fonts — Space Grotesk handled per-heading below */
-  --sl-font: var(--aios-font-sans);
-  --sl-font-mono: var(--aios-font-mono);
 }
 
-/* Dark-only: hide the (now no-op) light/dark toggle */
-starlight-theme-select {
-  display: none;
+/* ---- Light theme — off-white canvas; Starlight's default light ramp
+   carries the neutrals, AIOS tokens carry surfaces + accent. ---- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --sl-color-bg-nav: rgba(250, 250, 250, 0.85);
+  --sl-color-backdrop-overlay: rgba(250, 250, 250, 0.7);
 }
 
 /* ---- Typography: Space Grotesk for all headings, tight tracking ---- */
