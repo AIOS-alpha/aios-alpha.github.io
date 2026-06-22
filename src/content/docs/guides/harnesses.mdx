@@ -1,0 +1,116 @@
+---
+title: Harnesses
+description: The multi-agent workflow harnesses that do real operational work inside your workspace — what each one does and how to run it.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Harnesses are the differentiator. Instead of asking one agent to do a whole task in one context, a harness spawns focused sub-agents and adds **adversarial verification** so its output is trustworthy. They are Claude Code skills that live in `.claude/skills/` of your scaffolded workspace.
+
+<Aside type="note">
+  The headline finding from the A/B study behind these harnesses: **adversarial verification — not parallelism — is what makes a harness trustworthy.** A fan-out without an independent grounding step can amplify a single agent's error and do *worse* than a single pass.
+</Aside>
+
+Every harness is a **template** (tuned per workspace via `args`), **read-only** (it returns data; the caller writes), and demonstrated against the synthetic `examples/sample-engagement/`, so you can run every one with zero real data.
+
+---
+
+## Shipped harnesses
+
+These three ship today and are the heart of the system.
+
+### `/decision-audit`
+
+Lints the decision log against the workspace governance rules and returns only verified findings.
+
+- **Pattern:** one verifier per rule + an adversarial verify pass.
+- **Run it** inside Claude Code, in your scaffolded workspace:
+  ```
+  /decision-audit
+  ```
+
+### `/scope-creep`
+
+Flags deliverables that drift from the scope baseline/ledger, with a refuter pass that downgrades false positives.
+
+- **Pattern:** per-deliverable classify + severity-downgrade refuter.
+- **Run it:**
+  ```
+  /scope-creep
+  ```
+
+### `/transcript-decisions`
+
+Turns meeting transcripts into novel, grounded decision-log rows. Pairs well with the [Granola integration](/guides/integrations/) — export transcripts into `1-inbox/transcripts/` first.
+
+- **Pattern:** fan-out extract + dedup + adversarial grounding.
+- **Run it:**
+  ```
+  /transcript-decisions
+  ```
+
+---
+
+## Workflow skills
+
+These skills ship in the scaffold alongside the harnesses above.
+
+### `/aios-sync`
+
+Review what's staged to push, decide what to promote, then run `aios push` — the curated path from "I did work" to "the team can see it".
+
+```
+/aios-sync
+```
+
+### `/okf-traverse`
+
+Answer a question by traversing the local OKF (Open Knowledge Framework) link graph. Works **offline** — no brain required. Pull the graph first with `aios pull-bundle`.
+
+```
+/okf-traverse
+```
+
+### `/weekly-synthesis`
+
+A rubric-gated weekly digest that revises until the rubric passes or the budget is spent.
+
+```
+/weekly-synthesis
+```
+
+<Aside type="caution">
+  Synthesis is sensitive to fabrication. The study showed that synthesis without an independent fidelity verifier can invent content — a dedicated fidelity-verifier pass for this harness is on the roadmap. Treat its output as a draft to review, not a finished artifact.
+</Aside>
+
+---
+
+## CLI-driven loops
+
+Two `aios` commands drive multi-agent loops from the terminal rather than as in-repo skills.
+
+### `aios analyze`
+
+Builds an **Agentic Engineering Maturity (AEM)** report from your local agent-session logs (Claude, Codex, Cursor). It computes structural signals — delegation, verification, cost, and more — and places you on the AEM Spine. Runs offline; raw session text never leaves your machine.
+
+```bash
+aios analyze                       # last 7 days, printed
+aios analyze --since 30d --report  # longer window + deep report
+aios analyze --push                # send the daily aggregate (ratios + counts only) to the brain
+```
+
+### `aios relay`
+
+Runs an automated Opus 4.8 ↔ Cursor plan/review loop over a task: Opus plans, Cursor executes, Opus reviews, repeating for N rounds (default 3).
+
+```bash
+aios relay "add rate-limit tests"          # 3 rounds, /review-plan
+aios relay "refactor parser" --rounds 2     # custom round count
+aios relay "tidy imports" --dry-run         # plan/review without writing
+```
+
+---
+
+## Roadmap
+
+More harnesses are deliberately deferred and make good contribution targets: a weekly-synthesis harness *with* a fidelity verifier, a ticket-hygiene harness, and a classifier-router that picks single-pass vs harness by input size. See the issue tracker for the current list.

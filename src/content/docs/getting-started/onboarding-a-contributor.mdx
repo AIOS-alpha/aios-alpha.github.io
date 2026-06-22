@@ -1,0 +1,246 @@
+---
+title: Onboarding a contributor
+description: The canonical thread from "interested" to "contributing" — understand AIOS, get brain access, scaffold a workspace, sync your first content, and land your first PR.
+---
+
+import { Steps, Tabs, TabItem, Aside, Card } from '@astrojs/starlight/components';
+
+This is the one page to read first. It walks a new contributor end-to-end: from understanding what AIOS is, through getting brain access and scaffolding a workspace, to landing your first pull request. Each step links to the deeper guide for that surface.
+
+<Aside type="tip">
+  If you only do one thing today: read **Step 1** (the model), then ask a Team Brain admin for an API key (**Step 2**). Everything else builds on those two.
+</Aside>
+
+---
+
+## 1. Understand AIOS
+
+AIOS is a three-part system. You will touch all three.
+
+| Part | What it is | Your relationship to it |
+|------|-----------|------------------------|
+| **Your Workspace** | A git repo you clone once and work in daily — a numbered folder spine, governance conventions, validators, and multi-agent harnesses | One per person. You own it; you decide what leaves your machine. |
+| **The Team Brain** | The one shared hub. Receives tier-tagged pushes from every workspace and answers natural-language queries over shared memory | Shared. You push to it and query it; an admin runs it. |
+| **This site** | The public docs | Reference. Start here, contribute back. |
+
+### Access tiers — the one invariant to internalize
+
+Every file in your workspace carries a tier. It decides what syncs and who sees it.
+
+| Friendly name | Canonical | Syncs? | Visible to |
+|---------------|-----------|--------|-----------|
+| `private` / `personal` | `admin` | **Never** | You only — never leaves your machine |
+| `team` | `team` | Syncs to brain | All team members |
+| `client` / `company` | `external` | Syncs outward | External stakeholders |
+
+<Aside type="caution">
+  The brain rejects `admin`-tier content at the API boundary with a **422** — it is never written to the database. A file with **no tier frontmatter does not sync at all** (the CLI default-denies it). This is a hard invariant, enforced in code, not a convention.
+</Aside>
+
+See [Your Workspace](/guides/workspace/) for the full spine and tier model.
+
+---
+
+## 2. Get access — your API key
+
+People are **invite-only**; machines (the `aios` CLI) authenticate with a **per-member API key**. Before you can sync, a Team Brain **admin** issues you a key for your team. Our team slug is `aios`.
+
+An admin runs this against the brain (the full admin flow lives in the brain repo's [`DEVELOPMENT.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/DEVELOPMENT.md)):
+
+```bash
+npm run admin -- create-member you@example.com --name "Your Name" --handle you --role member --team aios
+npm run admin -- issue-key you@example.com --name "your-laptop" --team aios
+# → prints aios_<key_id>_<secret> ONCE — sent to you over a secure channel
+```
+
+<Aside type="note">
+  The key is shown **once** and stored SHA-256 hashed at rest. Save it immediately. The format is always `aios_<key_id>_<secret>`. The public [Quickstart](/guides/quickstart/) covers a local-seed demo key for a self-hosted brain; to join an **existing** team brain, you need an admin-issued key as above.
+</Aside>
+
+If you want to sign into the dashboard too, the admin can also send you a magic login link (`npm run admin -- login-link you@example.com --team aios`).
+
+---
+
+## 3. Scaffold your workspace
+
+<Steps>
+
+1. **Clone the workspace repo and install**
+
+   ```bash
+   git clone https://github.com/AIOS-alpha/aios-workspace
+   cd aios-workspace
+   npm install
+   ```
+
+2. **Scaffold a workspace for your context**
+
+   Pick the skin that matches you. The spine is identical; only the framing inside `0-context/` and `4-shared/` differs.
+
+   <Tabs>
+     <TabItem label="Employee">
+     ```bash
+     scripts/scaffold-project.sh \
+       --context employee \
+       --slug my-workspace \
+       --stakeholder "Your Company" \
+       --owner your-name \
+       --team "you,teammate" \
+       --org AIOS-alpha \
+       --output ~/Projects/my-workspace
+     ```
+     </TabItem>
+     <TabItem label="Consultant">
+     ```bash
+     scripts/scaffold-project.sh \
+       --context consultant \
+       --slug acme-workspace \
+       --stakeholder "Acme Corp" \
+       --owner your-name \
+       --team "you,colleague1" \
+       --org AIOS-alpha \
+       --output ~/Projects/acme-workspace
+     ```
+     </TabItem>
+   </Tabs>
+
+3. **Validate the fresh scaffold**
+
+   ```bash
+   cd ~/Projects/my-workspace
+   /path/to/aios-workspace/validation/validate-all.sh .
+   ```
+
+   All checks should pass on a clean scaffold.
+
+</Steps>
+
+---
+
+## 4. Connect to the brain
+
+Point your workspace at the brain and drop in your key.
+
+<Steps>
+
+1. **Put your key in the environment** (never commit it):
+
+   ```bash
+   # .env in your workspace (gitignored)
+   AIOS_API_KEY=aios_<key_id>_<secret>
+   ```
+
+2. **Set the brain URL and team in `aios.yaml`:**
+
+   ```yaml
+   version: 1
+   brain_url: https://your-brain.example.com   # ask your admin for the team URL
+   team_id: aios
+   api_key_env: AIOS_API_KEY                    # names the env var holding your key
+   ```
+
+   `aios.yaml` references your key by env var (`api_key_env`), so the secret lives in `.env` and never in the committed config.
+
+</Steps>
+
+See the [CLI reference](/reference/cli/) for every config field and the environment-variable overrides.
+
+---
+
+## 5. Your first sync
+
+<Steps>
+
+1. **Preview what would sync**
+
+   ```bash
+   aios status
+   # → new / modified / blocked / clean, with the tier + block reason per file
+   ```
+
+   Files without tier frontmatter show up as **blocked** — that's the default-deny working.
+
+2. **Add tier frontmatter** to a file you want to share. The friendly label goes in the YAML frontmatter:
+
+   ```yaml
+   ---
+   title: Sprint 1 retrospective
+   access: team
+   ---
+   ```
+
+3. **Push team-tier content to the brain**
+
+   ```bash
+   aios push                  # everything eligible
+   aios push --dry-run        # preview only
+   ```
+
+   Only `team` and `external` content is sent; `admin` content is default-denied before any network call (and independently 422'd by the brain).
+
+4. **Pull team updates back**
+
+   ```bash
+   aios pull
+   # → writes updates into 1-inbox/from-brain/ and task rows into 3-log/
+   ```
+
+5. **Query shared memory**
+
+   ```bash
+   aios query "what decisions did we make this week?"
+   # → streams a cited answer
+   ```
+
+</Steps>
+
+---
+
+## 6. Contribute code
+
+Once you're synced, you're ready to land a change. Each repo has its own contributor guide — read the one for the repo you're touching.
+
+<Card title="Pick the repo" icon="github">
+
+| Repo | Contributor guide |
+|------|-------------------|
+| [`aios-workspace`](https://github.com/AIOS-alpha/aios-workspace) | CLI, scaffold, validators, harness skills, GUI |
+| [`aios-team-brain`](https://github.com/AIOS-alpha/aios-team-brain) | [`DEVELOPMENT.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/DEVELOPMENT.md) · [`CONTRIBUTING.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/CONTRIBUTING.md) |
+
+</Card>
+
+The shape of a first contribution is the same everywhere:
+
+<Steps>
+
+1. **Find an issue** — look for `good first issue` in the tracker, or ask a maintainer which epic needs hands.
+
+2. **Work in a git worktree, never a feature branch in the primary checkout.** Others work in the primary checkout concurrently, so commit feature work in a sibling worktree:
+
+   ```bash
+   git fetch origin
+   git worktree add -b feat/<short-task> ../<repo>-<short-task> origin/main
+   cd ../<repo>-<short-task>
+   ```
+
+3. **Write spec-first tests** in the right tier (in the brain: unit / data-mechanics / integration — see its `DEVELOPMENT.md`), then run them. A test derived from what the product *should* do that goes red found a real gap.
+
+4. **Keep the docs honest** — for the brain, update `docs/ARCHITECTURE.md` in the same PR; if you add a route, table, or ingestion source, update the drift blocks or `npm run check:docs` fails.
+
+5. **Green before you open it** — run the repo's lint + tests, paste the output in the PR, then open it from the worktree branch.
+
+</Steps>
+
+See [Contributing](/contributing/) for the per-repo development setup and the full first-contribution checklist.
+
+---
+
+## Where to go next
+
+- [Quickstart](/guides/quickstart/) — the condensed setup
+- [Your Workspace](/guides/workspace/) — spine, tiers, harnesses, validators
+- [Integrations](/guides/integrations/) — connect Slack, Jira, Linear, and more
+- [Harnesses](/guides/harnesses/) — the multi-agent workflows
+- [Brain API v1](/reference/brain-api/) — the pinned sync contract
+- [Troubleshooting](/guides/troubleshooting/) — when something doesn't work
+- [Glossary](/reference/glossary/) — the vocabulary cheat sheet

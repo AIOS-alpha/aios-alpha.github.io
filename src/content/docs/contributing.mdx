@@ -7,6 +7,10 @@ import { Aside } from '@astrojs/starlight/components';
 
 AIOS is an open-source project built and maintained by **John Dass** and **Chetan**. Contributions are welcome.
 
+<Aside type="tip">
+  New here? Start with [Onboarding a contributor](/getting-started/onboarding-a-contributor/) — the end-to-end thread from "interested" to your first PR. This page is the contributor-specific reference it links into.
+</Aside>
+
 ---
 
 ## Repos
@@ -58,6 +62,35 @@ cd aios-team-brain
 bash scripts/e2e.sh
 # → resets, seeds, pushes from sample workspace, pulls, queries, checks 422 guard
 ```
+
+---
+
+## Local development per repo
+
+Each repo has its own contributor guide — read the one for the repo you're touching before you start:
+
+| Repo | Read this |
+|------|-----------|
+| [`aios-team-brain`](https://github.com/AIOS-alpha/aios-team-brain) | [`DEVELOPMENT.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/DEVELOPMENT.md) (run it locally, which test tier catches what) · [`CONTRIBUTING.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/CONTRIBUTING.md) (the five things that gate a PR) · [`docs/ARCHITECTURE.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/docs/ARCHITECTURE.md) (where data lives) |
+| [`aios-workspace`](https://github.com/AIOS-alpha/aios-workspace) | The repo README and `docs/` — scaffold, validators, harness skills, and the `aios` CLI |
+
+---
+
+## Your first contribution
+
+The shape is the same across repos:
+
+1. **Find an issue** — look for `good first issue` in the tracker, or ask a maintainer which epic needs hands.
+2. **Work in a git worktree, never a feature branch in the primary checkout.** Others work in the primary checkout concurrently:
+   ```bash
+   git fetch origin
+   git worktree add -b feat/<short-task> ../<repo>-<short-task> origin/main
+   cd ../<repo>-<short-task>
+   ```
+   Open the PR from the worktree branch; `git worktree remove <path>` after it merges.
+3. **Write spec-first tests in the right tier** — assert what the product *should* do, then run it. A spec-derived test that goes red found a real gap. In the brain, anything touching the DB or access control needs a **data-mechanics** test on real Postgres.
+4. **Keep the docs honest** — in the brain, update `docs/ARCHITECTURE.md` in the same PR; if you add a route, table, or ingestion source, update the drift blocks or `npm run check:docs` fails.
+5. **Green before you open it** — run the repo's lint + tests, paste the output in the PR.
 
 ---
 
