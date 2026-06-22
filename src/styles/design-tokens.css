@@ -1,5 +1,5 @@
 /* =====================================================================
-   AIOS design tokens — now sourced from the @aios/design package, the
+   AIOS design tokens — now sourced from the @aios-alpha/design package, the
    single cross-repo source of truth (see DESIGN.md in that package).
 
    This file no longer hard-codes hex values. It (a) re-exports the
@@ -10,12 +10,12 @@
    unchanged. Aliases reference the package vars, so they resolve per
    active mode automatically.
 
-   To change a value: edit it in @aios/design and `npm run build:tokens`
+   To change a value: edit it in @aios-alpha/design and `npm run build:tokens`
    there, then bump the dependency here. Never hand-edit values below.
    ===================================================================== */
-@import "@aios/design/tokens.css";
+@import "@aios-alpha/design/tokens.css";
 
-/* Legacy-name compatibility (website name → @aios/design canonical name). */
+/* Legacy-name compatibility (website name → @aios-alpha/design canonical name). */
 :root {
   --aios-foreground: var(--aios-fg);
   --aios-muted-foreground: var(--aios-fg-muted);

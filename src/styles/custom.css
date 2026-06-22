@@ -1,11 +1,11 @@
 /* =====================================================================
    AIOS docs theme — maps the canonical design tokens (design-tokens.css,
-   sourced from @aios/design) onto Starlight's --sl-* variables.
+   sourced from @aios-alpha/design) onto Starlight's --sl-* variables.
 
    Dual-mode: dark is the brand default (AIOS near-black palette); light
    uses Starlight's clean light ramp with the AIOS violet accent + fonts.
    The .dark class is mirrored from Starlight's data-theme (see the head
-   script in astro.config.mjs) so the @aios/design dark palette engages.
+   script in astro.config.mjs) so the @aios-alpha/design dark palette engages.
    ===================================================================== */
 
 @import '@fontsource/space-grotesk/400.css';
