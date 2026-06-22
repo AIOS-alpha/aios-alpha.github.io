@@ -1,0 +1,106 @@
+---
+title: Integrations
+description: Connect your AIOS workspace to the tools you already use — MCP servers and CLI tools, wired through aios connect and the integrations catalog.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Your AIOS workspace can connect to the tools you already use. Integrations come in two shapes:
+
+- **MCP servers** — declared in `.mcp.json` at the workspace root. Claude Code (and the local GUI, which loads the same project settings) starts them and exposes their tools to the agent.
+- **CLI tools** — installed on your machine and on `PATH`; the agent calls them via Bash (e.g. `gog-cli` for Gmail/Google).
+
+The catalog of what's connectable lives in `.claude/INTEGRATIONS.md` (generated from `.claude/integrations.json`). This page is the how-to-connect companion.
+
+---
+
+## The integrations catalog
+
+Every workspace generates an integrations catalog (`.claude/INTEGRATIONS.md`, via `npm run gen:catalog`) listing each connectable tool with its status and how to connect it. A live `.mcp.json` stub and a `.mcp.example.json` starter file of server blocks ship in the scaffold.
+
+To see what's connectable from the CLI:
+
+```bash
+aios connect
+# → lists connectable integrations with status (✓ wired / ○ available)
+```
+
+---
+
+## Connecting an integration
+
+`aios connect <id>` runs a guided, live-validated connect flow for a single integration — it prints the exact key-creation URL and scopes, collects the required secret(s), validates them, and stores the selection.
+
+```bash
+aios connect slack                       # interactive: prompts for the required values
+aios connect slack --token <value>       # non-interactive: pass the primary secret
+aios connect github --set GITHUB_TOKEN=… # non-interactive: set a named env value
+```
+
+To wire an MCP server by hand instead:
+
+1. Copy the server block you want from `.mcp.example.json` into `.mcp.json` under `mcpServers`.
+2. Provide env values. **Do not inline real tokens** — `.mcp.json` is committed. Reference shell/managed env with `${VAR}`, and keep the actual secrets in your shell profile or a secrets manager (`.env` / `.env.local` are gitignored).
+3. Restart Claude Code / the GUI so the server is picked up.
+4. Flip the tool's `status` from `available` to `wired` in `.claude/integrations.json`, then run `npm run gen:catalog`.
+
+<Aside type="caution">
+  `.mcp.json` is committed — keep secrets out of it and use `${ENV}` indirection. Treat every integration as an egress path; only wire what the work needs. Content an integration pulls in lands in `1-inbox/` (private) until you deliberately promote it.
+</Aside>
+
+---
+
+## Supported tools
+
+These are the integrations shipped in the workspace catalog today.
+
+### Slack (MCP)
+
+Create a Slack app, add bot scopes (`channels:history`, `channels:read`, `chat:write`), install it to your workspace, and copy the bot token into `SLACK_BOT_TOKEN`. Set `SLACK_TEAM_ID` to your workspace id.
+
+### Jira + Confluence (MCP — one server)
+
+The `atlassian` server covers both. Create an API token at id.atlassian.com → Security → API tokens. Set `ATLASSIAN_URL` (e.g. `https://your-org.atlassian.net`), `ATLASSIAN_EMAIL`, and `ATLASSIAN_API_TOKEN`.
+
+### Linear (direct API skill + Team Brain PM sync)
+
+The shipped connector uses a personal Linear API key (`LINEAR_API_KEY`) and the `linear-direct` skill, because Linear's official MCP is OAuth-oriented. The Team Brain can also store a Linear integration with non-secret mapping hints (`teamId`, `projectId`, `doneStateName`) and an encrypted token, so merged AIOS work can move linked Linear issues to a completed workflow state.
+
+### Plane (REST / API key + Team Brain PM sync)
+
+Use Plane personal access tokens through `PLANE_API_KEY`. The Team Brain stores the workspace/project mapping (`workspaceSlug`, `projectId`, `doneStateName`, `externalSource`) and an encrypted token. Merged AIOS work uses task row keys and Plane `external_id` / `external_source` to move linked work items to DONE.
+
+### Notion (MCP)
+
+Create an internal integration at notion.so/my-integrations, copy its token into `NOTION_TOKEN`, and **share the pages/databases** you want reachable with that integration (Notion is deny-by-default per page).
+
+### GitHub (MCP or CLI)
+
+Either add the `github` MCP server with a fine-grained PAT (`GITHUB_TOKEN`), or rely on the `gh` CLI if it's already authenticated (`gh auth status`).
+
+### Gmail / Google Workspace (CLI — gog-cli)
+
+Install `gog-cli` and run `gog auth login` once for OAuth. The agent reads/sends mail, calendar, and drive by shelling out to `gog`. No MCP server.
+
+### Granola (CLI / export)
+
+Export meeting notes/transcripts into `1-inbox/transcripts/`, then run the [`transcript-decisions`](/guides/harnesses/) harness to turn them into decision-log rows. If you have the Granola API, set `GRANOLA_API_KEY` and script the export.
+
+### Mattermost (MCP)
+
+A self-hosted Slack alternative. Set `MATTERMOST_URL` and a personal access token (`MATTERMOST_TOKEN`).
+
+### Toggl (MCP)
+
+Set `TOGGL_API_KEY` (Toggl → Profile → API token). Use it to reconcile timers against `3-log/hours-log.md`.
+
+---
+
+## Sharing the team's tool set
+
+Once a team standardizes on a set of integrations, a team lead can publish that set so everyone starts from the same baseline:
+
+```bash
+aios push blueprint        # publish the team's tool set (lead/admin only)
+aios pull blueprint        # fetch the team's tool set → .aios/blueprint.json
+```

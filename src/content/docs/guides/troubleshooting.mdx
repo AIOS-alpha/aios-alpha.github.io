@@ -1,0 +1,97 @@
+---
+title: Troubleshooting
+description: Common errors across the AIOS flow — CLI setup, push 401/422, identity not on the roster, brain not reachable, and local brain setup — with the fix for each.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Most problems fall into one of a few buckets. Find your symptom below.
+
+---
+
+## CLI setup
+
+### `aios: command not found`
+
+The `aios` CLI is a zero-dependency Node.js script (`scripts/aios.mjs`, Node ≥ 18) that ships in `aios-workspace`. It isn't on your `PATH` yet. From inside an `aios-workspace` clone:
+
+```bash
+npm link                       # or: export PATH="$PWD/bin:$PATH"
+```
+
+Then `aios status` should work from any workspace.
+
+### `aios status` reports files as **blocked**
+
+That's the default-deny working as designed: a file with **no tier frontmatter does not sync**. Add an `access:` field to the file's YAML frontmatter (`team`, `client`/`company`, or — to keep it local — `private`/`admin`).
+
+---
+
+## Push errors
+
+### `401` on push
+
+Invalid or missing API key. Check that:
+
+- `AIOS_API_KEY` is exported in your environment, or `api_key` is set in `aios.yaml`. The env var overrides the file.
+- The key is the full `aios_<key_id>_<secret>` string your admin sent you (it's shown **once**; if you lost it, ask the admin to issue a new one).
+
+### `422` on push
+
+The item has `admin` tier — admin content is **never accepted** and never written to the database. Fix the `access` frontmatter of the file you're pushing: change `private`/`admin` to `team` (or `client`/`company` for outward content), or leave it private and stop trying to push it.
+
+<Aside type="caution">
+  A `422` is the tier invariant doing its job, not a bug. `admin`-tier content is rejected at the API boundary on purpose.
+</Aside>
+
+### `403` on push
+
+Either the team wasn't found, or your key isn't authorized for the team you named. Confirm the `team` slug in `aios.yaml` (ours is `aios`) matches the team your key was issued for. Some endpoints (codebase/metrics ingest) are **team-tier only** and reject `external`-tier keys with `403`.
+
+### `429` on push
+
+Rate limit — sync writes are capped (60 items/min per key). Wait a moment and retry, or push in smaller batches.
+
+---
+
+## Identity & access
+
+### Your identity isn't on the roster
+
+People are **invite-only**; an admin must create your member row before you can sign into the dashboard, and issue you a per-member API key before the CLI can sync. If your key 401s or your email can't log in, ask a Team Brain admin to onboard you:
+
+```bash
+npm run admin -- create-member you@example.com --name "Your Name" --handle you --role member --team aios
+npm run admin -- issue-key you@example.com --name "your-laptop" --team aios
+```
+
+See [Onboarding a contributor](/getting-started/onboarding-a-contributor/) for the full path.
+
+---
+
+## Brain not reachable
+
+If `aios push`, `pull`, or `query` can't connect:
+
+- Check `brain_url` in `aios.yaml` (or `AIOS_BRAIN_URL` in the environment) points at the right host — your admin's deployed URL, or `http://localhost:3000` for a local brain.
+- Confirm the brain is actually running and reachable from your machine.
+
+---
+
+## Local brain setup
+
+If you're running the Team Brain locally for development, the brain repo's [`DEVELOPMENT.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/DEVELOPMENT.md) has the full setup and a troubleshooting table. The most common ones:
+
+| Symptom | Fix |
+|---|---|
+| `relation "..." does not exist` / empty dashboard | Schema/seed not loaded → `npm run pg:schema && npm run dev:seed` |
+| Auth / cookie errors in Postgres mode | `AUTH_SECRET` unset in `.env.local` |
+| Invite / magic links point at the wrong host | Set `APP_URL` to your absolute base URL |
+| Live query errors, everything else works | No LLM configured — set `ANTHROPIC_API_KEY` or `LLM_BASE_URL` (see `docs/PROVIDERS.md`) |
+| `ECONNREFUSED 127.0.0.1:5434` in data-mechanics tests | The test Postgres container is down → `npm run db:test:up` |
+
+---
+
+## Still stuck?
+
+Open an issue on the relevant repo, or reach out to John at iamjohndass@pm.me.

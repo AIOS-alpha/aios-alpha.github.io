@@ -34,6 +34,7 @@ export default defineConfig({
                   label: 'Getting Started',
                   items: [
                       { label: 'Quickstart', slug: 'guides/quickstart' },
+                      { label: 'Onboarding a contributor', slug: 'getting-started/onboarding-a-contributor' },
                   ],
               },
               {
@@ -42,6 +43,9 @@ export default defineConfig({
                       { label: 'Your Workspace', slug: 'guides/workspace' },
                       { label: 'The Cockpit', slug: 'guides/cockpit' },
                       { label: 'Team Brain', slug: 'guides/team-brain' },
+                      { label: 'Integrations', slug: 'guides/integrations' },
+                      { label: 'Harnesses', slug: 'guides/harnesses' },
+                      { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
                   ],
               },
               {
@@ -60,6 +64,7 @@ export default defineConfig({
                   items: [
                       { label: 'Brain API v1', slug: 'reference/brain-api' },
                       { label: 'CLI Commands', slug: 'reference/cli' },
+                      { label: 'Glossary', slug: 'reference/glossary' },
                   ],
               },
               { label: 'Changelog', slug: 'changelog' },

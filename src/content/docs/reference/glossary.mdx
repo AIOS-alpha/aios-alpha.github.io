@@ -1,0 +1,63 @@
+---
+title: Glossary
+description: A one-page vocabulary cheat sheet for AIOS — tiers, row_key, frontmatter, the spine folders, OKF, harnesses, blueprints, and the sidecar.
+---
+
+A quick reference for the terms you'll meet across the workspace, the brain, and the sync contract.
+
+---
+
+## Access tiers
+
+Every piece of content carries a tier. Authors write a **friendly label**; it normalizes to a **canonical** value on ingest.
+
+| Friendly label | Canonical | Syncs? |
+|----------------|-----------|--------|
+| `private`, `personal` | `admin` | Never |
+| `team` | `team` | Yes — to the brain |
+| `client`, `company` | `external` | Yes — outward surface |
+
+- **`admin` / `private`** — never leaves your machine. The CLI default-denies it before any network call; the brain independently rejects it with a **422**.
+- **`team`** — visible to all team members on the brain.
+- **`external` / `client` / `company`** — the outward-facing surface for stakeholders.
+
+---
+
+## Core terms
+
+**`access`** — the YAML frontmatter field on a file that declares its tier (e.g. `access: team`). A file with **no `access` field does not sync** — the CLI reports it as `blocked`.
+
+**`audience`** — the tier column on a **decision row** in the decision log (the log's `Audience` column). An `external`-tier key receives only `audience: "external"` decision rows. (Distinct from a file's `access` frontmatter, though both express the same tier vocabulary.)
+
+**`row_key`** — the stable identifier used for diff-sync. For a file it's the relative path from the workspace root (e.g. `2-work/sprint-1-retro.md`); for a task or decision row it's the row's id. A push with the same `row_key` and a new checksum updates the existing record in place; the same checksum is a no-op.
+
+**Harness** — a multi-agent Claude Code skill in `.claude/skills/` that spawns focused sub-agents and adds **adversarial verification** so its output is trustworthy. It's a read-only template (it returns data; the caller writes). See [Harnesses](/guides/harnesses/).
+
+**OKF (Open Knowledge Framework)** — the structured link graph the workspace maintains. Files carry `links:` in frontmatter pointing to related decisions, tasks, or documents; `/okf-traverse` answers questions by following the graph rather than full-text search. `aios pull-bundle` fetches the graph from the brain for offline traversal.
+
+**Blueprint** — the team's standardized **tool set** (its integration selections). A team lead publishes it with `aios push blueprint`; members fetch it with `aios pull blueprint` into `.aios/blueprint.json` so everyone starts from the same baseline. See [Integrations](/guides/integrations/).
+
+**Sidecar** — the `ingestion/` Python connector service that runs alongside the Team Brain. It's HTTP-only to the brain and is the canonical pusher for some ingest paths (e.g. codebase scans).
+
+---
+
+## The workspace spine
+
+The six numbered folders every workspace shares, with their default tier:
+
+| Folder | Purpose | Default tier | Syncs? |
+|--------|---------|-------------|--------|
+| `0-context/` | Charter/scope (consultant) or role/OKRs (employee) | `team` | Yes |
+| `1-inbox/` | Raw inputs, transcripts, brain pulls | `admin` | Never |
+| `2-work/` | Deliverables, working documents | `team` | Yes |
+| `3-log/` | Decision log, tasks, hours | `admin` | Never |
+| `4-shared/` | Client-facing or company output | `external` | Yes |
+| `5-personal/` | Private scratch | `admin` | Never |
+
+See [Your Workspace](/guides/workspace/) for the full model.
+
+---
+
+## API key format
+
+Per-member API keys are always `aios_<key_id>_<secret>`, SHA-256 hashed at rest and shown **once** at creation. They authenticate the `aios` CLI; people authenticate to the dashboard separately (invite-only magic link).
