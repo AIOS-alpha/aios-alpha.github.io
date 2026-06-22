@@ -1,0 +1,104 @@
+---
+title: Design System
+description: The one AIOS design system — two published packages, the consumption recipe, tokens, and dual-mode (light + dark).
+---
+
+AIOS ships **one design system** for every surface: this website, the Team Brain
+dashboard, the workspace GUI, and any UI you build on top of the toolkit. It is
+token-driven and **dual-mode** (full light + dark), and it lives as two published,
+no-auth npm packages.
+
+The human- and agent-readable contract is **`DESIGN.md`** inside
+[`@aios-alpha/design`](https://www.npmjs.com/package/@aios-alpha/design) — the
+pinned design contract, the same way `brain-api.md` is the pinned sync contract.
+Hand `DESIGN.md` to Claude Code or Cursor and it will align any UI to the system.
+
+## The two packages
+
+| Package | What it ships |
+|---------|---------------|
+| **`@aios-alpha/design`** | The token layer. CSS custom properties (`@aios-alpha/design/tokens.css`), a Tailwind v4 theme bridge (`@aios-alpha/design/tailwind-theme.css`), and the `DESIGN.md` contract. No JavaScript, no framework. |
+| **`@aios-alpha/ui`** | The React component layer (shadcn-based) themed entirely through the token bridge — buttons, badges, code/terminal frames, glass nav, and the AIOS-specific pieces. |
+
+Both install with no authentication:
+
+```bash
+npm install @aios-alpha/design @aios-alpha/ui
+```
+
+Use just `@aios-alpha/design` if you only need tokens (raw CSS, Astro/Starlight,
+or your own components); add `@aios-alpha/ui` when you want the ready-made React
+components.
+
+## Consumption recipe (Tailwind v4)
+
+In a Tailwind v4 global stylesheet, in this exact order:
+
+```css
+@import "@aios-alpha/design/tokens.css";
+@import "@aios-alpha/design/tailwind-theme.css";
+@import "tailwindcss";
+@source "../node_modules/@aios-alpha/ui/dist";
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+- `tokens.css` defines the runtime `--aios-*` custom properties.
+- `tailwind-theme.css` bridges shadcn/Tailwind utility names (`bg-background`,
+  `text-foreground`, `border-border`, `bg-primary`, `font-display`, `font-mono`,
+  `rounded-lg`, …) onto those tokens.
+- `@source` tells Tailwind to scan the `@aios-alpha/ui` component classes.
+- `@custom-variant dark` wires the dark mode to a `.dark` class.
+
+This is the same recipe shipped on the website and the Team Brain dashboard.
+
+**Raw CSS (no Tailwind):** import only `tokens.css` and reference `var(--aios-*)`
+directly. **Astro / Starlight:** import `tokens.css` and map the `--aios-*` vars
+onto Starlight's `--sl-*` variables — this site does exactly that.
+
+## Dual-mode: light + dark
+
+Light is the `:root` default. Adding **`class="dark"`** to `<html>` swaps only the
+color values — **type, spacing, and radius are mode-independent**.
+
+```html
+<html class="dark"> ... </html>   <!-- dark; remove the class for light -->
+```
+
+In Next.js, drive the class with `next-themes`; elsewhere toggle it directly.
+Every surface ships both modes; the initial default is per-surface (marketing
+leans dark, the dashboard leans light, the workspace GUI is terminal-native dark).
+
+## Tokens at a glance
+
+All values come from `--aios-*` custom properties — never hardcode a hex, a `px`
+text size, or a font stack in a component.
+
+- **Color.** Brand **violet** (`--aios-primary`) and a rationed **lime** accent
+  (`--aios-accent`, at most one filled lime action per screen). Neutral surfaces
+  step `bg → surface → elevated → muted`; foreground in `fg / fg-secondary /
+  fg-muted`; borders in `border / border-visible / border-strong`. Supporting
+  cyan + fuchsia are reserved for tier/kind badges only. Status: `destructive`,
+  `emerald`, `amber` (warnings only).
+- **Typography.** Three self-hosted families: **Space Grotesk** (display +
+  headings), **Plus Jakarta Sans** (body + UI), **JetBrains Mono** (code *and*
+  structural UI — eyebrow labels, metadata, status). A fluid `clamp()` scale
+  from `label` to `display` — never override with fixed `px`.
+- **Spacing & shape.** 4px base grid (`--aios-space-*`), `1200px` max content
+  width. Radius steps: `sm 4` chips · `md 6` buttons/inputs · `lg 10`
+  code/terminal · `xl 14` cards · `2xl 20` modals · `full` pills.
+- **Elevation is mode-specific.** Light: hairline border + a subtle shadow
+  (`--aios-shadow-button/card/overlay`). Dark: step the surface up + raise the
+  border, and reach for a **glow** (`--aios-glow-violet` / `--aios-glow-lime`),
+  never a drop shadow on a card.
+- **Gradients & effects.** The AIOS **prism** (`--aios-gradient-prism`, violet →
+  emerald → lime) for ambient hero glow and the brand mark; glass nav via a
+  `blur(12px)` backdrop.
+
+## Source of truth
+
+Token values live in `tokens/*.json` inside `@aios-alpha/design` and compile to
+the published `dist/` files — never hand-edit a consuming repo. To change the
+system, edit the tokens and `DESIGN.md` there first, then rebuild. See
+[`DESIGN.md`](https://www.npmjs.com/package/@aios-alpha/design) for the complete
+contract, including the full color palettes, the type scale, the component specs,
+and the do's and don'ts.
