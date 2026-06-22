@@ -1,0 +1,20 @@
+name: nda-gate
+
+# Confidentiality gate for the public site. Runs on PRs and pushes; the deploy
+# workflow runs the same scan fail-closed before publishing to Pages.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  nda-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: NDA confidentiality scan
+        env:
+          AIOS_CONFIDENTIAL_TERMS: ${{ secrets.AIOS_CONFIDENTIAL_TERMS }}
+        run: bash scripts/nda-scan.sh
