@@ -6,7 +6,7 @@
 
     <div class="mb-14">
       <span class="text-label text-accent block mb-4">Getting started</span>
-      <h2 class="text-heading-2 text-foreground">Up in three commands.</h2>
+      <h2 class="text-heading-2 text-foreground">Run the operating loop once.</h2>
     </div>
 
     <div class="terminal max-w-[720px]">
@@ -19,18 +19,22 @@
       <div class="terminal-body space-y-5">
 
         <div>
-          <div class="terminal-comment mb-1"># 1. Initialize your workspace</div>
-          <div><span class="terminal-prompt">$</span> npx aios-init my-workspace</div>
+          <div class="terminal-comment mb-1"># 1. Scaffold your private workspace</div>
+          <div><span class="terminal-prompt">$</span> git clone https://github.com/AIOS-alpha/aios-workspace</div>
+          <div><span class="terminal-prompt">$</span> cd aios-workspace</div>
+          <div><span class="terminal-prompt">$</span> ./scripts/scaffold-project.sh --slug alex-aios --owner alex</div>
         </div>
 
         <div>
-          <div class="terminal-comment mb-1"># 2. Run your first harness</div>
-          <div><span class="terminal-prompt">$</span> aios run meeting-synthesis --input ./transcripts/</div>
+          <div class="terminal-comment mb-1"># 2. Run a verifier-gated harness in Claude Code</div>
+          <div><span class="terminal-prompt">$</span> cd ~/Projects/alex-aios</div>
+          <div><span class="terminal-prompt">$</span> /weekly-synthesis</div>
         </div>
 
         <div>
-          <div class="terminal-comment mb-1"># 3. Push to the team brain</div>
-          <div><span class="terminal-prompt">$</span> aios push --tier team</div>
+          <div class="terminal-comment mb-1"># 3. Review what can leave your machine</div>
+          <div><span class="terminal-prompt">$</span> aios status</div>
+          <div><span class="terminal-prompt">$</span> aios push</div>
         </div>
 
       </div>
@@ -41,7 +45,7 @@
         href="/guides/quickstart"
         class="text-body text-link hover:text-primary transition-colors duration-200 no-underline"
       >
-        Read the full guide →
+        Read the full quickstart →
       </a>
     </div>
 

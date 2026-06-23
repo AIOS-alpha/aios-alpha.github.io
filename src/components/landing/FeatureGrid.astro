@@ -4,33 +4,33 @@ import { FolderTree, Network, Layers, Bot, Plug, BookOpen } from 'lucide-astro';
 const cards = [
   {
     icon: FolderTree,
-    headline: 'Your workspace, your rules.',
-    body: 'A numbered folder spine, governance rules, validators, and multi-agent harnesses — one per person. You decide what leaves your machine.',
+    headline: 'A private workspace per person.',
+    body: 'Each contributor gets a numbered folder spine, workspace memory, governance rules, validators, and agent harnesses. Capture rough work locally before anything becomes team memory.',
   },
   {
     icon: Network,
-    headline: 'Shared memory, without the noise.',
-    body: 'Every workspace pushes tier-tagged context to one brain. Ask it questions in plain English across the team\'s shared memory. Self-host on your own Supabase.',
+    headline: 'One brain for the team.',
+    body: 'Team-tier work from every workspace lands in a shared brain. It surfaces tasks, decisions, deliverables, and grounded answers across the context people chose to promote.',
   },
   {
     icon: Layers,
-    headline: 'Nothing leaks without a push.',
-    body: 'Private → team → external. You promote content deliberately through the spine, and the brain rejects admin-tier at the boundary. Audience tags are first-class, not afterthoughts.',
+    headline: 'Promotion, not leakage.',
+    body: 'Private → team → external is built into the files, hooks, CLI, API, and dashboard. Admin-tier content stays local; the brain rejects it at the boundary.',
   },
   {
     icon: Bot,
-    headline: 'Real work, not wrappers.',
-    body: 'Turn meeting transcripts into decisions. Run weekly synthesis. Catch scope creep. Harnesses that ship deliverables, not chat logs.',
+    headline: 'Verified harnesses, not prompt piles.',
+    body: 'Turn transcripts into decisions, audit scope drift, and synthesize the week with verifier-gated workflows. AIOS treats agent output as work that must be grounded.',
   },
   {
     icon: Plug,
-    headline: 'A contract, not a vibe.',
-    body: 'Both repos build against one pinned brain-api spec. Version it, diff it, and never break a push silently.',
+    headline: 'A sync contract, not a vibe.',
+    body: 'Workspace and Team Brain build against one pinned brain-api contract. Version it, diff it, and keep every push predictable.',
   },
   {
     icon: BookOpen,
-    headline: 'Yours to run, start to finish.',
-    body: 'Open source under MIT. Self-host the brain, clone the workspace per person. No cloud, no lock-in, no per-seat pricing.',
+    headline: 'Yours to run and extend.',
+    body: 'Open source, self-hosted, and plain-file first. Bring your own agent runtime, add your own harnesses, and keep your team memory in infrastructure you control.',
   },
 ];
 ---
@@ -40,7 +40,7 @@ const cards = [
 
     <div class="mb-14">
       <span class="text-label text-accent block mb-4">The system</span>
-      <h2 class="text-heading-2 text-foreground max-w-[540px]">Two repos. One system.</h2>
+      <h2 class="text-heading-2 text-foreground max-w-[620px]">Private workspaces. Verified work. Shared brain.</h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
