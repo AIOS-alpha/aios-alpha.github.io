@@ -75,14 +75,15 @@ leans dark, the dashboard leans light, the workspace GUI is terminal-native dark
 All values come from `--aios-*` custom properties — never hardcode a hex, a `px`
 text size, or a font stack in a component.
 
-- **Color.** Brand **violet** (`--aios-primary`) and a rationed **lime** accent
+- **Color.** Brand **violet** (`--aios-violet`) and editorial **primary** buttons
+  (`--aios-primary`, near-black in light / white in dark). A rationed **lime** accent
   (`--aios-accent`, at most one filled lime action per screen). Neutral surfaces
   step `bg → surface → elevated → muted`; foreground in `fg / fg-secondary /
   fg-muted`; borders in `border / border-visible / border-strong`. Supporting
   cyan + fuchsia are reserved for tier/kind badges only. Status: `destructive`,
   `emerald`, `amber` (warnings only).
-- **Typography.** Three self-hosted families: **Space Grotesk** (display +
-  headings), **Plus Jakarta Sans** (body + UI), **JetBrains Mono** (code *and*
+- **Typography.** Three self-hosted families: **Instrument Serif** (display +
+  headings), **Instrument Sans** (body + UI), **JetBrains Mono** (code *and*
   structural UI — eyebrow labels, metadata, status). A fluid `clamp()` scale
   from `label` to `display` — never override with fixed `px`.
 - **Spacing & shape.** 4px base grid (`--aios-space-*`), `1200px` max content
