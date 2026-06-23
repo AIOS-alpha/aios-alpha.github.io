@@ -13,8 +13,9 @@
   --color-border-visible: var(--aios-border-visible);
   --color-foreground: var(--aios-foreground);
   --color-muted-foreground: var(--aios-muted-foreground);
-  --color-primary: var(--aios-violet);
-  --color-primary-hover: var(--aios-violet-hover);
+  --color-primary: var(--aios-primary);
+  --color-primary-hover: var(--aios-primary-hover);
+  --color-primary-foreground: var(--aios-primary-fg);
   --color-accent: var(--aios-lime);
   --color-label: var(--aios-lime);
   --color-link: var(--aios-violet-light);
@@ -46,7 +47,7 @@
 @utility text-display {
   font-family: var(--font-display);
   font-size: clamp(3rem, 2.5rem + 2.5vw, 5rem);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.03em;
 }
@@ -54,7 +55,7 @@
 @utility text-heading-1 {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 2rem + 2.5vw, 4rem);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -62,7 +63,7 @@
 @utility text-heading-2 {
   font-family: var(--font-display);
   font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
@@ -70,7 +71,7 @@
 @utility text-heading-3 {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.3;
   letter-spacing: -0.01em;
 }
