@@ -1,25 +1,20 @@
 ---
+const stats = [
+  { value: '2', label: 'Repos. One system.' },
+  { value: '3', label: 'Tiers. Nothing leaks.' },
+  { value: '100%', label: 'Self-hosted. MIT-licensed.' },
+];
 ---
 
 <section class="py-16 bg-surface border-y border-border">
   <div class="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-0 md:divide-x md:divide-border">
-
-      <div class="flex flex-col items-center md:items-start md:px-8 first:md:pl-0 last:md:pr-0">
-        <span class="text-heading-2 text-foreground font-display">2</span>
-        <span class="text-label text-accent mt-2">Repos. One system.</span>
-      </div>
-
-      <div class="flex flex-col items-center md:items-start md:px-8">
-        <span class="text-heading-2 text-foreground font-display">3</span>
-        <span class="text-label text-accent mt-2">Tiers. Nothing leaks.</span>
-      </div>
-
-      <div class="flex flex-col items-center md:items-start md:px-8 first:md:pl-0 last:md:pr-0">
-        <span class="text-heading-2 text-foreground font-display">100%</span>
-        <span class="text-label text-accent mt-2">Self-hosted. MIT-licensed.</span>
-      </div>
-
+      {stats.map(({ value, label }) => (
+        <div class="flex flex-col items-center md:items-start md:px-8 first:md:pl-0 last:md:pr-0">
+          <span class="text-display text-foreground leading-none">{value}</span>
+          <span class="text-label text-muted-foreground mt-3">{label}</span>
+        </div>
+      ))}
     </div>
   </div>
 </section>
