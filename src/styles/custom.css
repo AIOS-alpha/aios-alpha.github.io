@@ -8,12 +8,10 @@
    script in astro.config.mjs) so the @aios-alpha/design dark palette engages.
    ===================================================================== */
 
-@import '@fontsource/space-grotesk/400.css';
-@import '@fontsource/space-grotesk/600.css';
-@import '@fontsource/space-grotesk/700.css';
-@import '@fontsource/plus-jakarta-sans/400.css';
-@import '@fontsource/plus-jakarta-sans/600.css';
-@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/600.css';
+@import '@fontsource/instrument-sans/700.css';
 @import '@fontsource/jetbrains-mono/400.css';
 @import './design-tokens.css';
 
@@ -25,7 +23,7 @@
   --sl-color-accent-low: color-mix(in srgb, var(--aios-violet) 18%, transparent);
   --sl-color-text-accent: var(--aios-violet-light);   /* link color */
 
-  /* Fonts — Space Grotesk handled per-heading below */
+  /* Fonts — Instrument Serif (display) + Instrument Sans (body) */
   --sl-font: var(--aios-font-sans);
   --sl-font-mono: var(--aios-font-mono);
 
@@ -67,10 +65,11 @@
   --sl-color-backdrop-overlay: rgba(250, 250, 250, 0.7);
 }
 
-/* ---- Typography: Space Grotesk for all headings, tight tracking ---- */
+/* ---- Typography: Instrument Serif for headings, tight tracking ---- */
 :is(h1, h2, h3, h4, h5, h6),
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--aios-font-display);
+  font-weight: 400;
   letter-spacing: -0.02em;
   color: var(--sl-color-white);
 }

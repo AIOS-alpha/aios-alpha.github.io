@@ -1,32 +1,36 @@
 /* =====================================================================
-   AIOS design tokens — now sourced from the @aios-alpha/design package, the
-   single cross-repo source of truth (see DESIGN.md in that package).
-
-   This file no longer hard-codes hex values. It (a) re-exports the
-   package tokens (light = :root, dark = .dark) and (b) provides a thin
-   compatibility alias layer mapping the website's historical token names
-   onto the package's canonical names, so the existing Starlight (--sl-*)
-   and Tailwind (@theme) mappings in custom.css / global.css keep working
-   unchanged. Aliases reference the package vars, so they resolve per
-   active mode automatically.
-
-   To change a value: edit it in @aios-alpha/design and `npm run build:tokens`
-   there, then bump the dependency here. Never hand-edit values below.
+   AIOS design tokens — sourced from @aios-alpha/design (Editorial Minimal).
+   This file adds website-specific aliases so Starlight + landing CSS keep
+   their existing --aios-* names without duplicating hex values.
    ===================================================================== */
 @import "@aios-alpha/design/tokens.css";
 
-/* Legacy-name compatibility (website name → @aios-alpha/design canonical name). */
-:root {
+:root,
+.dark {
+  /* Legacy website names → package tokens */
+  --aios-surface-elevated: var(--aios-elevated);
   --aios-foreground: var(--aios-fg);
   --aios-muted-foreground: var(--aios-fg-muted);
-  --aios-violet: var(--aios-primary);
-  --aios-violet-hover: var(--aios-primary-hover);
+  --aios-violet-hover: color-mix(in srgb, var(--aios-violet) 85%, black);
+  --aios-violet-light: color-mix(in srgb, var(--aios-violet) 75%, white);
+  --aios-violet-bright: color-mix(in srgb, var(--aios-violet) 55%, white);
   --aios-lime: var(--aios-accent);
-  --aios-surface-elevated: var(--aios-elevated);
-  --aios-font-sans: var(--aios-font-body);
-  --aios-gradient-text: var(--aios-gradient-text-glow);
 
-  /* Link / high-contrast accents not in the package — derived constants. */
-  --aios-violet-light: #a78bfa;
-  --aios-violet-bright: #c4b5fd;
+  /* Gradients — from package token file when rebuilt; fallback for safety */
+  --aios-gradient-prism: linear-gradient(
+    135deg,
+    var(--aios-violet) 0%,
+    var(--aios-emerald) 50%,
+    var(--aios-accent) 100%
+  );
+  --aios-gradient-primary: linear-gradient(
+    135deg,
+    var(--aios-violet) 0%,
+    var(--aios-accent) 100%
+  );
+  --aios-gradient-text: linear-gradient(
+    135deg,
+    var(--aios-violet-light) 0%,
+    var(--aios-accent) 100%
+  );
 }
