@@ -49,7 +49,9 @@ In a Tailwind v4 global stylesheet, in this exact order:
 - `@source` tells Tailwind to scan the `@aios-alpha/ui` component classes.
 - `@custom-variant dark` wires the dark mode to a `.dark` class.
 
-This is the same recipe shipped on the website and the Team Brain dashboard.
+This is the same recipe used on this website, the Team Brain dashboard, and the
+workspace GUI (`gui/client`; `@source` path is relative to that package's hoisted
+`node_modules`).
 
 **Raw CSS (no Tailwind):** import only `tokens.css` and reference `var(--aios-*)`
 directly. **Astro / Starlight:** import `tokens.css` and map the `--aios-*` vars
