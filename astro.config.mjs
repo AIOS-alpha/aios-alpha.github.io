@@ -74,6 +74,7 @@ export default defineConfig({
                   items: [
                       { label: 'Brain API v1', slug: 'reference/brain-api' },
                       { label: 'CLI Commands', slug: 'reference/cli' },
+                      { label: 'Design System', slug: 'reference/design-system' },
                       { label: 'Glossary', slug: 'reference/glossary' },
                   ],
               },
