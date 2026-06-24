@@ -25,7 +25,7 @@ import '../../../styles/diagrams.css';
   </p>
 
   <!-- edges -->
-  <svg class="dgm-svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg class="dgm-svg" viewBox="0 0 1280 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>
       <marker id="cb-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
@@ -41,56 +41,56 @@ import '../../../styles/diagrams.css';
     </defs>
 
     <!-- brain bokeh — gentle "sleep-light" breathing -->
-    <circle class="cb-halo" cx="640" cy="360" r="230" fill="url(#cb-halo)" />
+    <circle class="cb-halo" cx="640" cy="400" r="250" fill="url(#cb-halo)" />
 
     <!-- agent-users -> brain (daily updates) -->
-    <path class="dgm-edge cb-in"   d="M310,120 C410,120 430,330 490,338" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M310,196 C420,196 450,340 490,346" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M310,272 C430,272 460,348 490,352" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in cb-flow" d="M310,120 C410,120 430,330 490,338" />
-    <path class="dgm-edge cb-in cb-flow" d="M310,196 C420,196 450,340 490,346" />
-    <path class="dgm-edge cb-in cb-flow" d="M310,272 C430,272 460,348 490,352" />
+    <path class="dgm-edge cb-in"   d="M310,130 C410,130 440,388 490,388" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M310,240 C420,240 450,398 490,398" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M310,350 C430,350 460,408 490,408" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in cb-flow" d="M310,130 C410,130 440,388 490,388" />
+    <path class="dgm-edge cb-in cb-flow" d="M310,240 C420,240 450,398 490,398" />
+    <path class="dgm-edge cb-in cb-flow" d="M310,350 C430,350 460,408 490,408" />
 
     <!-- data streams -> brain (ingestion) -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,440 C410,440 450,430 490,420" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,516 C410,516 455,440 490,430" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,530 C420,530 450,452 490,448" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,640 C420,640 460,472 490,460" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> surfaces -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,330 C880,330 900,120 970,120" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,346 C880,346 900,212 970,212" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,360 C880,360 900,304 970,304" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,388 C890,388 910,140 970,140" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,400 C890,400 910,250 970,250" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,412 C890,412 910,360 970,360" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> actions -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,386 C880,386 900,452 970,452" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,400 C880,400 900,556 970,556" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,430 C890,430 910,540 970,540" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,444 C890,444 910,660 970,660" marker-end="url(#cb-arrow)" />
 
     <!-- self-improvement loop -->
-    <path class="dgm-edge cb-loop" d="M612,475 C590,560 690,560 668,475" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-loop" d="M612,520 C590,605 690,605 668,520" marker-end="url(#cb-arrow-v)" />
   </svg>
 
   <!-- AGENT-USERS -->
-  <span class="cb-label cb-label--agents" style="left:15.6%; top:8.1%;">AGENT-USERS</span>
-  <div class="cb-node" style="left:15.6%; top:16.7%;">
+  <span class="cb-label cb-label--agents" style="left:15.6%; top:8.5%;">AGENT-USERS</span>
+  <div class="cb-node" style="left:15.6%; top:15.9%;">
     <div class="dgm-node"><span class="dgm-node__title">Agent-User A</span></div>
   </div>
-  <div class="cb-node" style="left:15.6%; top:27.2%;">
+  <div class="cb-node" style="left:15.6%; top:29.3%;">
     <div class="dgm-node"><span class="dgm-node__title">Agent-User B</span></div>
   </div>
-  <div class="cb-node" style="left:15.6%; top:37.8%;">
+  <div class="cb-node" style="left:15.6%; top:42.7%;">
     <div class="dgm-node"><span class="dgm-node__title">Agent-User C</span></div>
   </div>
 
   <!-- DATA STREAMS -->
-  <span class="cb-label cb-label--streams" style="left:15.6%; top:51.7%;">DATA STREAMS</span>
-  <div class="cb-node" style="left:15.6%; top:61.1%;">
+  <span class="cb-label cb-label--streams" style="left:15.6%; top:56.1%;">DATA STREAMS</span>
+  <div class="cb-node" style="left:15.6%; top:64.6%;">
     <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">Slack · Notion</span></div>
   </div>
-  <div class="cb-node" style="left:15.6%; top:71.7%;">
+  <div class="cb-node" style="left:15.6%; top:78%;">
     <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">Linear · GitHub</span></div>
   </div>
 
   <!-- COLLECTIVE BRAIN -->
-  <div class="cb-node cb-node--brain" style="left:50%; top:50%;">
+  <div class="cb-node cb-node--brain" style="left:50%; top:48.8%;">
     <div class="dgm-node cb-brain">
       <span class="cb-brain__title">Collective Brain</span>
       <span class="cb-brain__meta">Knowledge · Memory</span>
@@ -99,36 +99,36 @@ import '../../../styles/diagrams.css';
   </div>
 
   <!-- SURFACES -->
-  <span class="cb-label cb-label--surfaces" style="left:84.4%; top:8.1%;">SURFACES</span>
-  <div class="cb-node" style="left:84.4%; top:16.7%;">
+  <span class="cb-label cb-label--surfaces" style="left:84.4%; top:8.5%;">SURFACES</span>
+  <div class="cb-node" style="left:84.4%; top:17.1%;">
     <div class="dgm-node"><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
   </div>
-  <div class="cb-node" style="left:84.4%; top:29.4%;">
+  <div class="cb-node" style="left:84.4%; top:30.5%;">
     <div class="dgm-node"><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
   </div>
-  <div class="cb-node" style="left:84.4%; top:42.2%;">
+  <div class="cb-node" style="left:84.4%; top:43.9%;">
     <div class="dgm-node"><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
   </div>
 
   <!-- ACTIONS -->
-  <span class="cb-label cb-label--actions" style="left:84.4%; top:54.2%;">ACTIONS</span>
-  <div class="cb-node" style="left:84.4%; top:62.8%;">
+  <span class="cb-label cb-label--actions" style="left:84.4%; top:57.3%;">ACTIONS</span>
+  <div class="cb-node" style="left:84.4%; top:65.9%;">
     <div class="dgm-node"><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
   </div>
-  <div class="cb-node" style="left:84.4%; top:77.2%;">
+  <div class="cb-node" style="left:84.4%; top:80.5%;">
     <div class="dgm-node"><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
   </div>
 
-  <!-- edge labels (absolute on desktop; hidden on mobile) -->
-  <span class="cb-edge-label" style="left:31.3%; top:22.9%;">daily updates →</span>
-  <span class="cb-edge-label" style="left:31.3%; top:65.3%;">ingestion ⇢</span>
-  <span class="cb-edge-label cb-edge-label--center" style="left:50%; top:82%;">self-improves with every use</span>
+  <!-- edge labels — beside / clear of the lines, not over them -->
+  <span class="cb-edge-label" style="left:33%; top:11.5%;">daily updates →</span>
+  <span class="cb-edge-label" style="left:30.5%; top:70.5%;">ingestion ⇢</span>
+  <span class="cb-edge-label cb-edge-label--center" style="left:50%; top:79%;">self-improves with every use</span>
 </figure>
 
 <style>
   .cbrain {
     position: relative;
-    aspect-ratio: 1280 / 720;
+    aspect-ratio: 1280 / 820;
     width: 100%;
     margin-inline: auto;
   }
