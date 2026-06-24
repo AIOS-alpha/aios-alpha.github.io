@@ -1,20 +1,21 @@
 ---
-import Placeholder from './Placeholder.astro';
+import InfoFlow from './diagrams/InfoFlow.astro';
 ---
 
 <section class="relative py-20 md:py-32 bg-surface">
-  <div class="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+  <div class="max-w-[1320px] mx-auto px-6 md:px-12 lg:px-20">
 
-    <div class="mb-14 max-w-[620px]">
-      <span class="text-label text-muted-foreground block mb-4">ARCHITECTURE</span>
-      <h2 class="text-heading-2 text-foreground mb-5">How information flows</h2>
+    <div class="mb-14 max-w-[640px]">
+      <span class="text-label text-muted-foreground block mb-4">HOW INFORMATION FLOWS</span>
+      <h2 class="text-heading-2 text-foreground mb-5">You decide what leaves your machine.</h2>
       <p class="text-body-lg text-muted-foreground">
-        A continuous loop, not a pipeline. Work surfaces from every workspace, enriches the
-        shared brain, and insights return to each individual — tightening with every cycle.
+        Every file carries an access tier. Guards and validators enforce it on your machine,
+        and the versioned brain-api contract is the only way across — private work is rejected
+        at the boundary and never leaves. Team and external work syncs, and insight returns.
       </p>
     </div>
 
-    <Placeholder variant="screenshot" ratio="16 / 9" label="How information flows — system diagram" />
+    <InfoFlow />
 
   </div>
 </section>
