@@ -9,38 +9,45 @@
 
    HTML node cards (crisp, centered text) on the vertices of an SVG edge
    layer. Inline SVG + CSS only — no JS, no video. Token-driven, dual-mode,
-   reduced-motion safe. Colour is rationed: violet = agent-users · emerald =
-   the brain + context engine · lime = surfaced · cyan = action · grey = data
-   streams. Each card carries its accent dot top-left (Mac-window style); the
-   group legends repeat the dot as a key. See docs/diagram-system.md. */
+   reduced-motion safe. Colour is rationed and carried by a subtle tinted card
+   border (matching the group legend dot): violet = agent-users · emerald =
+   brain + context engine · lime = surfaced · cyan = action · grey = data
+   streams. Cards scale in cqw so the layout holds at every width. See
+   docs/diagram-system.md. */
 import '../../../styles/diagrams.css';
 
 const ICONS = {
-  slack:  'M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z',
-  notion: 'M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z',
-  linear: 'M2.886 4.18A11.982 11.982 0 0 1 11.99 0C18.624 0 24 5.376 24 12.009c0 3.64-1.62 6.903-4.18 9.105L2.887 4.18ZM1.817 5.626l16.556 16.556c-.524.33-1.075.62-1.65.866L.951 7.277c.247-.575.537-1.126.866-1.65ZM.322 9.163l14.515 14.515c-.71.172-1.443.282-2.195.322L0 11.358a12 12 0 0 1 .322-2.195Zm-.17 4.862 9.823 9.824a12.02 12.02 0 0 1-9.824-9.824Z',
-  github: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12',
+  slack:   { vb: '0 0 24 24', d: 'M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z' },
+  notion:  { vb: '0 0 24 24', d: 'M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z' },
+  linear:  { vb: '0 0 24 24', d: 'M2.886 4.18A11.982 11.982 0 0 1 11.99 0C18.624 0 24 5.376 24 12.009c0 3.64-1.62 6.903-4.18 9.105L2.887 4.18ZM1.817 5.626l16.556 16.556c-.524.33-1.075.62-1.65.866L.951 7.277c.247-.575.537-1.126.866-1.65ZM.322 9.163l14.515 14.515c-.71.172-1.443.282-2.195.322L0 11.358a12 12 0 0 1 .322-2.195Zm-.17 4.862 9.823 9.824a12.02 12.02 0 0 1-9.824-9.824Z' },
+  github:  { vb: '0 0 24 24', d: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12' },
+  granola: { vb: '0 0 32 32', d: 'M15.826 31.9139C19.126 31.9139 22.586 31.1819 23.979 30.1679C24.869 29.5339 25.311 29.5959 26.104 28.8379C26.324 28.6159 26.421 28.5509 26.484 28.4879C29.497 26.0119 31.243 22.8079 31.243 18.6519C31.243 11.8919 26.453 7.29194 19.599 7.29194C13.57 7.29194 8.969 11.1299 8.969 16.0479C8.969 20.5219 12.459 23.7259 17.439 23.7259C17.726 23.7259 17.854 23.5669 18.171 23.5669C19.378 23.5669 20.361 23.2189 20.996 22.5529C21.313 22.2049 21.916 21.5049 21.979 21.4729C22.265 21.2179 22.327 20.8389 22.393 20.6799C22.455 20.5219 22.583 20.4249 22.648 20.2039C22.71 19.9489 22.617 19.6319 22.617 19.3489C22.617 18.8419 22.837 18.3349 22.837 17.8589C22.837 16.5279 21.251 15.1929 19.823 15.1929C19.664 15.1929 19.664 15.0649 19.568 15.0649C19.471 15.0649 19.378 15.1619 19.282 15.1619C19.185 15.1619 19.061 15.0029 18.933 15.0029C18.805 15.0029 18.743 15.1309 18.553 15.1309C18.14 15.1309 18.109 15.1929 17.792 15.1929C17.6833 15.1962 17.5759 15.2171 17.474 15.2549C17.347 15.3169 17.347 15.4139 17.219 15.4139C17.049 15.4139 16.964 15.4459 16.964 15.5099C16.964 15.8589 16.995 15.7969 16.836 15.7969C16.666 15.7969 16.5603 15.8069 16.519 15.8269C16.391 15.8899 16.488 16.0479 16.36 16.1449C16.233 16.2069 16.202 16.3039 16.17 16.4929C16.14 16.6829 15.95 16.7479 15.95 16.9379C15.95 17.0349 15.981 17.0969 15.981 17.1579C15.981 17.3479 15.601 17.2859 15.601 17.4759C15.601 17.6039 15.698 17.6959 15.698 17.8249C15.698 17.9209 15.636 17.9829 15.636 18.0799C15.636 18.1759 15.698 18.2379 15.698 18.2999C15.698 18.4599 15.478 18.4899 15.478 18.6179C15.478 18.7449 15.605 18.8379 15.605 18.9349C15.605 18.9969 15.508 19.0319 15.508 19.1249C15.508 19.2179 15.478 19.0629 15.668 19.3449C15.795 19.5349 15.795 19.6319 15.668 19.7899C15.54 19.9499 15.288 20.0459 14.971 20.0459C13.639 20.0459 13.481 18.6799 12.749 18.4589C12.529 18.3969 12.494 18.3629 12.494 18.2689C12.494 18.1759 12.494 18.2069 12.622 18.0789C12.749 17.9519 12.78 17.8589 12.78 17.7619C12.78 17.6659 12.78 17.6349 12.718 17.5719C12.463 17.1589 12.338 16.6519 12.338 16.0819C12.338 13.1649 15.891 10.7199 19.258 10.7199C20.272 10.7199 20.113 10.9749 20.717 10.9749C20.875 10.9749 20.813 10.9749 21.034 10.9439C21.606 10.8469 22.651 11.0709 23.476 11.4819C25.759 12.6239 27.252 15.3209 27.252 18.4619C27.252 23.8259 22.492 27.7269 16.147 27.7269C12.687 27.7269 10.307 26.6469 7.959 24.0149C7.704 23.7289 8.086 24.0779 7.672 23.3499C7.165 22.4599 7.228 23.0319 7.228 23.0319C7.068 22.8419 6.783 22.3019 6.624 22.1119C6.434 21.8909 6.179 21.9219 6.086 21.7939C5.958 21.6359 6.148 21.3489 6.086 21.1909C6.024 20.9359 5.482 20.5559 5.42 20.3659C5.358 20.1759 5.134 18.9699 5.134 18.7489C5.134 18.4939 5.324 18.4629 5.324 18.3039C5.324 18.0839 5.037 18.0179 4.879 17.6999C4.72 17.3829 4.624 16.6519 4.624 15.8589C4.624 15.4449 4.624 15.2859 4.751 14.3339C4.782 14.0169 5.258 14.0169 5.258 13.6689C5.258 13.5409 5.196 13.3819 5.196 13.2889C5.196 13.1619 5.196 13.1299 5.227 13.0339C6.558 7.44994 12.525 3.29394 19.157 3.29394C21.441 3.29394 23.186 3.70794 25.883 4.84994C26.773 5.22894 28.073 4.56294 28.073 3.86694C28.135 3.64594 28.011 3.57994 27.977 3.45294C27.945 3.32494 27.817 3.16594 27.69 3.13494C27.628 3.10494 27.594 3.00794 27.532 2.91494C27.435 2.75594 27.342 2.69394 27.087 2.62794C26.9906 2.6132 26.9011 2.56882 26.831 2.50094C26.7597 2.3923 26.6611 2.30435 26.545 2.24594C26.418 2.18294 26.325 2.24594 26.259 2.21494C26.197 2.18294 26.162 2.11794 26.1 2.08694C26.07 2.05594 26.004 2.05594 25.91 2.05594C22.71 0.341938 20.616 0.0859375 17.826 0.0859375C11.797 0.0859375 6.403 2.68994 3.072 7.22594C2.785 7.60594 2.944 8.23994 2.534 8.62294C1.74 9.35294 0.757004 13.3499 0.757004 15.8899C0.757004 18.0139 1.264 20.8389 1.93 22.3939C3.23 25.4399 2.661 24.1709 2.85 24.4569C3.23 25.0599 3.548 25.1219 3.706 25.3119C3.706 25.3119 3.803 25.5019 3.803 25.6919C3.803 25.8189 3.803 25.8499 3.833 25.9119C3.93 26.1019 4.372 26.4189 4.499 26.5469C4.786 26.8329 5.006 27.4369 5.482 27.9129C6.214 28.6429 7.259 29.2129 10.59 30.7679C11.763 31.3059 11.097 31.0239 11.225 31.0549C11.511 31.1509 11.891 31.1509 12.115 31.3099C12.242 31.4069 12.084 31.3719 12.432 31.3719C12.494 31.3719 12.494 31.4029 12.56 31.4339C12.622 31.4649 12.687 31.5619 12.78 31.5619C12.843 31.5619 12.877 31.4999 12.97 31.5309C13.063 31.5609 13.287 31.7209 13.477 31.8169C13.636 31.9129 13.667 31.9129 13.732 31.8479C13.922 31.7199 14.05 31.8789 14.239 31.8789C14.301 31.8789 14.398 31.8479 14.588 31.8479C14.843 31.8479 14.843 31.9099 15.826 31.9099Z' },
+  google:  { vb: '0 0 24 24', d: 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z' },
 };
 const streams = [
-  { name: 'Slack',  icon: ICONS.slack },
-  { name: 'Notion', icon: ICONS.notion },
-  { name: 'Linear', icon: ICONS.linear },
-  { name: 'GitHub', icon: ICONS.github },
+  { name: 'Slack',   ...ICONS.slack },
+  { name: 'Notion',  ...ICONS.notion },
+  { name: 'Linear',  ...ICONS.linear },
+  { name: 'GitHub',  ...ICONS.github },
+  { name: 'Granola', ...ICONS.granola },
+  { name: 'Google',  ...ICONS.google },
 ];
+const COLS = ['10.9%', '19.9%'];
+const ROWS = ['59.4%', '68.1%', '76.9%'];
 ---
 
 <figure class="cbrain dgm" aria-labelledby="cbrain-cap">
   <p class="sr-only" id="cbrain-cap">
     Agent-users on Claude Code, Cursor and the AIOS Workstation send daily
-    updates, and data streams from Slack, Notion, Linear, GitHub and more are
-    ingested, into one Team Brain holding knowledge, memory, reasoning and
-    policy. A context engine beneath it finds patterns and closes the loop. The
-    brain surfaces a kanban board, a KPI dashboard and a query interface, and
-    takes policy-governed actions — spawning agents, executing tasks, and
-    improving the team's shared harness of skills, hooks and guards.
+    updates, and data streams from Slack, Notion, Linear, GitHub, Granola,
+    Google and more are ingested, into one Team Brain holding knowledge, memory,
+    reasoning and policy. A context engine beneath it finds patterns and closes
+    the loop. The brain surfaces a kanban board, a KPI dashboard and a query
+    interface, and takes policy-governed actions — spawning agents, executing
+    tasks, and improving the team's shared harness of skills, hooks and guards.
   </p>
 
-  <svg class="dgm-svg" viewBox="0 0 1280 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg class="dgm-svg" viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>
       <marker id="cb-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
@@ -59,65 +66,64 @@ const streams = [
     </defs>
 
     <!-- brain bokeh — gentle "sleep-light" breathing (6s in / 6s out) -->
-    <circle class="cb-halo" cx="640" cy="340" r="172" fill="url(#cb-halo)" />
+    <circle class="cb-halo" cx="640" cy="300" r="168" fill="url(#cb-halo)" />
 
     <!-- agent-users -> brain (daily updates) -->
-    <path class="dgm-edge cb-in"   d="M305,130 C410,130 440,310 490,312" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M305,250 C420,250 450,338 490,340" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M305,370 C430,362 460,368 490,366" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in cb-flow" d="M305,130 C410,130 440,310 490,312" />
-    <path class="dgm-edge cb-in cb-flow" d="M305,250 C420,250 450,338 490,340" />
-    <path class="dgm-edge cb-in cb-flow" d="M305,370 C430,362 460,368 490,366" />
+    <path class="dgm-edge cb-in"   d="M305,128 C410,128 440,253 490,255" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M305,238 C420,238 450,273 490,275" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M305,348 C430,348 460,300 490,300" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in cb-flow" d="M305,128 C410,128 440,253 490,255" />
+    <path class="dgm-edge cb-in cb-flow" d="M305,238 C420,238 450,273 490,275" />
+    <path class="dgm-edge cb-in cb-flow" d="M305,348 C430,348 460,300 490,300" />
 
     <!-- data streams -> brain (ingestion) -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,540 C410,540 445,410 490,402" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,615 C410,615 450,425 490,416" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,475 C400,475 440,340 490,336" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,545 C410,545 450,356 490,350" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> surfaces -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,318 C880,318 900,125 975,125" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,332 C880,332 900,240 975,240" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,346 C880,346 900,355 975,355" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,255 C880,255 900,128 975,128" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,275 C880,275 900,238 975,238" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,300 C880,300 900,348 975,348" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> actions -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,366 C880,366 900,545 975,545" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,380 C880,380 900,665 975,665" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,394 C870,394 900,785 975,785" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,330 C880,330 900,475 975,475" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,345 C880,345 900,585 975,585" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,358 C870,358 900,695 975,695" marker-end="url(#cb-arrow)" />
 
-    <!-- Context Engine closes the loop with the brain -->
-    <path class="dgm-edge cb-loop" d="M600,442 C576,478 576,494 600,514" marker-end="url(#cb-arrow-e)" />
-    <path class="dgm-edge cb-loop" d="M680,514 C704,494 704,478 680,442" marker-end="url(#cb-arrow-e)" />
+    <!-- Context Engine closes the loop: brain -> engine (violet in), engine -> brain (emerald out) -->
+    <path class="dgm-edge cb-loop-in"  d="M626,367 C616,380 616,390 626,403" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-loop-out" d="M654,403 C664,390 664,380 654,367" marker-end="url(#cb-arrow-e)" />
   </svg>
 
   <!-- AGENT-USERS -->
-  <span class="cb-label cb-label--agents" style="left:15.2%; top:5.6%;">AGENT-USERS</span>
-  <div class="cb-node" style="left:15.2%; top:14.4%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--ic"></span><span class="dgm-node__title">Agent-User A</span><span class="dgm-node__meta">Claude Code + MCP</span></div>
+  <span class="cb-label cb-label--agents" style="left:15.2%; top:6.5%;">AGENT-USERS</span>
+  <div class="cb-node" style="left:15.2%; top:16%;">
+    <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User A</span><span class="dgm-node__meta">Claude Code + MCP</span></div>
   </div>
-  <div class="cb-node" style="left:15.2%; top:27.8%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--ic"></span><span class="dgm-node__title">Agent-User B</span><span class="dgm-node__meta">Cursor + MCP</span></div>
+  <div class="cb-node" style="left:15.2%; top:29.75%;">
+    <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User B</span><span class="dgm-node__meta">Cursor + MCP</span></div>
   </div>
-  <div class="cb-node" style="left:15.2%; top:41.1%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--ic"></span><span class="dgm-node__title">Agent-User C</span><span class="dgm-node__meta">AIOS Workstation</span></div>
+  <div class="cb-node" style="left:15.2%; top:43.5%;">
+    <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User C</span><span class="dgm-node__meta">AIOS Workstation</span></div>
   </div>
 
   <!-- DATA STREAMS -->
-  <span class="cb-label cb-label--streams" style="left:15.2%; top:52.2%;">DATA STREAMS</span>
+  <span class="cb-label cb-label--streams" style="left:15.2%; top:51.25%;">DATA STREAMS</span>
   {streams.map((s, i) => (
-    <div class="cb-node cb-node--stream" style={`left:${i % 2 === 0 ? 10.9 : 19.9}%; top:${i < 2 ? 60 : 68.3}%;`}>
+    <div class="cb-node cb-node--stream" style={`left:${COLS[i % 2]}; top:${ROWS[Math.floor(i / 2)]};`}>
       <div class="dgm-node cb-logo">
-        <svg class="cb-logo__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={s.icon} fill="currentColor" /></svg>
+        <svg class="cb-logo__icon" viewBox={s.vb} aria-hidden="true"><path d={s.d} fill="currentColor" /></svg>
         <span class="cb-logo__name">{s.name}</span>
       </div>
     </div>
   ))}
-  <div class="cb-node cb-node--more" style="left:15.2%; top:77.2%;">
+  <div class="cb-node cb-node--more" style="left:15.2%; top:85.6%;">
     <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">+ more integrations</span></div>
   </div>
 
   <!-- TEAM BRAIN -->
-  <div class="cb-node cb-node--brain" style="left:50%; top:37.8%;">
+  <div class="cb-node cb-node--brain" style="left:50%; top:36.25%;">
     <div class="dgm-node cb-brain">
-      <span class="cb-cdot cb-cdot--brain"></span>
       <span class="cb-brain__title">Team Brain</span>
       <span class="cb-brain__meta">Knowledge · Memory</span>
       <span class="cb-brain__meta">Reasoning · Policy</span>
@@ -125,57 +131,55 @@ const streams = [
   </div>
 
   <!-- CONTEXT ENGINE (closes the loop) -->
-  <div class="cb-node cb-node--engine" style="left:50%; top:64.4%;">
+  <div class="cb-node cb-node--engine" style="left:50%; top:56%;">
     <div class="dgm-node cb-engine">
-      <span class="cb-cdot cb-cdot--brain"></span>
       <span class="dgm-node__title">Context Engine</span>
       <span class="dgm-node__meta">manages context · finds patterns</span>
     </div>
   </div>
 
   <!-- SURFACES -->
-  <span class="cb-label cb-label--surfaces" style="left:84.8%; top:5.6%;">SURFACES</span>
-  <div class="cb-node" style="left:84.8%; top:13.9%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--share"></span><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
+  <span class="cb-label cb-label--surfaces" style="left:84.8%; top:6.5%;">SURFACES</span>
+  <div class="cb-node" style="left:84.8%; top:16%;">
+    <div class="dgm-node cb-tint--share"><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
   </div>
-  <div class="cb-node" style="left:84.8%; top:26.7%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--share"></span><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
+  <div class="cb-node" style="left:84.8%; top:29.75%;">
+    <div class="dgm-node cb-tint--share"><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
   </div>
-  <div class="cb-node" style="left:84.8%; top:39.4%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--share"></span><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
+  <div class="cb-node" style="left:84.8%; top:43.5%;">
+    <div class="dgm-node cb-tint--share"><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
   </div>
 
   <!-- ACTIONS -->
-  <span class="cb-label cb-label--actions" style="left:84.8%; top:52.2%;">ACTIONS</span>
-  <div class="cb-node" style="left:84.8%; top:60.6%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--act"></span><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
+  <span class="cb-label cb-label--actions" style="left:84.8%; top:51.25%;">ACTIONS</span>
+  <div class="cb-node" style="left:84.8%; top:59.4%;">
+    <div class="dgm-node cb-tint--act"><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
   </div>
-  <div class="cb-node" style="left:84.8%; top:73.9%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--act"></span><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
+  <div class="cb-node" style="left:84.8%; top:73.1%;">
+    <div class="dgm-node cb-tint--act"><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
   </div>
-  <div class="cb-node" style="left:84.8%; top:87.2%;">
-    <div class="dgm-node"><span class="cb-cdot cb-cdot--act"></span><span class="dgm-node__title">Improve harness</span><span class="dgm-node__meta">a goal → shared skills, hooks &amp; guards</span></div>
+  <div class="cb-node" style="left:84.8%; top:86.9%;">
+    <div class="dgm-node cb-tint--act"><span class="dgm-node__title">Improve harness</span><span class="dgm-node__meta">a goal → shared skills, hooks &amp; guards</span></div>
   </div>
 
   <!-- edge labels — clear of the lines -->
-  <span class="cb-edge-label" style="left:33%; top:9%;">daily updates →</span>
-  <span class="cb-edge-label" style="left:31%; top:48%;">ingestion ⇢</span>
+  <span class="cb-edge-label" style="left:32%; top:12%;">daily updates →</span>
+  <span class="cb-edge-label" style="left:31%; top:47%;">ingestion ⇢</span>
 </figure>
 
 <style>
   .cbrain {
     position: relative;
-    aspect-ratio: 1280 / 900;
+    aspect-ratio: 1280 / 800;
     width: 100%;
     margin-inline: auto;
-    /* cards size in cqw so they scale WITH the viewBox-positioned layout —
-       keeps vertical gaps proportional at every width. */
     container-type: inline-size;
   }
 
   /* ---- edges ---- */
   .cb-in { stroke: color-mix(in srgb, var(--aios-violet) 60%, var(--aios-border-strong)); }
-  .cb-loop { stroke: color-mix(in srgb, var(--aios-emerald) 62%, var(--aios-border-strong)); }
+  .cb-loop-in  { stroke: color-mix(in srgb, var(--aios-violet) 68%, var(--aios-border-strong)); }
+  .cb-loop-out { stroke: color-mix(in srgb, var(--aios-emerald) 68%, var(--aios-border-strong)); }
   .cb-flow {
     stroke: var(--aios-violet);
     stroke-dasharray: 2 9;
@@ -190,7 +194,7 @@ const streams = [
     50%      { opacity: 0.92; transform: scale(1.04); }
   }
 
-  /* ---- legend labels (carry the rationed colour dot) ---- */
+  /* ---- legend labels (carry the rationed colour dot — the key) ---- */
   .cb-label {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -226,7 +230,7 @@ const streams = [
     pointer-events: none;
   }
 
-  /* ---- nodes — centered, roomy, per-card dot top-left ---- */
+  /* ---- nodes — centered, roomy, accent carried by a subtle tinted border ---- */
   .cb-node {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -248,21 +252,21 @@ const streams = [
   .cbrain :global(.dgm-node__title) { font-size: clamp(0.95rem, 1.5cqw, 1.4rem); }
   .cbrain :global(.dgm-node__meta)  { font-size: clamp(0.6rem, 0.82cqw, 0.78rem); line-height: 1.45; }
 
-  /* per-card accent dot, top-left (Mac close-button position) */
-  .cb-cdot {
-    position: absolute;
-    top: clamp(10px, 1cqw, 15px); left: clamp(12px, 1.15cqw, 17px);
-    width: clamp(7px, 0.7cqw, 10px); aspect-ratio: 1;
-    border-radius: 9999px;
-    background: var(--cd, var(--aios-fg-muted));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cd, transparent) 16%, transparent);
+  /* subtle tinted border + faint matching wash — the card's colour identity */
+  .cb-tint--ic {
+    border-color: color-mix(in srgb, var(--aios-violet) 36%, var(--aios-border));
+    background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--aios-violet) 6%, var(--aios-surface)) 0%, var(--aios-surface) 74%);
   }
-  .cb-cdot--ic    { --cd: var(--aios-violet); }
-  .cb-cdot--brain { --cd: var(--aios-emerald); }
-  .cb-cdot--share { --cd: var(--aios-accent); }
-  .cb-cdot--act   { --cd: var(--aios-cyan); }
+  .cb-tint--share {
+    border-color: color-mix(in srgb, var(--aios-accent) 40%, var(--aios-border));
+    background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--aios-accent) 7%, var(--aios-surface)) 0%, var(--aios-surface) 74%);
+  }
+  .cb-tint--act {
+    border-color: color-mix(in srgb, var(--aios-cyan) 40%, var(--aios-border));
+    background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--aios-cyan) 7%, var(--aios-surface)) 0%, var(--aios-surface) 74%);
+  }
 
-  /* data-stream logo cards — compact, monochrome icon + name */
+  /* data-stream logo cards — compact, monochrome icon + name, neutral grey */
   .cb-logo {
     flex-direction: row;
     gap: 0.65cqw;
@@ -283,9 +287,9 @@ const streams = [
     border-style: dashed;
     box-shadow: none;
   }
-  .dgm-node--ghost .dgm-node__meta { font-size: 0.7rem; color: var(--aios-fg-muted); }
+  .dgm-node--ghost .dgm-node__meta { font-size: clamp(0.6rem, 0.78cqw, 0.7rem); color: var(--aios-fg-muted); }
 
-  /* the brain — larger, prism-tinted */
+  /* the brain — larger, violet-tinted (gradient border = its colour identity) */
   .cb-brain {
     gap: 0.6cqw;
     padding: clamp(18px, 2cqw, 30px) clamp(16px, 1.8cqw, 26px);
@@ -293,7 +297,7 @@ const streams = [
       radial-gradient(120% 120% at 50% 0%,
         color-mix(in srgb, var(--aios-violet) 11%, var(--aios-surface)) 0%,
         var(--aios-surface) 70%);
-    border-color: color-mix(in srgb, var(--aios-violet) 30%, var(--aios-border));
+    border-color: color-mix(in srgb, var(--aios-violet) 32%, var(--aios-border));
     box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 26px 64px -34px color-mix(in srgb, var(--aios-violet) 60%, transparent);
   }
   .cb-brain__title {
@@ -313,10 +317,10 @@ const streams = [
 
   /* context engine — emerald-tinted, sibling of the brain */
   .cb-engine {
-    border-color: color-mix(in srgb, var(--aios-emerald) 28%, var(--aios-border));
+    border-color: color-mix(in srgb, var(--aios-emerald) 34%, var(--aios-border));
     background:
       radial-gradient(120% 120% at 50% 0%,
-        color-mix(in srgb, var(--aios-emerald) 8%, var(--aios-surface)) 0%,
+        color-mix(in srgb, var(--aios-emerald) 9%, var(--aios-surface)) 0%,
         var(--aios-surface) 75%);
   }
 

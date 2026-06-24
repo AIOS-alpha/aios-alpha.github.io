@@ -7,16 +7,56 @@
    private/admin content is rejected at the boundary (422) and never leaves.
    Shared signal returns as insight, always within your tier.
 
-   Inline SVG + CSS only. Two tokens ride offset-paths (SVG user units, so they
-   scale with the viewBox): one CROSSES the boundary, one is STOPPED at it.
-   Token-driven, dual-mode, reduced-motion safe. Accents rationed: violet =
-   individual, emerald = collective, lime = surfaced; the boundary + guards are
-   greyscale chrome (governance, not a colour role). See docs/diagram-system.md.
+   SINGLE-SVG pattern (see docs/diagram-system.md): every box, label, edge and
+   token lives in ONE viewBox coordinate space. Geometry is defined once as data
+   below and everything (label centres, edge endpoints, token paths) derives from
+   it — so nothing can drift, overflow its box, or collide. Token-driven,
+   dual-mode, reduced-motion safe. Colour rationed: violet = individual, emerald
+   = collective, lime = surfaced; the wall + guards are greyscale chrome.
 
    Grounded in: brain-api.md (tiers + 422 forbidden_tier), architecture.md
-   (three-place enforcement + SQL tier filter), aios.mjs (sync default-deny),
-   team-ops-guard.sh + feature-set.md (guard hook + validators). */
+   (three-place enforcement + SQL tier filter), aios.mjs (sync default-deny). */
 import '../../../styles/diagrams.css';
+
+const VB = { w: 1040, h: 620 };
+const WALL_X = 580;
+
+// ---- Node geometry: defined once on the grid; all else derives from it. ----
+const N = {
+  workspace: { x: 48,  y: 188, w: 208, h: 112, accent: 'ic',
+    title: ['Your workspace'],     meta: ['0-context … 5-personal', '· tiered'] },
+  guards:    { x: 288, y: 188, w: 196, h: 112,
+    title: ['Guards & validators'], meta: ['hook · validators', '· default-deny'] },
+  contract:  { x: 500, y: 176, w: 160, h: 136, gate: true,
+    title: ['brain-api', 'contract'], meta: ['/api/v1 ·', 'both sides build to it'] },
+  brain:     { x: 736, y: 188, w: 208, h: 112, accent: 'brain',
+    title: ['Team Brain'],          meta: ['tier-filtered memory', '· grounded query'] },
+  shared:    { x: 728, y: 398, w: 224, h: 112, accent: 'share',
+    title: ['Shared signal'],       meta: ['tasks · decisions', 'plain-english query'] },
+};
+
+const cx     = (n) => n.x + n.w / 2;
+const cy     = (n) => n.y + n.h / 2;
+const right  = (n) => n.x + n.w;
+const top    = (n) => n.y;
+const bottom = (n) => n.y + n.h;
+
+const MID_Y = cy(N.workspace); // 244 — the main flow lane
+
+// Inner text rhythm, relative to box top.
+const dotDY = 18, titleDY = 58, title2DY = 80, metaDY = 88, meta2DY = 104;
+
+const nodes = Object.entries(N).map(([key, n]) => ({ key, ...n }));
+
+// Straight, hairline main-flow connectors (box edge → box edge).
+const flow = [
+  [right(N.workspace), MID_Y, N.guards.x,   MID_Y],
+  [right(N.guards),    MID_Y, N.contract.x, MID_Y],
+  [right(N.contract),  MID_Y, N.brain.x,    MID_Y],
+];
+
+const BLOCK_Y = 392;          // the rejected-token lane, below the gate
+const TOKEN_OFFSET = 70;      // how far inside its box a token starts/ends
 ---
 
 <figure class="iflow dgm" aria-labelledby="iflow-cap">
@@ -29,133 +69,207 @@ import '../../../styles/diagrams.css';
     within your tier.
   </p>
 
-  <svg class="dgm-svg" viewBox="0 0 1000 562" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg viewBox={`0 0 ${VB.w} ${VB.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>
-      <marker id="if-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
+      <marker id="if-arrow" viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="if-arrowhead" />
       </marker>
       <radialGradient id="if-token" cx="50%" cy="50%" r="50%">
         <stop offset="0%"  stop-color="var(--aios-emerald)" />
-        <stop offset="55%" stop-color="var(--aios-violet)" />
+        <stop offset="60%" stop-color="var(--aios-violet)" />
         <stop offset="100%" stop-color="var(--aios-violet)" />
       </radialGradient>
     </defs>
 
     <!-- zone frames (faint chrome) -->
-    <rect class="dgm-edge dgm-edge--faint" x="34"  y="104" width="470" height="372" rx="16" />
-    <rect class="dgm-edge dgm-edge--faint" x="552" y="104" width="414" height="300" rx="16" />
+    <rect class="if-zone-frame" x="26"  y="138" width="532" height="392" rx="20" />
+    <rect class="if-zone-frame" x="602" y="138" width="412" height="392" rx="20" />
+    <text class="if-zonelabel" x="52"  y="166">YOUR MACHINE</text>
+    <text class="if-zonelabel" x="628" y="166">SHARED</text>
 
-    <!-- main flow: workspace -> guards -> [contract] -> brain -->
-    <path class="dgm-edge" d="M196,165 L300,165" marker-end="url(#if-arrow)" />
-    <path class="dgm-edge" d="M404,165 L470,165" marker-end="url(#if-arrow)" />
-    <path class="dgm-edge" d="M566,165 L640,165" marker-end="url(#if-arrow)" />
-    <!-- drift hint on the crossing segment -->
-    <path class="dgm-edge dgm-flow if-cross-edge" d="M404,165 L470,165" />
+    <!-- insight returns: dashed arc over the top, shared → workspace -->
+    <path class="if-return" marker-end="url(#if-arrow)"
+          d={`M ${cx(N.shared)},${top(N.shared)} C 905,150 760,64 520,64 C 360,64 210,112 ${cx(N.workspace)},${top(N.workspace) - 6}`} />
+    <text class="if-elabel if-elabel--return" x="520" y="50" text-anchor="middle">↩ insight returns</text>
 
-    <!-- brain -> insight -->
-    <path class="dgm-edge dgm-edge--faint" d="M720,205 C795,255 800,300 845,330" marker-end="url(#if-arrow)" />
+    <!-- main flow connectors -->
+    {flow.map(([x1, y1, x2, y2]) => (
+      <line class="if-edge" x1={x1} y1={y1} x2={x2} y2={y2} marker-end="url(#if-arrow)" />
+    ))}
 
-    <!-- insight -> workspace : dashed return arc over the top -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed if-return" d="M856,322 C912,150 540,58 300,58 C220,58 150,92 120,138" marker-end="url(#if-arrow)" />
+    <!-- brain → shared signal (query) -->
+    <path class="if-edge" marker-end="url(#if-arrow)"
+          d={`M ${cx(N.brain)},${bottom(N.brain)} C ${cx(N.brain)},350 ${cx(N.shared)},356 ${cx(N.shared)},${top(N.shared)}`} />
+    <text class="if-elabel" x={cx(N.brain) + 64} y="352" text-anchor="middle">query · plain english</text>
 
-    <!-- the brain-api contract: the vertical boundary line -->
-    <line class="dgm-edge if-wall" x1="520" y1="80" x2="520" y2="486" />
-    <line class="dgm-edge if-wall dgm-pulse" x1="520" y1="80" x2="520" y2="486" />
+    <!-- the brain-api contract: the boundary wall (drawn behind the gate node) -->
+    <line class="if-wall"       x1={WALL_X} y1="150" x2={WALL_X} y2="520" />
+    <line class="if-wall-glow"  x1={WALL_X} y1="150" x2={WALL_X} y2="520" />
 
-    <!-- blocked path: private/admin token travels to the wall and stops -->
-    <path class="dgm-edge--faint if-stub" d="M392,430 L505,430" fill="none" />
+    <!-- blocked lane: a private/admin token travels to the wall and stops -->
+    <line class="if-stub" x1="312" y1={BLOCK_Y} x2={WALL_X - 6} y2={BLOCK_Y} />
+    <text class="if-elabel if-elabel--stay" x="312" y={BLOCK_Y + 30} text-anchor="start">STAYS LOCAL</text>
+    <text class="if-elabel if-elabel--422"  x={WALL_X + 16} y={BLOCK_Y + 4} text-anchor="start">422 · private rejected</text>
 
-    <!-- accepted token crosses the boundary -->
-    <circle class="dgm-token if-accepted" r="6" fill="url(#if-token)" />
-    <!-- blocked token: parks against the wall -->
-    <circle class="if-blocked" r="5.5" fill="var(--aios-violet)" />
-    <!-- 422 block cap at the wall (opacity reveal, no layout shift) -->
+    <!-- node cards -->
+    {nodes.map((n) => (
+      <g class={`if-node${n.gate ? ' if-node--gate' : ''}`}>
+        <rect class="if-box" x={n.x} y={n.y} width={n.w} height={n.h} rx="14" />
+        {n.accent && (
+          <circle class={`if-dot if-dot--${n.accent}`} cx={cx(n)} cy={n.y + dotDY} r="4" />
+        )}
+        {n.title.length === 1
+          ? <text class="if-title" x={cx(n)} y={n.y + titleDY} text-anchor="middle">{n.title[0]}</text>
+          : (<>
+              <text class={`if-title${n.gate ? ' if-title--mono' : ''}`} x={cx(n)} y={n.y + (n.gate ? 52 : titleDY)} text-anchor="middle">{n.title[0]}</text>
+              <text class={`if-title${n.gate ? ' if-title--mono' : ''}`} x={cx(n)} y={n.y + (n.gate ? 74 : title2DY)} text-anchor="middle">{n.title[1]}</text>
+            </>)}
+        <text class="if-meta" x={cx(n)} y={n.y + (n.gate ? 100 : metaDY)} text-anchor="middle">{n.meta[0]}</text>
+        <text class="if-meta" x={cx(n)} y={n.y + (n.gate ? 116 : meta2DY)} text-anchor="middle">{n.meta[1]}</text>
+      </g>
+    ))}
+
+    <!-- tier legend (under workspace) -->
+    <g class="if-tiers" transform={`translate(${cx(N.workspace)}, 392)`}>
+      <text class="if-elabel" x="0" y="0" text-anchor="middle">TIER TAGS</text>
+      <g class="if-chip" transform="translate(-99, 18)">
+        <rect x="0" y="0" width="66" height="22" rx="11" /><circle class="if-dot--ic" cx="13" cy="11" r="3.5" /><text x="24" y="15">private</text>
+      </g>
+      <g class="if-chip" transform="translate(-26, 18)">
+        <rect x="0" y="0" width="56" height="22" rx="11" /><circle class="if-dot--team" cx="13" cy="11" r="3.5" /><text x="24" y="15">team</text>
+      </g>
+      <g class="if-chip" transform="translate(38, 18)">
+        <rect x="0" y="0" width="68" height="22" rx="11" /><circle class="if-dot--share" cx="13" cy="11" r="3.5" /><text x="24" y="15">external</text>
+      </g>
+      <text class="if-tiers-sub" x="0" y="66" text-anchor="middle">private never leaves your machine</text>
+    </g>
+
+    <!-- edge labels along the flow -->
+    <text class="if-elabel" x={(right(N.workspace) + N.guards.x) / 2} y="172" text-anchor="middle">tier-tag · validate</text>
+    <text class="if-elabel" x={(right(N.guards) + N.contract.x) / 2} y="158" text-anchor="middle">push · team / external ↗</text>
+    <text class="if-elabel if-elabel--ok" x={(right(N.contract) + N.brain.x) / 2} y="232" text-anchor="middle">accepted ✓</text>
+
+    <!-- the accepted token crosses the boundary; the blocked one parks at it -->
+    <circle class="if-tok-accepted" r="6" />
+    <circle class="if-tok-blocked"  r="5.5" />
+    <!-- 422 ✕ cap, revealed when the blocked token arrives -->
     <g class="if-cap">
-      <line x1="512" y1="422" x2="522" y2="438" />
-      <line x1="522" y1="422" x2="512" y2="438" />
+      <line x1={WALL_X - 8} y1={BLOCK_Y - 8} x2={WALL_X + 8} y2={BLOCK_Y + 8} />
+      <line x1={WALL_X + 8} y1={BLOCK_Y - 8} x2={WALL_X - 8} y2={BLOCK_Y + 8} />
     </g>
   </svg>
-
-  <!-- zone captions -->
-  <span class="if-zone" style="left:5%;  top:20.5%;">YOUR MACHINE</span>
-  <span class="if-zone" style="left:57%; top:20.5%;">SHARED</span>
-
-  <!-- nodes -->
-  <div class="iflow-node" style="left:13%; top:29.4%;">
-    <div class="dgm-node if-node"><span class="if-accent if-accent--ic"></span><span class="dgm-node__title">Your workspace</span><span class="dgm-node__meta">0-context … 5-personal · tiered</span></div>
-  </div>
-  <div class="iflow-node" style="left:35%; top:29.4%;">
-    <div class="dgm-node if-node"><span class="dgm-node__title">Guards &amp; validators</span><span class="dgm-node__meta">hook · validators · default-deny</span></div>
-  </div>
-  <div class="iflow-node iflow-node--gate" style="left:52%; top:29.4%;">
-    <div class="dgm-node if-node if-node--gate"><span class="dgm-node__title">brain-api contract</span><span class="dgm-node__meta">/api/v1 · both sides build to it</span></div>
-  </div>
-  <div class="iflow-node" style="left:72%; top:29.4%;">
-    <div class="dgm-node if-node"><span class="if-accent if-accent--brain"></span><span class="dgm-node__title">Team Brain</span><span class="dgm-node__meta">tier-filtered memory · grounded query</span></div>
-  </div>
-  <div class="iflow-node" style="left:86%; top:64%;">
-    <div class="dgm-node if-node"><span class="if-accent if-accent--share"></span><span class="dgm-node__title">Shared signal</span><span class="dgm-node__meta">tasks · decisions · plain-english query</span></div>
-  </div>
-
-  <!-- tier legend (under workspace) -->
-  <div class="if-tiers" style="left:13%; top:62.5%;">
-    <span class="if-tiers__head">TIER TAGS</span>
-    <span class="if-tiers__row">
-      <span class="if-chip if-chip--ic">private</span>
-      <span class="if-chip if-chip--team">team</span>
-      <span class="if-chip if-chip--ext">external</span>
-    </span>
-    <span class="if-tiers__sub">private never leaves your machine</span>
-  </div>
-
-  <!-- edge labels -->
-  <span class="if-elabel" style="left:23.5%; top:24.5%;">tier-tag · validate</span>
-  <span class="if-elabel" style="left:43.5%; top:24.5%;">push · team / external ↗</span>
-  <span class="if-elabel" style="left:63.5%; top:24.5%;">accepted ✓</span>
-  <span class="if-elabel" style="left:80%;   top:49%;">query · plain english</span>
-  <span class="if-elabel if-elabel--return" style="left:46%; top:7.5%;">↩ insight returns</span>
-
-  <!-- the blocked / privacy moment -->
-  <span class="if-elabel if-elabel--stay" style="left:30%;   top:76.5%;">STAYS LOCAL</span>
-  <span class="if-elabel if-elabel--422"  style="left:53.5%; top:76.5%;">422 · private rejected</span>
 </figure>
 
 <style>
   .iflow {
     position: relative;
-    aspect-ratio: 1000 / 562;
+    width: 100%;
     max-width: 1040px;
     margin-inline: auto;
+    aspect-ratio: 1040 / 620;
   }
+  .iflow svg { width: 100%; height: 100%; overflow: visible; }
 
-  /* ---- the boundary line ---- */
-  .if-wall { stroke: var(--aios-border-strong); stroke-width: 1.5; }
-  .if-wall.dgm-pulse {
-    stroke: var(--aios-violet);
-    stroke-width: 3;
-    opacity: 0.18;
-    filter: blur(1px);
+  /* ---- chrome ---- */
+  .if-zone-frame { fill: none; stroke: var(--aios-border); stroke-width: 1; }
+  .if-zonelabel {
+    fill: var(--aios-fg-muted);
+    font-family: var(--aios-font-mono);
+    font-size: 13px;
+    letter-spacing: 2.2px;
+  }
+  .if-edge { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.25; }
+  .if-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .if-return {
+    fill: none;
+    stroke: var(--aios-border-strong);
+    stroke-width: 1.1;
+    stroke-dasharray: 4 6;
+    stroke-linecap: round;
+    opacity: 0.6;
   }
   .if-stub { stroke: color-mix(in srgb, var(--aios-violet) 45%, var(--aios-border-strong)); stroke-width: 1.25; }
-  .if-cross-edge { stroke: var(--aios-violet); opacity: 0.7; }
 
-  /* ---- tokens ---- */
-  .if-accepted {
-    offset-path: path('M196,165 L470,165 L520,165 L640,165 L716,165');
+  /* ---- the boundary wall ---- */
+  .if-wall { stroke: var(--aios-border-strong); stroke-width: 1.5; }
+  .if-wall-glow {
+    stroke: var(--aios-violet);
+    stroke-width: 4;
+    opacity: 0.16;
+    filter: blur(1.5px);
+    animation: if-wall-pulse 4.5s ease-in-out infinite;
+  }
+  @keyframes if-wall-pulse { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.24; } }
+
+  /* ---- node cards ---- */
+  .if-box {
+    fill: var(--aios-surface);
+    stroke: var(--aios-border);
+    stroke-width: 1;
+  }
+  .if-node--gate .if-box {
+    stroke: var(--aios-border-strong);
+    fill: color-mix(in srgb, var(--aios-fg) 3%, var(--aios-surface));
+  }
+  .if-title {
+    fill: var(--aios-fg);
+    font-family: var(--aios-font-display);
+    font-size: 21px;
+    letter-spacing: -0.01em;
+  }
+  .if-title--mono {
+    font-family: var(--aios-font-mono);
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  .if-meta {
+    fill: var(--aios-fg-secondary);
+    font-family: var(--aios-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.01em;
+  }
+  .if-dot--ic    { fill: var(--aios-violet); }
+  .if-dot--brain { fill: var(--aios-emerald); }
+  .if-dot--share { fill: var(--aios-accent); }
+  .if-dot--team  { fill: var(--aios-fg-muted); }
+
+  /* ---- tier legend ---- */
+  .if-tiers text { font-family: var(--aios-font-mono); }
+  .if-tiers > text:first-child { fill: var(--aios-fg-muted); font-size: 10.5px; letter-spacing: 1.6px; }
+  .if-chip rect { fill: none; stroke: var(--aios-border); stroke-width: 1; }
+  .if-chip text { fill: var(--aios-fg-secondary); font-size: 11px; }
+  .if-tiers-sub { fill: var(--aios-fg-muted); font-size: 10px; letter-spacing: 0.02em; }
+
+  /* ---- edge labels ---- */
+  .if-elabel {
+    fill: var(--aios-fg-muted);
+    font-family: var(--aios-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+  .if-elabel--ok     { fill: color-mix(in srgb, var(--aios-emerald) 55%, var(--aios-fg-muted)); }
+  .if-elabel--422    { fill: color-mix(in srgb, var(--aios-violet) 70%, var(--aios-fg-muted)); }
+  .if-elabel--stay   { fill: var(--aios-fg-secondary); }
+  .if-elabel--return { fill: var(--aios-fg-muted); }
+
+  /* ---- tokens (motion) ---- */
+  .if-tok-accepted {
     fill: url(#if-token);
     filter: drop-shadow(0 0 5px color-mix(in srgb, var(--aios-violet) 70%, transparent));
+    offset-path: path('M256,244 L944,244');
     animation: if-cross 11s linear infinite;
   }
   @keyframes if-cross {
     0%   { offset-distance: 0%;   opacity: 0; }
-    7%   { opacity: 1; }
+    6%   { opacity: 1; }
     90%  { opacity: 1; }
     100% { offset-distance: 100%; opacity: 0; }
   }
-  .if-blocked {
-    offset-path: path('M392,430 L505,430');
+  .if-tok-blocked {
     fill: var(--aios-violet);
     filter: drop-shadow(0 0 4px color-mix(in srgb, var(--aios-violet) 60%, transparent));
+    offset-path: path('M312,392 L574,392');
     animation: if-block 11s ease-out infinite;
   }
   @keyframes if-block {
@@ -174,132 +288,12 @@ import '../../../styles/diagrams.css';
     100%    { opacity: 0; }
   }
 
-  /* ---- zone captions ---- */
-  .if-zone {
-    position: absolute;
-    transform: translateY(-50%);
-    font-family: var(--aios-font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    color: var(--aios-fg-muted);
-    pointer-events: none;
-  }
-
-  /* ---- nodes ---- */
-  .iflow-node {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    width: 17%;
-    min-width: 150px;
-  }
-  .iflow-node--gate { width: 15%; min-width: 138px; }
-
-  .if-node { align-items: center; text-align: center; gap: 6px; padding: 15px 16px; }
-  .if-node .dgm-node__title { font-size: 1.16rem; }
-  .if-node .dgm-node__meta  { font-size: 0.66rem; line-height: 1.4; }
-  .if-accent {
-    width: 8px; height: 8px; border-radius: 9999px;
-    background: var(--if-dot, var(--aios-fg-muted));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--if-dot, transparent) 18%, transparent);
-  }
-  .if-accent--ic    { --if-dot: var(--aios-violet); }
-  .if-accent--brain { --if-dot: var(--aios-emerald); }
-  .if-accent--share { --if-dot: var(--aios-accent); }
-
-  /* the contract gate — greyscale, but slightly elevated as the spine */
-  .if-node--gate {
-    border-color: var(--aios-border-strong);
-    background: color-mix(in srgb, var(--aios-fg) 3%, var(--aios-surface));
-  }
-  .if-node--gate .dgm-node__title {
-    font-family: var(--aios-font-mono);
-    font-size: 0.86rem;
-    letter-spacing: 0.02em;
-  }
-
-  /* ---- tier legend ---- */
-  .if-tiers {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    width: 17%;
-    min-width: 150px;
-    pointer-events: none;
-  }
-  .if-tiers__head {
-    font-family: var(--aios-font-mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.16em;
-    color: var(--aios-fg-muted);
-  }
-  .if-tiers__row { display: inline-flex; gap: 6px; }
-  .if-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--aios-font-mono);
-    font-size: 0.6rem;
-    color: var(--aios-fg-secondary);
-    border: 1px solid var(--aios-border);
-    border-radius: 9999px;
-    padding: 2px 8px;
-  }
-  .if-chip::before {
-    content: '';
-    width: 6px; height: 6px; border-radius: 9999px;
-    background: var(--if-dot, var(--aios-fg-muted));
-  }
-  .if-chip--ic   { --if-dot: var(--aios-violet); }
-  .if-chip--team { --if-dot: var(--aios-fg-muted); }
-  .if-chip--ext  { --if-dot: var(--aios-accent); }
-  .if-tiers__sub {
-    font-family: var(--aios-font-mono);
-    font-size: 0.56rem;
-    color: var(--aios-fg-muted);
-  }
-
-  /* ---- edge labels ---- */
-  .if-elabel {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    font-family: var(--aios-font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.03em;
-    color: var(--aios-fg-muted);
-    white-space: nowrap;
-    pointer-events: none;
-  }
-  .if-elabel--422 { color: color-mix(in srgb, var(--aios-violet) 70%, var(--aios-fg-muted)); }
-  .if-elabel--stay { color: var(--aios-fg-secondary); }
-
-  /* ---- mobile: stack the flow vertically, drop the wall choreography ---- */
-  @media (max-width: 720px) {
-    .iflow {
-      aspect-ratio: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 420px;
-    }
-    .dgm-svg, .if-zone, .if-elabel { display: none; }
-    .iflow-node, .if-tiers {
-      position: static;
-      transform: none;
-      width: auto;
-      min-width: 0;
-    }
-    .if-tiers { margin-top: 4px; }
-  }
-
   /* ---- reduced motion: one crossed, one stopped — held still ---- */
   @media (prefers-reduced-motion: reduce) {
-    .if-accepted { animation: none; offset-distance: 64%; opacity: 1; }
-    .if-blocked  { animation: none; offset-distance: 100%; opacity: 1; }
-    .if-cap      { animation: none; opacity: 0.9; }
-    .if-cross-edge, .if-wall.dgm-pulse { animation: none; }
+    .if-tok-accepted { animation: none; offset-distance: 62%; opacity: 1; }
+    .if-tok-blocked  { animation: none; offset-distance: 100%; opacity: 1; }
+    .if-cap          { animation: none; opacity: 0.9; }
+    .if-wall-glow    { animation: none; opacity: 0.16; }
   }
 
   .sr-only {

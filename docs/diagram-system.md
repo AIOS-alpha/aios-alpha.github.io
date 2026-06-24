@@ -48,14 +48,36 @@ each node is distinct, a single centered accent dot per card is fine (`InfoFlow`
 | `.dgm-pulse` | soft breathing for a loop core / halo |
 | `.dgm-flow` | dashed drift along an edge — a direction-of-travel hint |
 
-### The hybrid layout pattern
+### The single-SVG layout pattern
 
-Nodes are **HTML overlays** (crisp editorial text) positioned by percentage on top
-of an **SVG layer** that draws only the ring/edges + the moving token. Because the
-container has a fixed `aspect-ratio` matching the SVG `viewBox` and the SVG uses
-`preserveAspectRatio="xMidYMid meet"`, an HTML node at `left: 50%; top: 14.4%`
-lands exactly on the viewBox point `(500, 81)` of a `1000 × 562` box. This gives
-selectable, accessible text **and** smooth vector motion that scales together.
+**Everything lives in one SVG `viewBox` — boxes (`<rect>`), labels (`<text>`),
+connectors (`<path>`/`<line>`), and moving tokens (`<circle>`).** There is no HTML
+overlay. This is the rule that keeps a diagram from drifting.
+
+> **Why not an HTML overlay?** An earlier version positioned node cards as HTML
+> with `left/top` percentages on top of an SVG that drew only the edges. That is
+> two coordinate systems (CSS percent vs. viewBox units) kept in sync by hand. The
+> moment a label's text length, the font metrics, or one coordinate changes, the
+> overlay drifts off the edges — clipped zone labels, titles overflowing their
+> boxes, labels landing on arrows. **One coordinate space makes alignment
+> deterministic.** A clean reference (the fluora deck) does exactly this.
+
+**Geometry as data.** Define node geometry once in frontmatter and derive every
+label centre and edge endpoint from it — never hand-type a magic number per label:
+
+```astro
+---
+const N = { workspace: { x: 48, y: 188, w: 208, h: 112, /* … */ } };
+const cx = (n) => n.x + n.w / 2;  const right = (n) => n.x + n.w;
+---
+<text x={cx(N.workspace)} text-anchor="middle">…</text>           <!-- label can't drift -->
+<line x1={right(N.workspace)} x2={N.guards.x} marker-end="url(#a)" /> <!-- edge: box → box -->
+```
+
+**Text fits the box.** SVG `<text>` does not wrap — split long strings into
+multiple `<text>` lines yourself and size the box to hold them (rough fit: mono
+≈ 0.6 × font-size per char, serif ≈ 0.5 ×). Centre with `text-anchor="middle"`;
+keep edge labels in the open corridors between boxes.
 
 ### Motion via `offset-path` (the key trick)
 
@@ -79,20 +101,28 @@ which means `prefers-reduced-motion` can switch it off declaratively.
 
 ## Accessibility
 
-- Node text is real DOM text (readable, selectable, translatable).
-- The SVG layer is decorative: `aria-hidden="true"`.
+- The whole SVG is decorative chrome: `aria-hidden="true"`. (SVG `<text>` does not
+  give a clean reading order, so meaning is carried by the prose caption instead.)
 - Each diagram `<figure>` carries an `aria-labelledby` pointing at an `.sr-only`
-  sentence that states the flow in prose (see `InfoFlow.astro`).
+  sentence that states the flow in prose (see `InfoFlow.astro`). This is the
+  authoritative description for assistive tech.
 
 ## Authoring a new diagram
 
 1. New `.astro` in `src/components/landing/diagrams/`; `import '…/styles/diagrams.css'`.
 2. Wrap in `<figure class="… dgm" aria-labelledby="…">` + an `.sr-only` summary.
-3. Draw edges/ring/token in one `.dgm-svg` (`viewBox` = your aspect box).
-4. Place `.dgm-node` cards as `%`-positioned HTML overlays on the viewBox points.
-5. Ration colour to `.dgm-accent--*`; keep all chrome greyscale.
-6. Put per-diagram layout in the component's scoped `<style>`; reuse primitives.
+3. Define node geometry as data in frontmatter; add helpers (`cx`, `right`, …).
+4. Draw everything inside one `<svg viewBox>` — `<rect>` boxes, `<text>` labels,
+   `<path>`/`<line>` edges, `<circle>` tokens — positions derived from the data.
+5. Ration colour to the accents; keep all chrome greyscale.
+6. Put per-diagram styling in the component's scoped `<style>`; reuse tokens.
 7. Add a `prefers-reduced-motion` block — verify the static frame reads.
+8. Run `npm run dev`, screenshot the diagram in **both** modes, and walk the
+   punch-list in `.claude/skills/diagram/SKILL.md` before declaring it done.
+
+> `InfoFlow.astro` is the canonical worked example of this pattern; copy its
+> skeleton. The `/diagram` skill (`.claude/skills/diagram/`) is the short version
+> of this doc for agents.
 
 ---
 
