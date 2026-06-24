@@ -62,17 +62,13 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     <!-- brain bokeh — gentle "sleep-light" breathing (6s in / 6s out) -->
     <circle class="cb-halo" cx="640" cy="290" r="170" fill="url(#cb-halo)" />
 
-    <!-- agent-users -> brain (all edges greyscale) -->
-    <path class="dgm-edge" d="M305,128 C410,128 442,248 492,250" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge" d="M305,238 C420,238 452,273 492,275" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge" d="M305,348 C430,348 462,300 492,300" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint cb-flow" d="M305,128 C410,128 442,248 492,250" />
-    <path class="dgm-edge dgm-edge--faint cb-flow" d="M305,238 C420,238 452,273 492,275" />
-    <path class="dgm-edge dgm-edge--faint cb-flow" d="M305,348 C430,348 462,300 492,300" />
-
-    <!-- data streams -> brain (ingestion) -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,475 C400,475 442,335 492,332" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,545 C410,545 452,352 492,348" marker-end="url(#cb-arrow)" />
+    <!-- inputs -> brain : agent-users + integrations, both subtle dashed
+         lines animating toward the brain -->
+    <path class="dgm-edge dgm-edge--faint cb-ingest" d="M305,128 C410,128 442,248 492,250" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint cb-ingest" d="M305,238 C420,238 452,273 492,275" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint cb-ingest" d="M305,348 C430,348 462,300 492,300" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint cb-ingest" d="M312,475 C400,475 442,335 492,332" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint cb-ingest" d="M312,545 C410,545 452,352 492,348" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> surfaces -->
     <path class="dgm-edge dgm-edge--faint" d="M788,250 C880,250 900,128 975,128" marker-end="url(#cb-arrow)" />
@@ -84,9 +80,13 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     <path class="dgm-edge dgm-edge--faint" d="M788,345 C880,345 900,585 975,585" marker-end="url(#cb-arrow)" />
     <path class="dgm-edge dgm-edge--faint" d="M788,362 C870,362 900,695 975,695" marker-end="url(#cb-arrow)" />
 
-    <!-- Context Engine closes the loop — greyscale, centered in the gap -->
-    <path class="dgm-edge" d="M626,390 C615,398 615,403 626,411" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge" d="M654,411 C665,403 665,398 654,390" marker-end="url(#cb-arrow)" />
+    <!-- Context Engine closes the loop — a clean cycle icon centered in the gap -->
+    <g class="cb-cycle" transform="translate(640 416) scale(1.7) translate(-12 -12)">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M8 16H3v5" />
+    </g>
   </svg>
 
   <!-- AGENT-USERS -->
@@ -101,8 +101,8 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User C</span><span class="dgm-node__meta">AIOS Workstation</span></div>
   </div>
 
-  <!-- DATA STREAMS -->
-  <span class="cb-label cb-label--streams" style="left:15.2%; top:51.25%;">DATA STREAMS</span>
+  <!-- INTEGRATIONS -->
+  <span class="cb-label cb-label--streams" style="left:15.2%; top:51.25%;">INTEGRATIONS</span>
   {streams.map((s, i) => (
     <div class="cb-node cb-node--stream" style={`left:${COLS[i % 2]}; top:${ROWS[Math.floor(i / 2)]};`}>
       <div class="dgm-node cb-logo">
@@ -112,7 +112,7 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     </div>
   ))}
   <div class="cb-node cb-node--more" style="left:15.2%; top:85.6%;">
-    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">+ more integrations</span></div>
+    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">+ more</span></div>
   </div>
 
   <!-- TEAM BRAIN -->
@@ -135,8 +135,12 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
   </div>
 
   <!-- CONTEXT ENGINE (closes the loop) -->
-  <div class="cb-node cb-node--engine" style="left:50%; top:59.4%;">
+  <div class="cb-node cb-node--engine" style="left:50%; top:64%;">
     <div class="dgm-node cb-engine">
+      <svg class="cb-engine__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
       <span class="dgm-node__title">Context Engine</span>
       <span class="dgm-node__meta">manages context · finds patterns</span>
     </div>
@@ -178,18 +182,27 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
   }
 
   /* ---- edges — all greyscale ---- */
-  .cb-flow {
-    stroke: var(--aios-fg-muted);
-    stroke-dasharray: 2 9;
-    opacity: 0.5;
-    animation: dgm-dash 1.8s linear infinite;
+  /* inputs (agents + integrations): subtle dashed lines drifting to the brain */
+  .cb-ingest {
+    stroke-dasharray: 4 7;
+    animation: dgm-dash 1.9s linear infinite;
   }
 
-  /* gentle Mac "sleep-light" breathing bokeh — 6s in, 6s out */
+  /* the brain↔engine cycle icon — greyscale, non-scaling stroke */
+  .cb-cycle {
+    fill: none;
+    stroke: var(--aios-border-strong);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cb-cycle path { vector-effect: non-scaling-stroke; }
+
+  /* gentle Mac "sleep-light" breathing bokeh — 6s in, 6s out (≈12% softer) */
   .cb-halo { transform-origin: center; animation: cb-breathe 12s ease-in-out infinite; }
   @keyframes cb-breathe {
-    0%, 100% { opacity: 0.5;  transform: scale(0.99); }
-    50%      { opacity: 0.92; transform: scale(1.04); }
+    0%, 100% { opacity: 0.44; transform: scale(0.99); }
+    50%      { opacity: 0.81; transform: scale(1.04); }
   }
 
   /* ---- legend labels (carry the rationed colour dot — the key) ---- */
@@ -324,13 +337,19 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
 
   /* context engine — emerald-tinted, sibling of the brain */
   .cb-engine {
-    min-height: 8cqw;
+    min-height: 9.5cqw;
     justify-content: center;
+    gap: 0.5cqw;
     border-color: color-mix(in srgb, var(--aios-emerald) 34%, var(--aios-border));
     background:
       radial-gradient(120% 120% at 50% 0%,
         color-mix(in srgb, var(--aios-emerald) 9%, var(--aios-surface)) 0%,
         var(--aios-surface) 75%);
+  }
+  .cb-engine__icon {
+    width: clamp(20px, 1.9cqw, 28px); height: auto; aspect-ratio: 1;
+    color: var(--aios-fg);
+    margin-bottom: 0.2cqw;
   }
 
   /* ---- mobile: drop the spoke layout, stack the groups ---- */
