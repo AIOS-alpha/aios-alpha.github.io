@@ -59,8 +59,8 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
       </radialGradient>
     </defs>
 
-    <!-- brain bokeh — gentle "sleep-light" breathing (6s in / 6s out) -->
-    <circle class="cb-halo" cx="640" cy="290" r="170" fill="url(#cb-halo)" />
+    <!-- brain bokeh — slow "human-lungs" breathing (shared dgm-breathe; ≈12% softer) -->
+    <circle class="dgm-breathe" cx="640" cy="290" r="170" fill="url(#cb-halo)" />
 
     <!-- inputs -> brain : agent-users + integrations, both subtle dashed
          lines animating toward the brain -->
@@ -198,12 +198,8 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
   }
   .cb-cycle path { vector-effect: non-scaling-stroke; }
 
-  /* gentle Mac "sleep-light" breathing bokeh — 6s in, 6s out (≈12% softer) */
-  .cb-halo { transform-origin: center; animation: cb-breathe 12s ease-in-out infinite; }
-  @keyframes cb-breathe {
-    0%, 100% { opacity: 0.44; transform: scale(0.99); }
-    50%      { opacity: 0.81; transform: scale(1.04); }
-  }
+  /* bokeh uses the shared .dgm-breathe pattern; tune the softened ceiling here */
+  .cbrain :global(.dgm-breathe) { --dgm-breathe-max: 0.8; --dgm-breathe-min: 0.4; }
 
   /* ---- legend labels (carry the rationed colour dot — the key) ---- */
   .cb-label {
@@ -378,8 +374,8 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
 
   /* ---- reduced motion ---- */
   @media (prefers-reduced-motion: reduce) {
-    .cb-halo { animation: none; opacity: 0.8; }
-    .cb-flow { animation: none; }
+    /* .dgm-breathe is held still by the shared stylesheet */
+    .cb-ingest { animation: none; }
   }
 
   .sr-only {

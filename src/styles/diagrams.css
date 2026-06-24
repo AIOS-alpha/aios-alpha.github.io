@@ -159,6 +159,19 @@
   50%      { opacity: 0.7;  transform: scale(1.06); }
 }
 
+/* Breathing — a slow, "human-lungs" pulse for an ambient glow / bokeh behind
+   a focal node: 6s in, 6s out, ease-in-out. Deliberately subtle. Tune per use
+   via the custom props; defaults suit a violet/prism bokeh.
+   Usage:  <circle class="dgm-breathe" …/>  (override --dgm-breathe-* as needed). */
+.dgm-breathe {
+  transform-origin: center;
+  animation: dgm-breathe 12s ease-in-out infinite;
+}
+@keyframes dgm-breathe {
+  0%, 100% { opacity: var(--dgm-breathe-min, 0.4);  transform: scale(var(--dgm-breathe-scale-min, 0.985)); }
+  50%      { opacity: var(--dgm-breathe-max, 0.8);  transform: scale(var(--dgm-breathe-scale-max, 1.045)); }
+}
+
 /* Dashed flow that drifts along an edge (direction-of-travel hint). */
 .dgm-flow {
   stroke-dasharray: 3 7;
@@ -172,6 +185,7 @@
     animation: none;
     offset-distance: 8%;   /* park the insight on the first arc */
   }
-  .dgm-pulse { animation: none; opacity: 0.5; }
-  .dgm-flow  { animation: none; }
+  .dgm-pulse   { animation: none; opacity: 0.5; }
+  .dgm-flow    { animation: none; }
+  .dgm-breathe { animation: none; opacity: var(--dgm-breathe-max, 0.8); }
 }
