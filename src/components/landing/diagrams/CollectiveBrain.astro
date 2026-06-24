@@ -1,30 +1,31 @@
 ---
 /* How it works — the Collective Brain.
 
-   Recreates Chetan's deck diagram in Editorial Minimal: many individual
-   agents + ingested data streams feed ONE collective brain, which fans out
-   to surfaces (kanban / KPI / query) and policy-governed actions (spawn /
-   execute), self-improving with every use.
+   Recreates Chetan's deck diagram in Editorial Minimal: many agent-users +
+   ingested data streams feed ONE collective brain, which fans out to surfaces
+   (kanban / KPI / query) and policy-governed actions (spawn / execute),
+   improving with every use.
 
-   Hub-and-spoke: HTML node cards (crisp text) positioned on the vertices of
-   an SVG edge layer. Inline SVG + CSS only — no JS, no video. Token-driven,
-   dual-mode, reduced-motion safe. Colour is rationed to the prism stops:
-   violet = individual · emerald = collective · lime = surfaced · cyan =
-   action · grey = neutral data streams. See docs/diagram-system.md. */
+   Hub-and-spoke: HTML node cards (crisp, centered text) on the vertices of an
+   SVG edge layer. Inline SVG + CSS only — no JS, no video. Token-driven,
+   dual-mode, reduced-motion safe. Colour is rationed and lives in the LEGEND
+   dots (one per group), not on every card: violet = agent-users · emerald =
+   collective brain · lime = surfaced · cyan = action · grey = data streams.
+   See docs/diagram-system.md. */
 import '../../../styles/diagrams.css';
 ---
 
 <figure class="cbrain dgm" aria-labelledby="cbrain-cap">
   <p class="sr-only" id="cbrain-cap">
-    Many individual agents send daily updates, and data streams from Slack,
-    Notion, Linear and GitHub are ingested, into a single collective brain that
-    holds knowledge, memory, reasoning and policy. The brain surfaces a kanban
-    board, a KPI dashboard and a query interface, and takes policy-governed
-    actions — spawning agents and executing tasks — improving with every use.
+    Many agent-users send daily updates, and data streams from Slack, Notion,
+    Linear and GitHub are ingested, into a single collective brain that holds
+    knowledge, memory, reasoning and policy. The brain surfaces a kanban board,
+    a KPI dashboard and a query interface, and takes policy-governed actions —
+    spawning agents and executing tasks — improving with every use.
   </p>
 
   <!-- edges -->
-  <svg class="dgm-svg" viewBox="0 0 1200 660" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg class="dgm-svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>
       <marker id="cb-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
@@ -33,65 +34,64 @@ import '../../../styles/diagrams.css';
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-violet)" />
       </marker>
       <radialGradient id="cb-halo" cx="50%" cy="50%" r="50%">
-        <stop offset="0%"  stop-color="var(--aios-violet)"  stop-opacity="0.18" />
-        <stop offset="55%" stop-color="var(--aios-emerald)" stop-opacity="0.08" />
+        <stop offset="0%"  stop-color="var(--aios-violet)"  stop-opacity="0.20" />
+        <stop offset="50%" stop-color="var(--aios-emerald)" stop-opacity="0.09" />
         <stop offset="100%" stop-color="var(--aios-accent)" stop-opacity="0" />
       </radialGradient>
     </defs>
 
-    <!-- brain halo -->
-    <circle class="dgm-pulse" cx="600" cy="332" r="180" fill="url(#cb-halo)" />
+    <!-- brain bokeh — gentle "sleep-light" breathing -->
+    <circle class="cb-halo" cx="640" cy="360" r="230" fill="url(#cb-halo)" />
 
-    <!-- agents -> brain (daily updates) -->
-    <path class="dgm-edge cb-in"   d="M280,110 C370,110 392,300 465,312" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M280,182 C380,182 408,318 465,322" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M280,254 C390,254 420,330 465,332" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in cb-flow" d="M280,110 C370,110 392,300 465,312" />
-    <path class="dgm-edge cb-in cb-flow" d="M280,182 C380,182 408,318 465,322" />
-    <path class="dgm-edge cb-in cb-flow" d="M280,254 C390,254 420,330 465,332" />
+    <!-- agent-users -> brain (daily updates) -->
+    <path class="dgm-edge cb-in"   d="M310,120 C410,120 430,330 490,338" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M310,196 C420,196 450,340 490,346" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M310,272 C430,272 460,348 490,352" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in cb-flow" d="M310,120 C410,120 430,330 490,338" />
+    <path class="dgm-edge cb-in cb-flow" d="M310,196 C420,196 450,340 490,346" />
+    <path class="dgm-edge cb-in cb-flow" d="M310,272 C430,272 460,348 490,352" />
 
     <!-- data streams -> brain (ingestion) -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M280,392 C380,392 410,392 465,388" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M280,462 C380,462 415,410 465,402" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,440 C410,440 450,430 490,420" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,516 C410,516 455,440 490,430" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> surfaces -->
-    <path class="dgm-edge dgm-edge--faint" d="M735,300 C820,300 850,112 920,112" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M735,316 C820,316 850,192 920,192" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M735,332 C820,332 850,272 920,272" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,330 C880,330 900,120 970,120" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,346 C880,346 900,212 970,212" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,360 C880,360 900,304 970,304" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> actions -->
-    <path class="dgm-edge dgm-edge--faint" d="M735,360 C820,360 850,408 920,408" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M735,374 C820,374 850,486 920,486" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,386 C880,386 900,452 970,452" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,400 C880,400 900,556 970,556" marker-end="url(#cb-arrow)" />
 
     <!-- self-improvement loop -->
-    <path class="dgm-edge cb-loop" d="M576,440 C556,520 644,520 624,440" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-loop" d="M612,475 C590,560 690,560 668,475" marker-end="url(#cb-arrow-v)" />
   </svg>
 
-  <!-- INDIVIDUAL AGENTS -->
-  <span class="cb-label" style="left:15%; top:6%;">INDIVIDUAL AGENTS</span>
-  <div class="cb-node dgm-accent--ic" style="left:15%; top:16.7%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">AGENT</span><span class="dgm-node__title">Agent A</span></div>
+  <!-- AGENT-USERS -->
+  <span class="cb-label cb-label--agents" style="left:15.6%; top:8.1%;">AGENT-USERS</span>
+  <div class="cb-node" style="left:15.6%; top:16.7%;">
+    <div class="dgm-node"><span class="dgm-node__title">Agent-User A</span></div>
   </div>
-  <div class="cb-node dgm-accent--ic" style="left:15%; top:27.6%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">AGENT</span><span class="dgm-node__title">Agent B</span></div>
+  <div class="cb-node" style="left:15.6%; top:27.2%;">
+    <div class="dgm-node"><span class="dgm-node__title">Agent-User B</span></div>
   </div>
-  <div class="cb-node dgm-accent--ic" style="left:15%; top:38.5%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">AGENT</span><span class="dgm-node__title">Agent C</span></div>
+  <div class="cb-node" style="left:15.6%; top:37.8%;">
+    <div class="dgm-node"><span class="dgm-node__title">Agent-User C</span></div>
   </div>
 
   <!-- DATA STREAMS -->
-  <span class="cb-label" style="left:15%; top:49.5%;">DATA STREAMS</span>
-  <div class="cb-node cb-node--stream" style="left:15%; top:59.4%;">
-    <div class="dgm-node dgm-node--sm dgm-node--ghost"><span class="dgm-node__meta">Slack · Notion</span></div>
+  <span class="cb-label cb-label--streams" style="left:15.6%; top:51.7%;">DATA STREAMS</span>
+  <div class="cb-node" style="left:15.6%; top:61.1%;">
+    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">Slack · Notion</span></div>
   </div>
-  <div class="cb-node cb-node--stream" style="left:15%; top:70%;">
-    <div class="dgm-node dgm-node--sm dgm-node--ghost"><span class="dgm-node__meta">Linear · GitHub</span></div>
+  <div class="cb-node" style="left:15.6%; top:71.7%;">
+    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">Linear · GitHub</span></div>
   </div>
 
   <!-- COLLECTIVE BRAIN -->
-  <div class="cb-node cb-node--brain dgm-accent--brain" style="left:50%; top:50.3%;">
+  <div class="cb-node cb-node--brain" style="left:50%; top:50%;">
     <div class="dgm-node cb-brain">
-      <span class="dgm-node__kicker">COLLECTIVE</span>
       <span class="cb-brain__title">Collective Brain</span>
       <span class="cb-brain__meta">Knowledge · Memory</span>
       <span class="cb-brain__meta">Reasoning · Policy</span>
@@ -99,162 +99,175 @@ import '../../../styles/diagrams.css';
   </div>
 
   <!-- SURFACES -->
-  <span class="cb-label" style="left:85%; top:6%;">SURFACES</span>
-  <div class="cb-node dgm-accent--share" style="left:85%; top:17%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">SURFACE</span><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
+  <span class="cb-label cb-label--surfaces" style="left:84.4%; top:8.1%;">SURFACES</span>
+  <div class="cb-node" style="left:84.4%; top:16.7%;">
+    <div class="dgm-node"><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
   </div>
-  <div class="cb-node dgm-accent--share" style="left:85%; top:29.1%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">SURFACE</span><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
+  <div class="cb-node" style="left:84.4%; top:29.4%;">
+    <div class="dgm-node"><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
   </div>
-  <div class="cb-node dgm-accent--share" style="left:85%; top:41.2%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">SURFACE</span><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
+  <div class="cb-node" style="left:84.4%; top:42.2%;">
+    <div class="dgm-node"><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
   </div>
 
   <!-- ACTIONS -->
-  <span class="cb-label" style="left:85%; top:53.5%;">ACTIONS</span>
-  <div class="cb-node dgm-accent--act" style="left:85%; top:61.8%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">ACTION</span><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
+  <span class="cb-label cb-label--actions" style="left:84.4%; top:54.2%;">ACTIONS</span>
+  <div class="cb-node" style="left:84.4%; top:62.8%;">
+    <div class="dgm-node"><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
   </div>
-  <div class="cb-node dgm-accent--act" style="left:85%; top:73.6%;">
-    <div class="dgm-node dgm-node--sm"><span class="dgm-node__kicker">ACTION</span><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
+  <div class="cb-node" style="left:84.4%; top:77.2%;">
+    <div class="dgm-node"><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
   </div>
 
   <!-- edge labels (absolute on desktop; hidden on mobile) -->
-  <span class="cb-edge-label" style="left:30%; top:21%;">daily updates →</span>
-  <span class="cb-edge-label" style="left:30%; top:63.5%;">ingestion ⇢</span>
-  <span class="cb-edge-label cb-edge-label--center" style="left:50%; top:82.5%;">self-improves with every use</span>
-
-  <figcaption class="cb-foot">
-    Agent spawning is <strong>permissioned</strong> by organizational policy.
-  </figcaption>
+  <span class="cb-edge-label" style="left:31.3%; top:22.9%;">daily updates →</span>
+  <span class="cb-edge-label" style="left:31.3%; top:65.3%;">ingestion ⇢</span>
+  <span class="cb-edge-label cb-edge-label--center" style="left:50%; top:82%;">self-improves with every use</span>
 </figure>
 
 <style>
   .cbrain {
     position: relative;
-    aspect-ratio: 1200 / 660;
-    max-width: 1080px;
+    aspect-ratio: 1280 / 720;
+    width: 100%;
     margin-inline: auto;
   }
 
   /* ---- edges ---- */
   .cb-in { stroke: color-mix(in srgb, var(--aios-violet) 60%, var(--aios-border-strong)); }
   .cb-loop { stroke: color-mix(in srgb, var(--aios-violet) 55%, var(--aios-border-strong)); }
-  /* drifting flow overlay on the agent inputs (direction = into the brain) */
   .cb-flow {
     stroke: var(--aios-violet);
-    stroke-dasharray: 2 8;
-    opacity: 0.85;
-    animation: dgm-dash 1.6s linear infinite;
+    stroke-dasharray: 2 9;
+    opacity: 0.8;
+    animation: dgm-dash 1.8s linear infinite;
   }
 
-  /* ---- labels ---- */
+  /* gentle Mac "sleep light" breathing bokeh */
+  .cb-halo { transform-origin: center; animation: cb-breathe 5.6s ease-in-out infinite; }
+  @keyframes cb-breathe {
+    0%, 100% { opacity: 0.62; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.045); }
+  }
+
+  /* ---- legend labels (carry the rationed colour dot) ---- */
   .cb-label {
     position: absolute;
     transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-family: var(--aios-font-mono);
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     letter-spacing: 0.16em;
     color: var(--aios-fg-muted);
     white-space: nowrap;
     pointer-events: none;
   }
+  .cb-label::before {
+    content: '';
+    width: 9px;
+    height: 9px;
+    border-radius: 9999px;
+    background: var(--cb-dot, var(--aios-fg-muted));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cb-dot, transparent) 18%, transparent);
+  }
+  .cb-label--agents   { --cb-dot: var(--aios-violet); }
+  .cb-label--streams  { --cb-dot: var(--aios-fg-muted); }
+  .cb-label--surfaces { --cb-dot: var(--aios-accent); }
+  .cb-label--actions  { --cb-dot: var(--aios-cyan); }
+
   .cb-edge-label {
     position: absolute;
     transform: translate(-50%, -50%);
     font-family: var(--aios-font-mono);
-    font-size: 0.6rem;
+    font-size: 0.68rem;
     letter-spacing: 0.04em;
     color: var(--aios-fg-muted);
     white-space: nowrap;
     pointer-events: none;
   }
 
-  /* ---- nodes ---- */
+  /* ---- nodes — centered, roomy, no per-card eyebrow ---- */
   .cb-node {
     position: absolute;
     transform: translate(-50%, -50%);
-    width: 16.6%;
-    min-width: 124px;
+    width: 17.2%;
+    min-width: 150px;
   }
-  .cb-node--brain { width: 23%; min-width: 180px; }
-  .cb-node--stream { width: 16.6%; }
+  .cb-node--brain { width: 23.4%; min-width: 210px; }
+
+  .cbrain :global(.dgm-node) {
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 17px 20px;
+  }
+  .cbrain :global(.dgm-node__title) { font-size: 1.32rem; }
+  .cbrain :global(.dgm-node__meta)  { font-size: 0.72rem; line-height: 1.45; }
 
   /* ghost (data stream) frame — dashed, no fill, neutral */
   .dgm-node--ghost {
     background: transparent;
     border-style: dashed;
     box-shadow: none;
-    align-items: flex-start;
-    justify-content: center;
   }
-  .dgm-node--ghost .dgm-node__meta { font-size: 0.64rem; color: var(--aios-fg-secondary); }
+  .dgm-node--ghost .dgm-node__meta { font-size: 0.78rem; color: var(--aios-fg-secondary); }
 
   /* the brain — larger, prism-tinted */
   .cb-brain {
-    align-items: center;
-    text-align: center;
-    gap: 6px;
-    padding: 20px 18px;
+    gap: 8px;
+    padding: 28px 24px;
     background:
       radial-gradient(120% 120% at 50% 0%,
-        color-mix(in srgb, var(--aios-violet) 10%, var(--aios-surface)) 0%,
+        color-mix(in srgb, var(--aios-violet) 11%, var(--aios-surface)) 0%,
         var(--aios-surface) 70%);
-    border-color: color-mix(in srgb, var(--aios-violet) 28%, var(--aios-border));
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 24px 60px -34px color-mix(in srgb, var(--aios-violet) 60%, transparent);
+    border-color: color-mix(in srgb, var(--aios-violet) 30%, var(--aios-border));
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 26px 64px -34px color-mix(in srgb, var(--aios-violet) 60%, transparent);
   }
-  .cb-brain .dgm-node__kicker { justify-content: center; }
   .cb-brain__title {
     font-family: var(--aios-font-display);
-    font-size: 1.5rem;
-    line-height: 1.1;
+    font-size: 1.95rem;
+    line-height: 1.05;
     letter-spacing: -0.02em;
     color: var(--aios-fg);
   }
   .cb-brain__meta {
     font-family: var(--aios-font-mono);
-    font-size: 0.66rem;
-    line-height: 1.3;
+    font-size: 0.76rem;
+    line-height: 1.35;
     color: var(--aios-fg-secondary);
   }
-  .cb-brain__meta:first-of-type { margin-top: 4px; }
-
-  /* ---- footer ---- */
-  .cb-foot {
-    position: absolute;
-    left: 50%;
-    bottom: -2.4rem;
-    transform: translateX(-50%);
-    font-family: var(--aios-font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.04em;
-    color: var(--aios-fg-muted);
-    white-space: nowrap;
-  }
-  .cb-foot strong { color: var(--aios-fg-secondary); font-weight: 400; }
+  .cb-brain__meta:first-of-type { margin-top: 6px; }
 
   /* ---- mobile: drop the spoke layout, stack the groups ---- */
-  @media (max-width: 860px) {
+  @media (max-width: 900px) {
     .cbrain {
       aspect-ratio: auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px 12px;
-      max-width: 460px;
+      gap: 12px 14px;
+      max-width: 520px;
     }
-    .dgm-svg, .cb-edge-label, .cb-foot { display: none; }
+    .dgm-svg, .cb-edge-label { display: none; }
     .cb-node, .cb-label {
       position: static;
       transform: none;
       width: auto;
       min-width: 0;
     }
-    .cb-label { grid-column: 1 / -1; margin-top: 6px; }
+    .cb-label { grid-column: 1 / -1; margin-top: 8px; }
     .cb-node--brain { grid-column: 1 / -1; }
-    .cb-brain__title { font-size: 1.3rem; }
+    .cb-brain__title { font-size: 1.5rem; }
   }
-  @media (max-width: 440px) {
-    .cbrain { grid-template-columns: 1fr; }
+  @media (max-width: 460px) {
+    .cbrain { grid-template-columns: 1fr; max-width: 340px; }
+  }
+
+  /* ---- reduced motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .cb-halo { animation: none; opacity: 0.8; }
+    .cb-flow { animation: none; }
   }
 
   .sr-only {

@@ -16,16 +16,23 @@ only to mark the three roles in a loop / the travelling insight:
 
 | Token | Role in diagrams |
 |-------|------------------|
-| `--aios-violet` | the **individual** (IC / workspace); the travelling insight token |
+| `--aios-violet` | the **individual** (agent-user / workspace); the travelling token |
 | `--aios-emerald` | the **collective** (Team Brain) |
 | `--aios-accent` (lime) | what's **surfaced / shared** (dashboard, outputs) |
-| `--aios-border-strong` | edges / ring (the default hairline) |
+| `--aios-cyan` | policy-governed **actions** (spawn / execute) |
+| `--aios-border-strong` | edges / ring / **governance boundaries** (the default hairline) |
 | `--aios-border` | faint / secondary edges, frames |
-| `--aios-fg` / `-secondary` / `-muted` | node titles / meta / kickers |
+| `--aios-fg` / `-secondary` / `-muted` | node titles / meta / labels |
 
 Never introduce a hex value — everything resolves from `--aios-*`, so both modes
 and any future token change are free. Use `color-mix(in srgb, var(--aios-…) …%, …)`
 for tints and glows.
+
+**Where colour lives.** Ration it: chrome (frames, edges, the privacy boundary,
+guards) stays **greyscale** — authority comes from structure, not hue. When a
+group repeats one role (three agent-users, three surfaces), move the dot to a
+**legend** label rather than repeating it on every card (`CollectiveBrain`); when
+each node is distinct, a single centered accent dot per card is fine (`InfoFlow`).
 
 ## Primitives (`src/styles/diagrams.css`)
 
@@ -75,7 +82,7 @@ which means `prefers-reduced-motion` can switch it off declaratively.
 - Node text is real DOM text (readable, selectable, translatable).
 - The SVG layer is decorative: `aria-hidden="true"`.
 - Each diagram `<figure>` carries an `aria-labelledby` pointing at an `.sr-only`
-  sentence that states the flow in prose (see `Flywheel.astro`).
+  sentence that states the flow in prose (see `InfoFlow.astro`).
 
 ## Authoring a new diagram
 
@@ -91,20 +98,19 @@ which means `prefers-reduced-motion` can switch it off declaratively.
 
 ## Phase 3 — production plan (remaining assets)
 
-The flywheel (Phase 2) proves tier-1 covers our needs. Remaining placeholders,
+Two flagship diagrams prove tier-1 covers our needs. Remaining placeholders,
 mapped to the system. **Order:** screenshots are blocked on real product UI; build
 the diagrams first.
 
 | Placeholder (component) | Asset | Approach | Notes |
 |---|---|---|---|
+| `HowItWorks.astro` | **InfoFlow** — the privacy model | ✅ done (inline SVG+CSS) | left-to-right boundary flow: tier-tagged work crosses the brain-api contract; private/admin token is stopped at the wall (422). Two `offset-path` tokens (one crosses, one blocked). |
+| `Transition.astro` | **CollectiveBrain** — "How it works" | ✅ done (inline SVG+CSS) | hub-and-spoke from Chetan's deck: agent-users + data streams → one collective brain → surfaces + actions. Legend dots, breathing bokeh. |
 | `Hero.astro` — "Team Brain dashboard" | **real screenshot** (4/5) | — | **Blocked:** needs real product UI. Flag, keep `Placeholder`. |
-| `Transition.astro` — "Product walkthrough" | **real screenshot/video** (16/9) | — | **Blocked:** real data. Flag, keep `Placeholder`. |
-| `HowItWorks.astro` | Flywheel | ✅ done (inline SVG+CSS) | shipped this PR |
 | `Integration.astro` ×3 (Workspace / Team Brain / Skill→repo→everyone) | topology diagrams | inline SVG+CSS, shared primitives | hub-and-spoke nodes; reuse `.dgm-node` + `.dgm-edge` + `.dgm-flow` |
 | `FeatureGrid.astro` (per-card thumb) | feature thumbnails | small static inline-SVG glyphs on `.dgm-frame` | greyscale, one accent each; motion optional |
 | `Vision.astro` (vision-card thumb) | vision thumbnails | same as feature thumbs | keep restrained |
 | `Problem.astro` (per-item thumb) | problem thumbnails | small static SVG | greyscale |
-| **New** — Transition architecture | **8 organ systems** + Agent workstations | inline SVG+CSS "collective brain" diagram | Knowledge repository · Ingestion · Context management · Action layer · Identity & membership · Policy engine · Audit log · Feedback loop — nodes around a central brain; Agent workstations feeding in. Source: Chetan's deck (AIO-107). |
 
 **Coordinate with AIO-104** (Section/FeatureCard extraction): the `Integration` and
 `FeatureGrid` diagrams drop into card-media boxes whose structure that ticket may

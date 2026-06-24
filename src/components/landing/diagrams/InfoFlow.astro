@@ -1,0 +1,314 @@
+---
+/* How information flows — the privacy model.
+
+   A left-to-right boundary flow, not a loop: the story is about a WALL. On
+   your machine, tier-tagged files pass guards + validators; only team/external
+   content crosses the versioned brain-api contract to the shared Team Brain —
+   private/admin content is rejected at the boundary (422) and never leaves.
+   Shared signal returns as insight, always within your tier.
+
+   Inline SVG + CSS only. Two tokens ride offset-paths (SVG user units, so they
+   scale with the viewBox): one CROSSES the boundary, one is STOPPED at it.
+   Token-driven, dual-mode, reduced-motion safe. Accents rationed: violet =
+   individual, emerald = collective, lime = surfaced; the boundary + guards are
+   greyscale chrome (governance, not a colour role). See docs/diagram-system.md.
+
+   Grounded in: brain-api.md (tiers + 422 forbidden_tier), architecture.md
+   (three-place enforcement + SQL tier filter), aios.mjs (sync default-deny),
+   team-ops-guard.sh + feature-set.md (guard hook + validators). */
+import '../../../styles/diagrams.css';
+---
+
+<figure class="iflow dgm" aria-labelledby="iflow-cap">
+  <p class="sr-only" id="iflow-cap">
+    Each file in your workspace is tagged with an access tier. On your machine,
+    guards and validators enforce those tags and refuse anything untagged. Only
+    team and external content is pushed across the versioned brain-api contract
+    to the shared Team Brain — private content is rejected at the boundary and
+    never leaves. Shared signal and grounded answers return to you, always
+    within your tier.
+  </p>
+
+  <svg class="dgm-svg" viewBox="0 0 1000 562" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs>
+      <marker id="if-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
+      </marker>
+      <radialGradient id="if-token" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="var(--aios-emerald)" />
+        <stop offset="55%" stop-color="var(--aios-violet)" />
+        <stop offset="100%" stop-color="var(--aios-violet)" />
+      </radialGradient>
+    </defs>
+
+    <!-- zone frames (faint chrome) -->
+    <rect class="dgm-edge dgm-edge--faint" x="34"  y="104" width="470" height="372" rx="16" />
+    <rect class="dgm-edge dgm-edge--faint" x="552" y="104" width="414" height="300" rx="16" />
+
+    <!-- main flow: workspace -> guards -> [contract] -> brain -->
+    <path class="dgm-edge" d="M196,165 L300,165" marker-end="url(#if-arrow)" />
+    <path class="dgm-edge" d="M404,165 L470,165" marker-end="url(#if-arrow)" />
+    <path class="dgm-edge" d="M566,165 L640,165" marker-end="url(#if-arrow)" />
+    <!-- drift hint on the crossing segment -->
+    <path class="dgm-edge dgm-flow if-cross-edge" d="M404,165 L470,165" />
+
+    <!-- brain -> insight -->
+    <path class="dgm-edge dgm-edge--faint" d="M720,205 C795,255 800,300 845,330" marker-end="url(#if-arrow)" />
+
+    <!-- insight -> workspace : dashed return arc over the top -->
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed if-return" d="M856,322 C912,150 540,58 300,58 C220,58 150,92 120,138" marker-end="url(#if-arrow)" />
+
+    <!-- the brain-api contract: the vertical boundary line -->
+    <line class="dgm-edge if-wall" x1="520" y1="80" x2="520" y2="486" />
+    <line class="dgm-edge if-wall dgm-pulse" x1="520" y1="80" x2="520" y2="486" />
+
+    <!-- blocked path: private/admin token travels to the wall and stops -->
+    <path class="dgm-edge--faint if-stub" d="M392,430 L505,430" fill="none" />
+
+    <!-- accepted token crosses the boundary -->
+    <circle class="dgm-token if-accepted" r="6" fill="url(#if-token)" />
+    <!-- blocked token: parks against the wall -->
+    <circle class="if-blocked" r="5.5" fill="var(--aios-violet)" />
+    <!-- 422 block cap at the wall (opacity reveal, no layout shift) -->
+    <g class="if-cap">
+      <line x1="512" y1="422" x2="522" y2="438" />
+      <line x1="522" y1="422" x2="512" y2="438" />
+    </g>
+  </svg>
+
+  <!-- zone captions -->
+  <span class="if-zone" style="left:5%;  top:20.5%;">YOUR MACHINE</span>
+  <span class="if-zone" style="left:57%; top:20.5%;">SHARED</span>
+
+  <!-- nodes -->
+  <div class="iflow-node" style="left:13%; top:29.4%;">
+    <div class="dgm-node if-node"><span class="if-accent if-accent--ic"></span><span class="dgm-node__title">Your workspace</span><span class="dgm-node__meta">0-context … 5-personal · tiered</span></div>
+  </div>
+  <div class="iflow-node" style="left:35%; top:29.4%;">
+    <div class="dgm-node if-node"><span class="dgm-node__title">Guards &amp; validators</span><span class="dgm-node__meta">hook · validators · default-deny</span></div>
+  </div>
+  <div class="iflow-node iflow-node--gate" style="left:52%; top:29.4%;">
+    <div class="dgm-node if-node if-node--gate"><span class="dgm-node__title">brain-api contract</span><span class="dgm-node__meta">/api/v1 · both sides build to it</span></div>
+  </div>
+  <div class="iflow-node" style="left:72%; top:29.4%;">
+    <div class="dgm-node if-node"><span class="if-accent if-accent--brain"></span><span class="dgm-node__title">Team Brain</span><span class="dgm-node__meta">tier-filtered memory · grounded query</span></div>
+  </div>
+  <div class="iflow-node" style="left:86%; top:64%;">
+    <div class="dgm-node if-node"><span class="if-accent if-accent--share"></span><span class="dgm-node__title">Shared signal</span><span class="dgm-node__meta">tasks · decisions · plain-english query</span></div>
+  </div>
+
+  <!-- tier legend (under workspace) -->
+  <div class="if-tiers" style="left:13%; top:62.5%;">
+    <span class="if-tiers__head">TIER TAGS</span>
+    <span class="if-tiers__row">
+      <span class="if-chip if-chip--ic">private</span>
+      <span class="if-chip if-chip--team">team</span>
+      <span class="if-chip if-chip--ext">external</span>
+    </span>
+    <span class="if-tiers__sub">private never leaves your machine</span>
+  </div>
+
+  <!-- edge labels -->
+  <span class="if-elabel" style="left:23.5%; top:24.5%;">tier-tag · validate</span>
+  <span class="if-elabel" style="left:43.5%; top:24.5%;">push · team / external ↗</span>
+  <span class="if-elabel" style="left:63.5%; top:24.5%;">accepted ✓</span>
+  <span class="if-elabel" style="left:80%;   top:49%;">query · plain english</span>
+  <span class="if-elabel if-elabel--return" style="left:46%; top:7.5%;">↩ insight returns</span>
+
+  <!-- the blocked / privacy moment -->
+  <span class="if-elabel if-elabel--stay" style="left:30%;   top:76.5%;">STAYS LOCAL</span>
+  <span class="if-elabel if-elabel--422"  style="left:53.5%; top:76.5%;">422 · private rejected</span>
+</figure>
+
+<style>
+  .iflow {
+    position: relative;
+    aspect-ratio: 1000 / 562;
+    max-width: 1040px;
+    margin-inline: auto;
+  }
+
+  /* ---- the boundary line ---- */
+  .if-wall { stroke: var(--aios-border-strong); stroke-width: 1.5; }
+  .if-wall.dgm-pulse {
+    stroke: var(--aios-violet);
+    stroke-width: 3;
+    opacity: 0.18;
+    filter: blur(1px);
+  }
+  .if-stub { stroke: color-mix(in srgb, var(--aios-violet) 45%, var(--aios-border-strong)); stroke-width: 1.25; }
+  .if-cross-edge { stroke: var(--aios-violet); opacity: 0.7; }
+
+  /* ---- tokens ---- */
+  .if-accepted {
+    offset-path: path('M196,165 L470,165 L520,165 L640,165 L716,165');
+    fill: url(#if-token);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--aios-violet) 70%, transparent));
+    animation: if-cross 11s linear infinite;
+  }
+  @keyframes if-cross {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    7%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  .if-blocked {
+    offset-path: path('M392,430 L505,430');
+    fill: var(--aios-violet);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--aios-violet) 60%, transparent));
+    animation: if-block 11s ease-out infinite;
+  }
+  @keyframes if-block {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    8%   { opacity: 1; }
+    34%  { offset-distance: 100%; opacity: 1; }
+    92%  { offset-distance: 100%; opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  .if-cap { stroke: var(--aios-violet); stroke-width: 2; stroke-linecap: round; opacity: 0; }
+  .if-cap { animation: if-cap 11s ease infinite; }
+  @keyframes if-cap {
+    0%, 30% { opacity: 0; }
+    40%     { opacity: 0.9; }
+    92%     { opacity: 0.9; }
+    100%    { opacity: 0; }
+  }
+
+  /* ---- zone captions ---- */
+  .if-zone {
+    position: absolute;
+    transform: translateY(-50%);
+    font-family: var(--aios-font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--aios-fg-muted);
+    pointer-events: none;
+  }
+
+  /* ---- nodes ---- */
+  .iflow-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 17%;
+    min-width: 150px;
+  }
+  .iflow-node--gate { width: 15%; min-width: 138px; }
+
+  .if-node { align-items: center; text-align: center; gap: 6px; padding: 15px 16px; }
+  .if-node .dgm-node__title { font-size: 1.16rem; }
+  .if-node .dgm-node__meta  { font-size: 0.66rem; line-height: 1.4; }
+  .if-accent {
+    width: 8px; height: 8px; border-radius: 9999px;
+    background: var(--if-dot, var(--aios-fg-muted));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--if-dot, transparent) 18%, transparent);
+  }
+  .if-accent--ic    { --if-dot: var(--aios-violet); }
+  .if-accent--brain { --if-dot: var(--aios-emerald); }
+  .if-accent--share { --if-dot: var(--aios-accent); }
+
+  /* the contract gate — greyscale, but slightly elevated as the spine */
+  .if-node--gate {
+    border-color: var(--aios-border-strong);
+    background: color-mix(in srgb, var(--aios-fg) 3%, var(--aios-surface));
+  }
+  .if-node--gate .dgm-node__title {
+    font-family: var(--aios-font-mono);
+    font-size: 0.86rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- tier legend ---- */
+  .if-tiers {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 17%;
+    min-width: 150px;
+    pointer-events: none;
+  }
+  .if-tiers__head {
+    font-family: var(--aios-font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    color: var(--aios-fg-muted);
+  }
+  .if-tiers__row { display: inline-flex; gap: 6px; }
+  .if-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--aios-font-mono);
+    font-size: 0.6rem;
+    color: var(--aios-fg-secondary);
+    border: 1px solid var(--aios-border);
+    border-radius: 9999px;
+    padding: 2px 8px;
+  }
+  .if-chip::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 9999px;
+    background: var(--if-dot, var(--aios-fg-muted));
+  }
+  .if-chip--ic   { --if-dot: var(--aios-violet); }
+  .if-chip--team { --if-dot: var(--aios-fg-muted); }
+  .if-chip--ext  { --if-dot: var(--aios-accent); }
+  .if-tiers__sub {
+    font-family: var(--aios-font-mono);
+    font-size: 0.56rem;
+    color: var(--aios-fg-muted);
+  }
+
+  /* ---- edge labels ---- */
+  .if-elabel {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: var(--aios-font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.03em;
+    color: var(--aios-fg-muted);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .if-elabel--422 { color: color-mix(in srgb, var(--aios-violet) 70%, var(--aios-fg-muted)); }
+  .if-elabel--stay { color: var(--aios-fg-secondary); }
+
+  /* ---- mobile: stack the flow vertically, drop the wall choreography ---- */
+  @media (max-width: 720px) {
+    .iflow {
+      aspect-ratio: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 420px;
+    }
+    .dgm-svg, .if-zone, .if-elabel { display: none; }
+    .iflow-node, .if-tiers {
+      position: static;
+      transform: none;
+      width: auto;
+      min-width: 0;
+    }
+    .if-tiers { margin-top: 4px; }
+  }
+
+  /* ---- reduced motion: one crossed, one stopped — held still ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .if-accepted { animation: none; offset-distance: 64%; opacity: 1; }
+    .if-blocked  { animation: none; offset-distance: 100%; opacity: 1; }
+    .if-cap      { animation: none; opacity: 0.9; }
+    .if-cross-edge, .if-wall.dgm-pulse { animation: none; }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
