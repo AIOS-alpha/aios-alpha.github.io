@@ -65,12 +65,12 @@
 .dgm-node {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
-  padding: 12px 14px;
+  padding: 15px 18px;
   background: var(--aios-surface);
   border: 1px solid var(--aios-border);
-  border-radius: 12px;
+  border-radius: 13px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 30px -20px rgba(0, 0, 0, 0.3);
 }
 .dgm-node__kicker {
@@ -78,7 +78,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--aios-font-mono);
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--aios-fg-muted);
@@ -93,22 +93,30 @@
 }
 .dgm-node__title {
   font-family: var(--aios-font-display);
-  font-size: 1.02rem;
+  font-size: 1.18rem;
   line-height: 1.15;
   letter-spacing: -0.01em;
   color: var(--aios-fg);
 }
 .dgm-node__meta {
   font-family: var(--aios-font-mono);
-  font-size: 0.6rem;
-  line-height: 1.45;
+  font-size: 0.64rem;
+  line-height: 1.5;
   color: var(--aios-fg-secondary);
 }
+
+/* Compact variant — for dense hub-and-spoke layouts (CollectiveBrain). */
+.dgm-node--sm { gap: 3px; padding: 9px 12px; border-radius: 10px; }
+.dgm-node--sm .dgm-node__kicker { font-size: 0.54rem; letter-spacing: 0.12em; }
+.dgm-node--sm .dgm-node__title  { font-size: 0.94rem; }
+.dgm-node--sm .dgm-node__meta   { font-size: 0.58rem; line-height: 1.4; }
 
 /* ---- Rationed prism accents (the only colour) --------------------- */
 .dgm-accent--ic     { --dgm-dot: var(--dgm-violet); }
 .dgm-accent--brain  { --dgm-dot: var(--dgm-emerald); }
 .dgm-accent--share  { --dgm-dot: var(--dgm-lime); }
+.dgm-accent--act    { --dgm-dot: var(--aios-cyan); }
+.dgm-accent--stream { --dgm-dot: var(--aios-fg-muted); }
 
 /* ---- SVG layer: ring + edges + token ------------------------------ */
 .dgm-svg {
