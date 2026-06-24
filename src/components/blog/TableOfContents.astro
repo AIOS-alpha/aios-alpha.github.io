@@ -1,0 +1,111 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+// Only H2/H3 make a useful contents list.
+const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+	toc.length > 0 && (
+		<nav class="toc" aria-label="Table of contents">
+			<p class="text-label text-muted-foreground mb-4">On this page</p>
+			<ul class="toc-list">
+				{toc.map((h) => (
+					<li class:list={['toc-item', { 'toc-sub': h.depth === 3 }]}>
+						<a href={`#${h.slug}`} data-toc-slug={h.slug} class="toc-link">
+							{h.text}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+	)
+}
+
+<style>
+	.toc {
+		position: sticky;
+		top: 7rem;
+		max-height: calc(100vh - 9rem);
+		overflow-y: auto;
+	}
+	.toc-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-left: 1px solid var(--color-border);
+	}
+	.toc-item {
+		margin: 0;
+	}
+	.toc-sub {
+		padding-left: 0.85rem;
+	}
+	.toc-link {
+		display: block;
+		padding: 0.3rem 0 0.3rem 0.85rem;
+		margin-left: -1px;
+		border-left: 1px solid transparent;
+		font-family: var(--font-sans);
+		font-size: 0.875rem;
+		line-height: 1.4;
+		color: var(--color-muted-foreground);
+		text-decoration: none;
+		transition: color 0.15s ease, border-color 0.15s ease;
+	}
+	.toc-link:hover {
+		color: var(--color-foreground);
+	}
+	.toc-link.is-active {
+		color: var(--color-link);
+		border-left-color: var(--color-link);
+	}
+</style>
+
+<script>
+	// Scroll-spy: highlight the contents entry for the heading nearest the top.
+	const linkById = new Map<string, HTMLAnchorElement>();
+	const headings: HTMLElement[] = [];
+	for (const link of document.querySelectorAll<HTMLAnchorElement>('.toc-link')) {
+		const slug = link.dataset.tocSlug ?? '';
+		const heading = document.getElementById(slug);
+		if (heading) {
+			linkById.set(slug, link);
+			headings.push(heading);
+		}
+	}
+
+	if (headings.length > 0) {
+		let active: HTMLAnchorElement | null = null;
+		const setActive = (id: string) => {
+			const next = linkById.get(id) ?? null;
+			if (next === active) return;
+			active?.classList.remove('is-active');
+			next?.classList.add('is-active');
+			active = next;
+		};
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				// Pick the topmost heading currently above the 30% line.
+				let topmost: IntersectionObserverEntry | null = null;
+				for (const e of entries) {
+					if (
+						e.isIntersecting &&
+						(!topmost || e.boundingClientRect.top < topmost.boundingClientRect.top)
+					) {
+						topmost = e;
+					}
+				}
+				if (topmost) setActive(topmost.target.id);
+			},
+			{ rootMargin: '0px 0px -70% 0px', threshold: 0 },
+		);
+		headings.forEach((h) => observer.observe(h));
+	}
+</script>

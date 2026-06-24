@@ -1,0 +1,88 @@
+---
+import { getSortedPosts, formatDate } from '../../lib/blog';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-sans/400.css';
+import '@fontsource/instrument-sans/500.css';
+import '@fontsource/instrument-sans/600.css';
+import '@fontsource/instrument-sans/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '../../styles/global.css';
+import Nav from '../../components/landing/Nav.astro';
+import Footer from '../../components/landing/Footer.astro';
+
+const posts = await getSortedPosts();
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Releases and field notes from the AIOS team."
+		/>
+		<title>Blog — AIOS</title>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="AIOS Blog"
+			href="/rss.xml"
+		/>
+	</head>
+	<body
+		class="bg-background text-foreground font-sans antialiased overflow-x-hidden"
+	>
+		<Nav />
+		<main class="mx-auto max-w-[760px] px-6 pt-32 pb-24">
+			<header class="mb-16">
+				<p class="text-label text-accent mb-3">Blog</p>
+				<h1 class="text-heading-1">Releases &amp; field notes</h1>
+				<p class="text-body-lg text-muted-foreground mt-4">
+					What we're building with AIOS, and what we're learning along the way.
+				</p>
+			</header>
+
+			{
+				posts.length === 0 ? (
+					<p class="text-muted-foreground">No posts yet. Check back soon.</p>
+				) : (
+					<ul class="flex list-none flex-col gap-12 p-0">
+						{posts.map((post) => (
+							<li class="border-b border-border pb-12 last:border-b-0">
+								<a href={`/blog/${post.id}/`} class="group block no-underline">
+									<p class="text-small text-muted-foreground mb-2">
+										<time datetime={post.data.pubDate.toISOString()}>
+											{formatDate(post.data.pubDate)}
+										</time>
+										<span class="mx-2">·</span>
+										{post.data.author}
+									</p>
+									<h2 class="text-heading-3 transition-colors group-hover:text-link">
+										{post.data.title}
+									</h2>
+									<p class="text-body text-muted-foreground mt-2">
+										{post.data.description}
+									</p>
+									{post.data.tags.length > 0 && (
+										<div class="mt-4 flex flex-wrap gap-2">
+											{post.data.tags.map((t) => (
+												<span class="text-small rounded-full border border-border px-3 py-1 text-muted-foreground">
+													#{t}
+												</span>
+											))}
+										</div>
+									)}
+								</a>
+							</li>
+						))}
+					</ul>
+				)
+			}
+		</main>
+		<Footer />
+	</body>
+</html>

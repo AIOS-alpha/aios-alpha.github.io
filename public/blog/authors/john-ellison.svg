@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88" viewBox="0 0 88 88" role="img" aria-label="John Ellison">
+  <defs>
+    <linearGradient id="je" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#84cc16"/>
+    </linearGradient>
+  </defs>
+  <rect width="88" height="88" rx="44" fill="url(#je)"/>
+  <text x="50%" y="50%" dy="0.35em" text-anchor="middle"
+    font-family="'Space Grotesk', system-ui, sans-serif" font-size="34" font-weight="700" fill="#0a0a0a">JE</text>
+</svg>
