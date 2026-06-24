@@ -1,0 +1,169 @@
+/* =====================================================================
+   AIOS diagram system — shared primitives.
+
+   Code-authored, token-driven, dual-mode (light + dark via @aios-alpha
+   tokens), Editorial Minimal. The chrome is greyscale; colour is rationed
+   to the prism stops (violet → emerald → lime). Motion is subtle and is
+   fully suppressed under `prefers-reduced-motion`.
+
+   Primitives:
+     .dgm            diagram root (sets the stage + scale variables)
+     .dgm-frame      window / terminal chrome (titlebar + dots)
+     .dgm-node       a labelled node card (kicker + title + meta)
+     .dgm-svg        the SVG edge/ring layer (sits behind nodes)
+     .dgm-edge       a hairline connector path
+     .dgm-token      an "insight" travelling a path (offset-path, user units)
+     .dgm-accent--*  the three rationed prism accents
+
+   Diagrams compose these; per-diagram layout lives in the component's
+   own scoped <style>. See src/content/docs/reference/diagram-system.mdx.
+   ===================================================================== */
+
+.dgm {
+  position: relative;
+  width: 100%;
+  color: var(--aios-fg);
+  font-family: var(--aios-font-sans);
+  --dgm-edge: var(--aios-border-strong);
+  --dgm-edge-faint: var(--aios-border);
+  --dgm-violet: var(--aios-violet);
+  --dgm-emerald: var(--aios-emerald);
+  --dgm-lime: var(--aios-accent);
+}
+
+/* ---- Window / terminal frame -------------------------------------- */
+.dgm-frame {
+  background: var(--aios-surface);
+  border: 1px solid var(--aios-border);
+  border-radius: var(--aios-radius-xl, 14px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -16px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+.dgm-frame__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border-bottom: 1px solid var(--aios-border);
+  background: color-mix(in srgb, var(--aios-fg) 3%, var(--aios-surface));
+}
+.dgm-frame__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--aios-border-strong);
+}
+.dgm-frame__title {
+  margin-left: 4px;
+  font-family: var(--aios-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--aios-fg-muted);
+}
+
+/* ---- Node card ----------------------------------------------------- */
+.dgm-node {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--aios-surface);
+  border: 1px solid var(--aios-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 30px -20px rgba(0, 0, 0, 0.3);
+}
+.dgm-node__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--aios-font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aios-fg-muted);
+}
+.dgm-node__kicker::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--dgm-dot, var(--aios-fg-muted));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dgm-dot, transparent) 18%, transparent);
+}
+.dgm-node__title {
+  font-family: var(--aios-font-display);
+  font-size: 1.02rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--aios-fg);
+}
+.dgm-node__meta {
+  font-family: var(--aios-font-mono);
+  font-size: 0.6rem;
+  line-height: 1.45;
+  color: var(--aios-fg-secondary);
+}
+
+/* ---- Rationed prism accents (the only colour) --------------------- */
+.dgm-accent--ic     { --dgm-dot: var(--dgm-violet); }
+.dgm-accent--brain  { --dgm-dot: var(--dgm-emerald); }
+.dgm-accent--share  { --dgm-dot: var(--dgm-lime); }
+
+/* ---- SVG layer: ring + edges + token ------------------------------ */
+.dgm-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.dgm-edge {
+  fill: none;
+  stroke: var(--dgm-edge);
+  stroke-width: 1.25;
+}
+.dgm-edge--faint { stroke: var(--dgm-edge-faint); }
+.dgm-edge--dashed {
+  stroke-dasharray: 4 6;
+  stroke-linecap: round;
+}
+
+/* The travelling insight. offset-path runs in SVG user units, so it
+   scales with the viewBox. Colour is the prism gradient core + glow. */
+.dgm-token {
+  fill: var(--dgm-violet);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--dgm-violet) 70%, transparent));
+}
+.dgm-token--orbit {
+  offset-distance: 0%;
+  animation: dgm-orbit var(--dgm-dur, 11s) linear infinite;
+}
+@keyframes dgm-orbit {
+  to { offset-distance: 100%; }
+}
+
+/* A soft pulse for the loop core / node halos. */
+.dgm-pulse { animation: dgm-pulse 4.5s ease-in-out infinite; transform-origin: center; }
+@keyframes dgm-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 0.7;  transform: scale(1.06); }
+}
+
+/* Dashed flow that drifts along an edge (direction-of-travel hint). */
+.dgm-flow {
+  stroke-dasharray: 3 7;
+  animation: dgm-dash 1.4s linear infinite;
+}
+@keyframes dgm-dash { to { stroke-dashoffset: -20; } }
+
+/* ---- Reduced motion: hold everything still ------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .dgm-token--orbit {
+    animation: none;
+    offset-distance: 8%;   /* park the insight on the first arc */
+  }
+  .dgm-pulse { animation: none; opacity: 0.5; }
+  .dgm-flow  { animation: none; }
+}

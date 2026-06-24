@@ -1,0 +1,168 @@
+---
+/* How information flows — the closed-loop flywheel.
+
+   Individual Workspace → Team Brain → Shared Dashboard → back to the IC,
+   with an "insight" token travelling the loop. Pure inline SVG + CSS
+   (no JS, no video), token-driven, dual-mode, reduced-motion safe.
+
+   Composes the shared diagram primitives in src/styles/diagrams.css.
+   Nodes are HTML overlays (crisp editorial text) positioned on the SVG
+   ring's vertices; the ring + travelling token live in the SVG layer. */
+import '../../../styles/diagrams.css';
+
+// Loop ring geometry (must match the SVG viewBox + node %s below).
+const RING =
+  'M140,281 A360,200 0 1 1 860,281 A360,200 0 1 1 140,281';
+---
+
+<figure class="fly dgm" aria-labelledby="fly-cap">
+  <p class="sr-only" id="fly-cap">
+    A continuous loop: work pushes from each individual workspace to the shared
+    Team Brain, surfaces on the shared dashboard, and returns as insight to every
+    individual — tightening with each cycle.
+  </p>
+
+  <!-- Ring + travelling insight (decorative; the meaning is in the nodes) -->
+  <svg class="dgm-svg" viewBox="0 0 1000 562" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs>
+      <radialGradient id="fly-token" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="var(--aios-accent)" />
+        <stop offset="55%" stop-color="var(--aios-violet)" />
+        <stop offset="100%" stop-color="var(--aios-violet)" />
+      </radialGradient>
+      <radialGradient id="fly-core" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="var(--aios-violet)" stop-opacity="0.16" />
+        <stop offset="60%" stop-color="var(--aios-emerald)" stop-opacity="0.07" />
+        <stop offset="100%" stop-color="var(--aios-accent)" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    <!-- faint prism core -->
+    <circle class="dgm-pulse" cx="500" cy="281" r="120" fill="url(#fly-core)" />
+
+    <!-- the loop: solid hairline + a drifting dashed overlay for direction -->
+    <path class="dgm-edge" d={RING} />
+    <path class="dgm-edge dgm-edge--faint dgm-flow" d={RING} />
+
+    <!-- insight token + short comet trail -->
+    <circle class="dgm-token dgm-token--orbit fly-token fly-token--trail" r="5" fill="url(#fly-token)" />
+    <circle class="dgm-token dgm-token--orbit fly-token" r="6" fill="url(#fly-token)" />
+  </svg>
+
+  <!-- center label -->
+  <div class="fly-core">
+    <span class="fly-core__kicker">CONTINUOUS LOOP</span>
+    <span class="fly-core__line">tightens each cycle</span>
+  </div>
+
+  <!-- edge labels -->
+  <span class="fly-edge fly-edge--push">push · team-tier ↘</span>
+  <span class="fly-edge fly-edge--query">↙ query in plain english</span>
+  <span class="fly-edge fly-edge--return">↑ insight returns</span>
+
+  <!-- nodes, placed on the ring vertices -->
+  <div class="fly-node fly-node--ic dgm-accent--ic">
+    <div class="dgm-node">
+      <span class="dgm-node__kicker">INDIVIDUAL</span>
+      <span class="dgm-node__title">Workspace</span>
+      <span class="dgm-node__meta">numbered spine · tiered context</span>
+    </div>
+  </div>
+
+  <div class="fly-node fly-node--brain dgm-accent--brain">
+    <div class="dgm-node">
+      <span class="dgm-node__kicker">COLLECTIVE</span>
+      <span class="dgm-node__title">Team Brain</span>
+      <span class="dgm-node__meta">memory · decisions · deliverables</span>
+    </div>
+  </div>
+
+  <div class="fly-node fly-node--share dgm-accent--share">
+    <div class="dgm-node">
+      <span class="dgm-node__kicker">SURFACED</span>
+      <span class="dgm-node__title">Shared dashboard</span>
+      <span class="dgm-node__meta">tasks · queries · signal</span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .fly {
+    aspect-ratio: 1000 / 562;
+    max-width: 920px;
+    margin-inline: auto;
+  }
+
+  /* Token motion path — SVG user units, scales with the viewBox. */
+  .fly-token { offset-path: path('M140,281 A360,200 0 1 1 860,281 A360,200 0 1 1 140,281'); }
+  .fly :global(.fly-token) { --dgm-dur: 12s; }
+  .fly-token--trail { opacity: 0.4; animation-delay: -0.28s; }
+
+  /* Center label */
+  .fly-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+    pointer-events: none;
+  }
+  .fly-core__kicker {
+    font-family: var(--aios-font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    color: var(--aios-fg-muted);
+  }
+  .fly-core__line {
+    font-family: var(--aios-font-display);
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--aios-fg-secondary);
+  }
+
+  /* Edge labels */
+  .fly-edge {
+    position: absolute;
+    font-family: var(--aios-font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    color: var(--aios-fg-muted);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .fly-edge--push   { left: 80%;  top: 30%; }
+  .fly-edge--query  { left: 50%;  top: 90%; transform: translateX(-50%); }
+  .fly-edge--return { left: 11%;  top: 38%; }
+
+  /* Nodes — centered on ring vertices (% match viewBox coordinates) */
+  .fly-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: clamp(150px, 22vw, 210px);
+  }
+  .fly-node--ic    { left: 50%;   top: 14.4%; }
+  .fly-node--brain { left: 78.5%; top: 71.7%; }
+  .fly-node--share { left: 21.5%; top: 71.7%; }
+
+  /* Tighten on small screens so the ring still reads */
+  @media (max-width: 640px) {
+    .fly { aspect-ratio: 1 / 1; }
+    .fly-node { width: clamp(118px, 38vw, 160px); }
+    .dgm-node__meta { display: none; }
+    .fly-edge { display: none; }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
