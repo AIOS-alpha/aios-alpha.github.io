@@ -1,31 +1,46 @@
 ---
-/* How it works — the Collective Brain.
+/* How it works — the Team Brain.
 
-   Recreates Chetan's deck diagram in Editorial Minimal: many agent-users +
-   ingested data streams feed ONE collective brain, which fans out to surfaces
-   (kanban / KPI / query) and policy-governed actions (spawn / execute),
-   improving with every use.
+   Hub-and-spoke (Chetan's deck, Editorial Minimal): agent-users + ingested
+   data streams feed one Team Brain; a Context Engine beneath it closes the
+   loop (manages context, finds patterns); the brain fans out to surfaces
+   (kanban / KPI / query) and policy-governed actions (spawn / execute /
+   improve-harness).
 
-   Hub-and-spoke: HTML node cards (crisp, centered text) on the vertices of an
-   SVG edge layer. Inline SVG + CSS only — no JS, no video. Token-driven,
-   dual-mode, reduced-motion safe. Colour is rationed and lives in the LEGEND
-   dots (one per group), not on every card: violet = agent-users · emerald =
-   collective brain · lime = surfaced · cyan = action · grey = data streams.
-   See docs/diagram-system.md. */
+   HTML node cards (crisp, centered text) on the vertices of an SVG edge
+   layer. Inline SVG + CSS only — no JS, no video. Token-driven, dual-mode,
+   reduced-motion safe. Colour is rationed: violet = agent-users · emerald =
+   the brain + context engine · lime = surfaced · cyan = action · grey = data
+   streams. Each card carries its accent dot top-left (Mac-window style); the
+   group legends repeat the dot as a key. See docs/diagram-system.md. */
 import '../../../styles/diagrams.css';
+
+const ICONS = {
+  slack:  'M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z',
+  notion: 'M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z',
+  linear: 'M2.886 4.18A11.982 11.982 0 0 1 11.99 0C18.624 0 24 5.376 24 12.009c0 3.64-1.62 6.903-4.18 9.105L2.887 4.18ZM1.817 5.626l16.556 16.556c-.524.33-1.075.62-1.65.866L.951 7.277c.247-.575.537-1.126.866-1.65ZM.322 9.163l14.515 14.515c-.71.172-1.443.282-2.195.322L0 11.358a12 12 0 0 1 .322-2.195Zm-.17 4.862 9.823 9.824a12.02 12.02 0 0 1-9.824-9.824Z',
+  github: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12',
+};
+const streams = [
+  { name: 'Slack',  icon: ICONS.slack },
+  { name: 'Notion', icon: ICONS.notion },
+  { name: 'Linear', icon: ICONS.linear },
+  { name: 'GitHub', icon: ICONS.github },
+];
 ---
 
 <figure class="cbrain dgm" aria-labelledby="cbrain-cap">
   <p class="sr-only" id="cbrain-cap">
-    Many agent-users send daily updates, and data streams from Slack, Notion,
-    Linear and GitHub are ingested, into a single collective brain that holds
-    knowledge, memory, reasoning and policy. The brain surfaces a kanban board,
-    a KPI dashboard and a query interface, and takes policy-governed actions —
-    spawning agents and executing tasks — improving with every use.
+    Agent-users on Claude Code, Cursor and the AIOS Workstation send daily
+    updates, and data streams from Slack, Notion, Linear, GitHub and more are
+    ingested, into one Team Brain holding knowledge, memory, reasoning and
+    policy. A context engine beneath it finds patterns and closes the loop. The
+    brain surfaces a kanban board, a KPI dashboard and a query interface, and
+    takes policy-governed actions — spawning agents, executing tasks, and
+    improving the team's shared harness of skills, hooks and guards.
   </p>
 
-  <!-- edges -->
-  <svg class="dgm-svg" viewBox="0 0 1280 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg class="dgm-svg" viewBox="0 0 1280 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>
       <marker id="cb-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
@@ -33,109 +48,134 @@ import '../../../styles/diagrams.css';
       <marker id="cb-arrow-v" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-violet)" />
       </marker>
+      <marker id="cb-arrow-e" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-emerald)" />
+      </marker>
       <radialGradient id="cb-halo" cx="50%" cy="50%" r="50%">
-        <stop offset="0%"  stop-color="var(--aios-violet)"  stop-opacity="0.20" />
-        <stop offset="50%" stop-color="var(--aios-emerald)" stop-opacity="0.09" />
+        <stop offset="0%"  stop-color="var(--aios-violet)"  stop-opacity="0.22" />
+        <stop offset="55%" stop-color="var(--aios-emerald)" stop-opacity="0.08" />
         <stop offset="100%" stop-color="var(--aios-accent)" stop-opacity="0" />
       </radialGradient>
     </defs>
 
-    <!-- brain bokeh — gentle "sleep-light" breathing -->
-    <circle class="cb-halo" cx="640" cy="400" r="250" fill="url(#cb-halo)" />
+    <!-- brain bokeh — gentle "sleep-light" breathing (6s in / 6s out) -->
+    <circle class="cb-halo" cx="640" cy="340" r="172" fill="url(#cb-halo)" />
 
     <!-- agent-users -> brain (daily updates) -->
-    <path class="dgm-edge cb-in"   d="M310,130 C410,130 440,388 490,388" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M310,240 C420,240 450,398 490,398" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M310,350 C430,350 460,408 490,408" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in cb-flow" d="M310,130 C410,130 440,388 490,388" />
-    <path class="dgm-edge cb-in cb-flow" d="M310,240 C420,240 450,398 490,398" />
-    <path class="dgm-edge cb-in cb-flow" d="M310,350 C430,350 460,408 490,408" />
+    <path class="dgm-edge cb-in"   d="M305,130 C410,130 440,310 490,312" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M305,250 C420,250 450,338 490,340" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in"   d="M305,370 C430,362 460,368 490,366" marker-end="url(#cb-arrow-v)" />
+    <path class="dgm-edge cb-in cb-flow" d="M305,130 C410,130 440,310 490,312" />
+    <path class="dgm-edge cb-in cb-flow" d="M305,250 C420,250 450,338 490,340" />
+    <path class="dgm-edge cb-in cb-flow" d="M305,370 C430,362 460,368 490,366" />
 
     <!-- data streams -> brain (ingestion) -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,530 C420,530 450,452 490,448" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M310,640 C420,640 460,472 490,460" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,540 C410,540 445,410 490,402" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,615 C410,615 450,425 490,416" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> surfaces -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,388 C890,388 910,140 970,140" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,400 C890,400 910,250 970,250" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,412 C890,412 910,360 970,360" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,318 C880,318 900,125 975,125" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,332 C880,332 900,240 975,240" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,346 C880,346 900,355 975,355" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> actions -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,430 C890,430 910,540 970,540" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,444 C890,444 910,660 970,660" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,366 C880,366 900,545 975,545" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,380 C880,380 900,665 975,665" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M790,394 C870,394 900,785 975,785" marker-end="url(#cb-arrow)" />
 
-    <!-- self-improvement loop -->
-    <path class="dgm-edge cb-loop" d="M612,520 C590,605 690,605 668,520" marker-end="url(#cb-arrow-v)" />
+    <!-- Context Engine closes the loop with the brain -->
+    <path class="dgm-edge cb-loop" d="M600,442 C576,478 576,494 600,514" marker-end="url(#cb-arrow-e)" />
+    <path class="dgm-edge cb-loop" d="M680,514 C704,494 704,478 680,442" marker-end="url(#cb-arrow-e)" />
   </svg>
 
   <!-- AGENT-USERS -->
-  <span class="cb-label cb-label--agents" style="left:15.6%; top:8.5%;">AGENT-USERS</span>
-  <div class="cb-node" style="left:15.6%; top:15.9%;">
-    <div class="dgm-node"><span class="dgm-node__title">Agent-User A</span></div>
+  <span class="cb-label cb-label--agents" style="left:15.2%; top:5.6%;">AGENT-USERS</span>
+  <div class="cb-node" style="left:15.2%; top:14.4%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--ic"></span><span class="dgm-node__title">Agent-User A</span><span class="dgm-node__meta">Claude Code + MCP</span></div>
   </div>
-  <div class="cb-node" style="left:15.6%; top:29.3%;">
-    <div class="dgm-node"><span class="dgm-node__title">Agent-User B</span></div>
+  <div class="cb-node" style="left:15.2%; top:27.8%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--ic"></span><span class="dgm-node__title">Agent-User B</span><span class="dgm-node__meta">Cursor + MCP</span></div>
   </div>
-  <div class="cb-node" style="left:15.6%; top:42.7%;">
-    <div class="dgm-node"><span class="dgm-node__title">Agent-User C</span></div>
+  <div class="cb-node" style="left:15.2%; top:41.1%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--ic"></span><span class="dgm-node__title">Agent-User C</span><span class="dgm-node__meta">AIOS Workstation</span></div>
   </div>
 
   <!-- DATA STREAMS -->
-  <span class="cb-label cb-label--streams" style="left:15.6%; top:56.1%;">DATA STREAMS</span>
-  <div class="cb-node" style="left:15.6%; top:64.6%;">
-    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">Slack · Notion</span></div>
-  </div>
-  <div class="cb-node" style="left:15.6%; top:78%;">
-    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">Linear · GitHub</span></div>
+  <span class="cb-label cb-label--streams" style="left:15.2%; top:52.2%;">DATA STREAMS</span>
+  {streams.map((s, i) => (
+    <div class="cb-node cb-node--stream" style={`left:${i % 2 === 0 ? 10.9 : 19.9}%; top:${i < 2 ? 60 : 68.3}%;`}>
+      <div class="dgm-node cb-logo">
+        <svg class="cb-logo__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={s.icon} fill="currentColor" /></svg>
+        <span class="cb-logo__name">{s.name}</span>
+      </div>
+    </div>
+  ))}
+  <div class="cb-node cb-node--more" style="left:15.2%; top:77.2%;">
+    <div class="dgm-node dgm-node--ghost"><span class="dgm-node__meta">+ more integrations</span></div>
   </div>
 
-  <!-- COLLECTIVE BRAIN -->
-  <div class="cb-node cb-node--brain" style="left:50%; top:48.8%;">
+  <!-- TEAM BRAIN -->
+  <div class="cb-node cb-node--brain" style="left:50%; top:37.8%;">
     <div class="dgm-node cb-brain">
-      <span class="cb-brain__title">Collective Brain</span>
+      <span class="cb-cdot cb-cdot--brain"></span>
+      <span class="cb-brain__title">Team Brain</span>
       <span class="cb-brain__meta">Knowledge · Memory</span>
       <span class="cb-brain__meta">Reasoning · Policy</span>
     </div>
   </div>
 
+  <!-- CONTEXT ENGINE (closes the loop) -->
+  <div class="cb-node cb-node--engine" style="left:50%; top:64.4%;">
+    <div class="dgm-node cb-engine">
+      <span class="cb-cdot cb-cdot--brain"></span>
+      <span class="dgm-node__title">Context Engine</span>
+      <span class="dgm-node__meta">manages context · finds patterns</span>
+    </div>
+  </div>
+
   <!-- SURFACES -->
-  <span class="cb-label cb-label--surfaces" style="left:84.4%; top:8.5%;">SURFACES</span>
-  <div class="cb-node" style="left:84.4%; top:17.1%;">
-    <div class="dgm-node"><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
+  <span class="cb-label cb-label--surfaces" style="left:84.8%; top:5.6%;">SURFACES</span>
+  <div class="cb-node" style="left:84.8%; top:13.9%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--share"></span><span class="dgm-node__title">Kanban board</span><span class="dgm-node__meta">agent-claimable tasks</span></div>
   </div>
-  <div class="cb-node" style="left:84.4%; top:30.5%;">
-    <div class="dgm-node"><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
+  <div class="cb-node" style="left:84.8%; top:26.7%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--share"></span><span class="dgm-node__title">KPI dashboard</span><span class="dgm-node__meta">published metrics</span></div>
   </div>
-  <div class="cb-node" style="left:84.4%; top:43.9%;">
-    <div class="dgm-node"><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
+  <div class="cb-node" style="left:84.8%; top:39.4%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--share"></span><span class="dgm-node__title">Query interface</span><span class="dgm-node__meta">ask the brain anything</span></div>
   </div>
 
   <!-- ACTIONS -->
-  <span class="cb-label cb-label--actions" style="left:84.4%; top:57.3%;">ACTIONS</span>
-  <div class="cb-node" style="left:84.4%; top:65.9%;">
-    <div class="dgm-node"><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
+  <span class="cb-label cb-label--actions" style="left:84.8%; top:52.2%;">ACTIONS</span>
+  <div class="cb-node" style="left:84.8%; top:60.6%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--act"></span><span class="dgm-node__title">Spawn agents</span><span class="dgm-node__meta">research · outreach · drafting</span></div>
   </div>
-  <div class="cb-node" style="left:84.4%; top:80.5%;">
-    <div class="dgm-node"><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
+  <div class="cb-node" style="left:84.8%; top:73.9%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--act"></span><span class="dgm-node__title">Execute tasks</span><span class="dgm-node__meta">pull from kanban autonomously</span></div>
+  </div>
+  <div class="cb-node" style="left:84.8%; top:87.2%;">
+    <div class="dgm-node"><span class="cb-cdot cb-cdot--act"></span><span class="dgm-node__title">Improve harness</span><span class="dgm-node__meta">a goal → shared skills, hooks &amp; guards</span></div>
   </div>
 
-  <!-- edge labels — beside / clear of the lines, not over them -->
-  <span class="cb-edge-label" style="left:33%; top:11.5%;">daily updates →</span>
-  <span class="cb-edge-label" style="left:30.5%; top:70.5%;">ingestion ⇢</span>
-  <span class="cb-edge-label cb-edge-label--center" style="left:50%; top:79%;">self-improves with every use</span>
+  <!-- edge labels — clear of the lines -->
+  <span class="cb-edge-label" style="left:33%; top:9%;">daily updates →</span>
+  <span class="cb-edge-label" style="left:31%; top:48%;">ingestion ⇢</span>
 </figure>
 
 <style>
   .cbrain {
     position: relative;
-    aspect-ratio: 1280 / 820;
+    aspect-ratio: 1280 / 900;
     width: 100%;
     margin-inline: auto;
+    /* cards size in cqw so they scale WITH the viewBox-positioned layout —
+       keeps vertical gaps proportional at every width. */
+    container-type: inline-size;
   }
 
   /* ---- edges ---- */
   .cb-in { stroke: color-mix(in srgb, var(--aios-violet) 60%, var(--aios-border-strong)); }
-  .cb-loop { stroke: color-mix(in srgb, var(--aios-violet) 55%, var(--aios-border-strong)); }
+  .cb-loop { stroke: color-mix(in srgb, var(--aios-emerald) 62%, var(--aios-border-strong)); }
   .cb-flow {
     stroke: var(--aios-violet);
     stroke-dasharray: 2 9;
@@ -143,11 +183,11 @@ import '../../../styles/diagrams.css';
     animation: dgm-dash 1.8s linear infinite;
   }
 
-  /* gentle Mac "sleep light" breathing bokeh */
-  .cb-halo { transform-origin: center; animation: cb-breathe 5.6s ease-in-out infinite; }
+  /* gentle Mac "sleep-light" breathing bokeh — 6s in, 6s out */
+  .cb-halo { transform-origin: center; animation: cb-breathe 12s ease-in-out infinite; }
   @keyframes cb-breathe {
-    0%, 100% { opacity: 0.62; transform: scale(1); }
-    50%      { opacity: 1;    transform: scale(1.045); }
+    0%, 100% { opacity: 0.5;  transform: scale(0.99); }
+    50%      { opacity: 0.92; transform: scale(1.04); }
   }
 
   /* ---- legend labels (carry the rationed colour dot) ---- */
@@ -156,9 +196,9 @@ import '../../../styles/diagrams.css';
     transform: translate(-50%, -50%);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.65cqw;
     font-family: var(--aios-font-mono);
-    font-size: 0.7rem;
+    font-size: clamp(0.58rem, 0.82cqw, 0.72rem);
     letter-spacing: 0.16em;
     color: var(--aios-fg-muted);
     white-space: nowrap;
@@ -166,9 +206,7 @@ import '../../../styles/diagrams.css';
   }
   .cb-label::before {
     content: '';
-    width: 9px;
-    height: 9px;
-    border-radius: 9999px;
+    width: 9px; height: 9px; border-radius: 9999px;
     background: var(--cb-dot, var(--aios-fg-muted));
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--cb-dot, transparent) 18%, transparent);
   }
@@ -181,43 +219,76 @@ import '../../../styles/diagrams.css';
     position: absolute;
     transform: translate(-50%, -50%);
     font-family: var(--aios-font-mono);
-    font-size: 0.68rem;
+    font-size: clamp(0.58rem, 0.78cqw, 0.7rem);
     letter-spacing: 0.04em;
     color: var(--aios-fg-muted);
     white-space: nowrap;
     pointer-events: none;
   }
 
-  /* ---- nodes — centered, roomy, no per-card eyebrow ---- */
+  /* ---- nodes — centered, roomy, per-card dot top-left ---- */
   .cb-node {
     position: absolute;
     transform: translate(-50%, -50%);
-    width: 17.2%;
+    width: 17%;
     min-width: 150px;
   }
-  .cb-node--brain { width: 23.4%; min-width: 210px; }
+  .cb-node--brain  { width: 23%;  min-width: 210px; }
+  .cb-node--engine { width: 19%;  min-width: 180px; }
+  .cb-node--stream { width: 8.2%; min-width: 96px; }
+  .cb-node--more   { width: 13%;  min-width: 130px; }
 
   .cbrain :global(.dgm-node) {
+    position: relative;
     align-items: center;
     text-align: center;
-    gap: 6px;
-    padding: 17px 20px;
+    gap: 0.4cqw;
+    padding: clamp(11px, 1.2cqw, 18px) clamp(13px, 1.5cqw, 22px);
   }
-  .cbrain :global(.dgm-node__title) { font-size: 1.32rem; }
-  .cbrain :global(.dgm-node__meta)  { font-size: 0.72rem; line-height: 1.45; }
+  .cbrain :global(.dgm-node__title) { font-size: clamp(0.95rem, 1.5cqw, 1.4rem); }
+  .cbrain :global(.dgm-node__meta)  { font-size: clamp(0.6rem, 0.82cqw, 0.78rem); line-height: 1.45; }
 
-  /* ghost (data stream) frame — dashed, no fill, neutral */
+  /* per-card accent dot, top-left (Mac close-button position) */
+  .cb-cdot {
+    position: absolute;
+    top: clamp(10px, 1cqw, 15px); left: clamp(12px, 1.15cqw, 17px);
+    width: clamp(7px, 0.7cqw, 10px); aspect-ratio: 1;
+    border-radius: 9999px;
+    background: var(--cd, var(--aios-fg-muted));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cd, transparent) 16%, transparent);
+  }
+  .cb-cdot--ic    { --cd: var(--aios-violet); }
+  .cb-cdot--brain { --cd: var(--aios-emerald); }
+  .cb-cdot--share { --cd: var(--aios-accent); }
+  .cb-cdot--act   { --cd: var(--aios-cyan); }
+
+  /* data-stream logo cards — compact, monochrome icon + name */
+  .cb-logo {
+    flex-direction: row;
+    gap: 0.65cqw;
+    padding: clamp(8px, 0.85cqw, 13px) clamp(9px, 1cqw, 14px);
+  }
+  .cb-logo__icon {
+    width: clamp(13px, 1.15cqw, 16px); height: auto; aspect-ratio: 1;
+    color: var(--aios-fg-secondary);
+    flex: none;
+  }
+  .cb-logo__name {
+    font-family: var(--aios-font-mono);
+    font-size: clamp(0.62rem, 0.82cqw, 0.76rem);
+    color: var(--aios-fg-secondary);
+  }
   .dgm-node--ghost {
     background: transparent;
     border-style: dashed;
     box-shadow: none;
   }
-  .dgm-node--ghost .dgm-node__meta { font-size: 0.78rem; color: var(--aios-fg-secondary); }
+  .dgm-node--ghost .dgm-node__meta { font-size: 0.7rem; color: var(--aios-fg-muted); }
 
   /* the brain — larger, prism-tinted */
   .cb-brain {
-    gap: 8px;
-    padding: 28px 24px;
+    gap: 0.6cqw;
+    padding: clamp(18px, 2cqw, 30px) clamp(16px, 1.8cqw, 26px);
     background:
       radial-gradient(120% 120% at 50% 0%,
         color-mix(in srgb, var(--aios-violet) 11%, var(--aios-surface)) 0%,
@@ -227,27 +298,36 @@ import '../../../styles/diagrams.css';
   }
   .cb-brain__title {
     font-family: var(--aios-font-display);
-    font-size: 1.95rem;
+    font-size: clamp(1.4rem, 2.2cqw, 2.1rem);
     line-height: 1.05;
     letter-spacing: -0.02em;
     color: var(--aios-fg);
   }
   .cb-brain__meta {
     font-family: var(--aios-font-mono);
-    font-size: 0.76rem;
+    font-size: clamp(0.64rem, 0.86cqw, 0.82rem);
     line-height: 1.35;
     color: var(--aios-fg-secondary);
   }
-  .cb-brain__meta:first-of-type { margin-top: 6px; }
+  .cb-brain__meta:first-of-type { margin-top: 0.4cqw; }
+
+  /* context engine — emerald-tinted, sibling of the brain */
+  .cb-engine {
+    border-color: color-mix(in srgb, var(--aios-emerald) 28%, var(--aios-border));
+    background:
+      radial-gradient(120% 120% at 50% 0%,
+        color-mix(in srgb, var(--aios-emerald) 8%, var(--aios-surface)) 0%,
+        var(--aios-surface) 75%);
+  }
 
   /* ---- mobile: drop the spoke layout, stack the groups ---- */
-  @media (max-width: 900px) {
+  @media (max-width: 920px) {
     .cbrain {
       aspect-ratio: auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px 14px;
-      max-width: 520px;
+      max-width: 540px;
     }
     .dgm-svg, .cb-edge-label { display: none; }
     .cb-node, .cb-label {
@@ -257,10 +337,10 @@ import '../../../styles/diagrams.css';
       min-width: 0;
     }
     .cb-label { grid-column: 1 / -1; margin-top: 8px; }
-    .cb-node--brain { grid-column: 1 / -1; }
+    .cb-node--brain, .cb-node--engine, .cb-node--more { grid-column: 1 / -1; }
     .cb-brain__title { font-size: 1.5rem; }
   }
-  @media (max-width: 460px) {
+  @media (max-width: 480px) {
     .cbrain { grid-template-columns: 1fr; max-width: 340px; }
   }
 
