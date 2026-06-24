@@ -1,0 +1,121 @@
+---
+title: The 8 organ systems
+description: Concept from Chetan's product deck; implementation status tracked in Team Brain. Architecture anatomy for the AIOS collective brain.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The AIOS Team Brain is organized as **eight organ systems** — independently deployable capabilities that together form a collective intelligence layer. This page adapts the architecture model from [Chetan's product deck](https://www.fluora.ai/aios) for the public OSS audience.
+
+<Aside type="note">
+**Live status** is maintained in the Team Brain repo: [`docs/ARCHITECTURE.md`](https://github.com/AIOS-alpha/aios-team-brain/blob/main/docs/ARCHITECTURE.md). Last synced from that doc: **2026-06-24**.
+</Aside>
+
+---
+
+## Status legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ Shipped | MVP in the current tagged release |
+| 🟡 Partial | Schema or engine exists; gaps remain (see notes) |
+| ⬜ Planned | On the roadmap; not yet in production code |
+
+---
+
+## The organs
+
+### 1. Knowledge repository — ✅ Shipped
+
+Everything the team knows, structured and retrievable. Items land in Postgres with full-text search; the query layer assembles context for natural-language answers.
+
+**Where:** `items` table, FTS indexes, [`lib/query`](/guides/team-brain/) in the Team Brain.
+
+---
+
+### 2. Ingestion layer — ✅ Shipped
+
+Pipes from workspace pushes and external sources into the brain. The CLI sync path and Python sidecar handle tier-tagged writes at the API boundary.
+
+**Where:** [`lib/ingest`](/guides/team-brain/) + [`ingestion/` sidecar](/guides/integrations/). Eight source types in MVP.
+
+See also: [Brain API v1](/reference/brain-api/) for the sync contract.
+
+---
+
+### 3. Context management — 🟡 Partial
+
+Decides what surfaces and what stays quiet — signal over noise so the brain informs without overwhelming. Retrieval and ranking logic exists; prioritization heuristics are still evolving.
+
+**Where:** `lib/query/retrieve.ts` in the Team Brain.
+
+Related landing topic: [Honesty — context overload](/#honesty) (hard problem #1).
+
+---
+
+### 4. Action layer — 🟡 Partial (MVP)
+
+Policy-gated agents that act on behalf of the collective. The schema and API seam exist; a full autonomous runner is not wired yet.
+
+**Where:** `lib/actions`, `actions` table, `POST /api/v1/actions`.
+
+See: [Harnesses](/guides/harnesses/) for how workspaces orchestrate agent work today.
+
+---
+
+### 5. Identity & membership — ✅ Shipped
+
+Who belongs, with what role and permissions. Teams, members, and per-member API keys are the root of access control.
+
+**Where:** `teams`, `members`, `api_keys` tables.
+
+See: [Access tiers](/reference/glossary/#access-tiers) in the glossary and the tier model in [Brain API v1](/reference/brain-api/).
+
+---
+
+### 6. Policy engine — 🟡 Partial
+
+The constitutional layer — what's autonomous, what needs approval, who decides. Engine and schema exist; dashboard UI and write-path enforcement are not complete.
+
+**Where:** `lib/policy`, `policies`, `approval_requests` tables.
+
+Principle: [Permissioned](/#principles) (landing page).
+
+---
+
+### 7. Audit log — ✅ Shipped
+
+Immutable record of every action, query, and ingestion event. Append-only, trigger-backed — the trust layer for a shared brain.
+
+**Where:** `audit_log` table in the Team Brain.
+
+---
+
+### 8. Feedback loop — 🟡 Partial
+
+Closes the loop so the brain learns from outcomes over time. PM sync, work events, and codebase analytics feed progression signals; full closed-loop learning is still maturing.
+
+**Where:** `work_events`, `lib/pm-sync`, codebase scan ingest.
+
+See: [Agentic Engineering maturity](/agentic/) for individual and team instrumentation.
+
+---
+
+## How the organs connect
+
+```
+Workspace pushes (tier-tagged)
+        │
+        ▼
+  Ingestion ──► Knowledge repository ◄── Context management
+        │              │                        │
+        │              ▼                        │
+        │         Query / Surfaces              │
+        │              │                        │
+        ▼              ▼                        ▼
+  Audit log ◄── Policy engine ──► Action layer
+        │                              │
+        └──────── Feedback loop ◄──────┘
+```
+
+For deployment and operation, start with [Team Brain](/guides/team-brain/) and [Your Workspace](/guides/workspace/).
