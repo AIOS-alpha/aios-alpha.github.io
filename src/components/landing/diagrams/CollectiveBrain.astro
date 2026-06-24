@@ -52,12 +52,6 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
       <marker id="cb-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-border-strong)" />
       </marker>
-      <marker id="cb-arrow-v" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-violet)" />
-      </marker>
-      <marker id="cb-arrow-e" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" fill="var(--aios-emerald)" />
-      </marker>
       <radialGradient id="cb-halo" cx="50%" cy="50%" r="50%">
         <stop offset="0%"  stop-color="var(--aios-violet)"  stop-opacity="0.22" />
         <stop offset="55%" stop-color="var(--aios-emerald)" stop-opacity="0.08" />
@@ -66,33 +60,33 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     </defs>
 
     <!-- brain bokeh — gentle "sleep-light" breathing (6s in / 6s out) -->
-    <circle class="cb-halo" cx="640" cy="300" r="168" fill="url(#cb-halo)" />
+    <circle class="cb-halo" cx="640" cy="290" r="170" fill="url(#cb-halo)" />
 
-    <!-- agent-users -> brain (daily updates) -->
-    <path class="dgm-edge cb-in"   d="M305,128 C410,128 440,253 490,255" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M305,238 C420,238 450,273 490,275" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in"   d="M305,348 C430,348 460,300 490,300" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-in cb-flow" d="M305,128 C410,128 440,253 490,255" />
-    <path class="dgm-edge cb-in cb-flow" d="M305,238 C420,238 450,273 490,275" />
-    <path class="dgm-edge cb-in cb-flow" d="M305,348 C430,348 460,300 490,300" />
+    <!-- agent-users -> brain (all edges greyscale) -->
+    <path class="dgm-edge" d="M305,128 C410,128 442,248 492,250" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge" d="M305,238 C420,238 452,273 492,275" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge" d="M305,348 C430,348 462,300 492,300" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint cb-flow" d="M305,128 C410,128 442,248 492,250" />
+    <path class="dgm-edge dgm-edge--faint cb-flow" d="M305,238 C420,238 452,273 492,275" />
+    <path class="dgm-edge dgm-edge--faint cb-flow" d="M305,348 C430,348 462,300 492,300" />
 
     <!-- data streams -> brain (ingestion) -->
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,475 C400,475 440,340 490,336" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,545 C410,545 450,356 490,350" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,475 C400,475 442,335 492,332" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint dgm-edge--dashed" d="M312,545 C410,545 452,352 492,348" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> surfaces -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,255 C880,255 900,128 975,128" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,275 C880,275 900,238 975,238" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,300 C880,300 900,348 975,348" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M788,250 C880,250 900,128 975,128" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M788,275 C880,275 900,238 975,238" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M788,300 C880,300 900,348 975,348" marker-end="url(#cb-arrow)" />
 
     <!-- brain -> actions -->
-    <path class="dgm-edge dgm-edge--faint" d="M790,330 C880,330 900,475 975,475" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,345 C880,345 900,585 975,585" marker-end="url(#cb-arrow)" />
-    <path class="dgm-edge dgm-edge--faint" d="M790,358 C870,358 900,695 975,695" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M788,325 C880,325 900,475 975,475" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M788,345 C880,345 900,585 975,585" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge dgm-edge--faint" d="M788,362 C870,362 900,695 975,695" marker-end="url(#cb-arrow)" />
 
-    <!-- Context Engine closes the loop: brain -> engine (violet in), engine -> brain (emerald out) -->
-    <path class="dgm-edge cb-loop-in"  d="M626,367 C616,380 616,390 626,403" marker-end="url(#cb-arrow-v)" />
-    <path class="dgm-edge cb-loop-out" d="M654,403 C664,390 664,380 654,367" marker-end="url(#cb-arrow-e)" />
+    <!-- Context Engine closes the loop — greyscale, centered in the gap -->
+    <path class="dgm-edge" d="M626,390 C615,398 615,403 626,411" marker-end="url(#cb-arrow)" />
+    <path class="dgm-edge" d="M654,411 C665,403 665,398 654,390" marker-end="url(#cb-arrow)" />
   </svg>
 
   <!-- AGENT-USERS -->
@@ -124,14 +118,24 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
   <!-- TEAM BRAIN -->
   <div class="cb-node cb-node--brain" style="left:50%; top:36.25%;">
     <div class="dgm-node cb-brain">
+      <svg class="cb-brain__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 18V5" />
+        <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" />
+        <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" />
+        <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" />
+        <path d="M18 18a4 4 0 0 0 2-7.464" />
+        <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" />
+        <path d="M6 18a4 4 0 0 1-2-7.464" />
+        <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" />
+      </svg>
       <span class="cb-brain__title">Team Brain</span>
       <span class="cb-brain__meta">Knowledge · Memory</span>
-      <span class="cb-brain__meta">Reasoning · Policy</span>
+      <span class="cb-brain__meta">Reasoning · Policy · Insights</span>
     </div>
   </div>
 
   <!-- CONTEXT ENGINE (closes the loop) -->
-  <div class="cb-node cb-node--engine" style="left:50%; top:56%;">
+  <div class="cb-node cb-node--engine" style="left:50%; top:59.4%;">
     <div class="dgm-node cb-engine">
       <span class="dgm-node__title">Context Engine</span>
       <span class="dgm-node__meta">manages context · finds patterns</span>
@@ -162,9 +166,6 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     <div class="dgm-node cb-tint--act"><span class="dgm-node__title">Improve harness</span><span class="dgm-node__meta">a goal → shared skills, hooks &amp; guards</span></div>
   </div>
 
-  <!-- edge labels — clear of the lines -->
-  <span class="cb-edge-label" style="left:32%; top:12%;">daily updates →</span>
-  <span class="cb-edge-label" style="left:31%; top:47%;">ingestion ⇢</span>
 </figure>
 
 <style>
@@ -176,14 +177,11 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     container-type: inline-size;
   }
 
-  /* ---- edges ---- */
-  .cb-in { stroke: color-mix(in srgb, var(--aios-violet) 60%, var(--aios-border-strong)); }
-  .cb-loop-in  { stroke: color-mix(in srgb, var(--aios-violet) 68%, var(--aios-border-strong)); }
-  .cb-loop-out { stroke: color-mix(in srgb, var(--aios-emerald) 68%, var(--aios-border-strong)); }
+  /* ---- edges — all greyscale ---- */
   .cb-flow {
-    stroke: var(--aios-violet);
+    stroke: var(--aios-fg-muted);
     stroke-dasharray: 2 9;
-    opacity: 0.8;
+    opacity: 0.5;
     animation: dgm-dash 1.8s linear infinite;
   }
 
@@ -289,9 +287,13 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
   }
   .dgm-node--ghost .dgm-node__meta { font-size: clamp(0.6rem, 0.78cqw, 0.7rem); color: var(--aios-fg-muted); }
 
-  /* the brain — larger, violet-tinted (gradient border = its colour identity) */
+  /* the brain — larger, violet-tinted (gradient border = its colour identity).
+     min-height in cqw makes the card span a fixed slice of the viewBox so the
+     right-edge arrows never drop below it. */
   .cb-brain {
     gap: 0.6cqw;
+    min-height: 13.6cqw;
+    justify-content: center;
     padding: clamp(18px, 2cqw, 30px) clamp(16px, 1.8cqw, 26px);
     background:
       radial-gradient(120% 120% at 50% 0%,
@@ -299,6 +301,11 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
         var(--aios-surface) 70%);
     border-color: color-mix(in srgb, var(--aios-violet) 32%, var(--aios-border));
     box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 26px 64px -34px color-mix(in srgb, var(--aios-violet) 60%, transparent);
+  }
+  .cb-brain__icon {
+    width: clamp(22px, 2.1cqw, 30px); height: auto; aspect-ratio: 1;
+    color: var(--aios-fg);
+    margin-bottom: 0.2cqw;
   }
   .cb-brain__title {
     font-family: var(--aios-font-display);
@@ -317,6 +324,8 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
 
   /* context engine — emerald-tinted, sibling of the brain */
   .cb-engine {
+    min-height: 8cqw;
+    justify-content: center;
     border-color: color-mix(in srgb, var(--aios-emerald) 34%, var(--aios-border));
     background:
       radial-gradient(120% 120% at 50% 0%,
