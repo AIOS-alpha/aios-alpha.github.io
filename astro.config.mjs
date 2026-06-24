@@ -38,7 +38,7 @@ export default defineConfig({
               },
           },
           social: [
-              { icon: 'github', label: 'GitHub', href: 'https://github.com/your-github-org/aios-workspace' },
+              { icon: 'github', label: 'GitHub', href: 'https://github.com/AIOS-alpha' },
           ],
           sidebar: [
               {

@@ -40,11 +40,15 @@ const bokehPools = [
     <script is:inline>
       (function () {
         try {
-          var stored = localStorage.getItem('aios-theme');
+          /* Same key as Starlight docs (starlight-theme) so landing ↔ docs stay in sync. */
+          var stored =
+            localStorage.getItem('starlight-theme') || localStorage.getItem('aios-theme');
           var dark = stored ? stored === 'dark' : true; // brand default = dark
           document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
         } catch (e) {
           document.documentElement.classList.add('dark');
+          document.documentElement.dataset.theme = 'dark';
         }
       })();
     </script>
