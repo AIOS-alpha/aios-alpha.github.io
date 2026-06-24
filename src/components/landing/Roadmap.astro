@@ -1,0 +1,79 @@
+---
+
+const columns = [
+  {
+    status: 'SHIPPED',
+    items: [
+      'Runtime-agnostic integrations (MCP + Plane/Linear/GitHub/Granola)',
+      'Tiered access governance (private → team → external)',
+      'Per-member token & cost tracking',
+      'Agentic maturity instrumentation',
+      'Dashboard task orchestration (brain → Linear projection)',
+      'Open-source design system',
+    ],
+    accent: 'text-emerald',
+  },
+  {
+    status: 'IN PROGRESS',
+    items: [
+      'Unified LLM cost & inference across providers (Anthropic, Cursor)',
+      'Two-way PM sync (agents on the board)',
+      'Slack bidirectional integration',
+    ],
+    accent: 'text-accent',
+  },
+  {
+    status: 'PLANNED',
+    items: [
+      'Finance & runway snapshots',
+      'Agentic learning journeys (20+ roles)',
+      'Public, live roadmap board',
+    ],
+    accent: 'text-muted-foreground',
+  },
+];
+---
+
+<section class="relative py-20 md:py-32 bg-surface">
+  <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+
+    <div class="mb-14">
+      <span class="text-label text-muted-foreground block mb-4">ROADMAP</span>
+      <h2 class="text-heading-2 text-foreground max-w-[480px]">Where this is going.</h2>
+      <p class="text-body text-muted-foreground mt-5 max-w-[560px]">
+        AIOS is open source and shaped by the people who use it.
+        If something on this list matters to you, open an issue or a PR.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {columns.map(({ status, items, accent }) => (
+        <div class="feature-card">
+          <span class={`text-label block mb-6 ${accent}`}>{status}</span>
+          <ul class="space-y-3">
+            {items.map((item) => (
+              <li class="flex items-start gap-2.5">
+                <span class={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 bg-current ${accent}`} aria-hidden="true" />
+                <span class="text-body text-muted-foreground">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- Footer CTA -->
+    <div class="mt-14 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <a
+        href="https://github.com/AIOS-alpha"
+        class="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-full no-underline btn-prism hover:bg-primary-hover transition-colors text-small"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Contribute on GitHub →
+      </a>
+      <span class="text-label text-muted-foreground">Public board coming soon.</span>
+    </div>
+
+  </div>
+</section>

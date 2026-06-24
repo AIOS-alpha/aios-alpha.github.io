@@ -18,6 +18,18 @@ const {
   title,
   description = 'An open-source AI transformation toolkit — structured agent workspaces and a shared team memory service.',
 } = Astro.props;
+
+// Page-level bokeh pools — staggered down the page on alternating sides to guide
+// the eye. Data-driven so positions live in one place, not scattered inline.
+const bokehPools = [
+  { top: '2%',  side: 'left: -7%',  w: '46vw', h: '30rem', bokeh: 1, opacity: 0.7 },
+  { top: '15%', side: 'right: -9%', w: '48vw', h: '32rem', bokeh: 4, opacity: 0.62 },
+  { top: '30%', side: 'left: -6%',  w: '44vw', h: '30rem', bokeh: 2, opacity: 0.68 },
+  { top: '45%', side: 'right: -7%', w: '50vw', h: '34rem', bokeh: 3, opacity: 0.58 },
+  { top: '60%', side: 'left: -8%',  w: '46vw', h: '32rem', bokeh: 1, opacity: 0.62 },
+  { top: '75%', side: 'right: -6%', w: '48vw', h: '32rem', bokeh: 4, opacity: 0.58 },
+  { top: '90%', side: 'left: -5%',  w: '42vw', h: '30rem', bokeh: 5, opacity: 0.58 },
+];
 ---
 
 <!doctype html>
@@ -42,7 +54,18 @@ const {
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body class="bg-background text-foreground font-sans antialiased overflow-x-hidden">
+  <body class="bg-background text-foreground font-sans antialiased overflow-x-clip">
+    <!-- One continuous bokeh field behind everything: pools staggered down the
+         page on alternating sides, bleeding smoothly across section boundaries.
+         Sections are transparent so it shows through; clipped to page width. -->
+    <div class="page-bokeh" aria-hidden="true">
+      {bokehPools.map((p) => (
+        <span
+          class="bokeh-pool"
+          style={`top:${p.top}; ${p.side}; width:${p.w}; height:${p.h}; background:var(--bokeh-${p.bokeh}); opacity:${p.opacity};`}
+        ></span>
+      ))}
+    </div>
     <slot />
   </body>
 </html>

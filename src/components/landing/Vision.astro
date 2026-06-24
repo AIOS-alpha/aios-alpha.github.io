@@ -1,0 +1,76 @@
+---
+import Placeholder from './Placeholder.astro';
+
+const points = [
+  {
+    label: '01 — The flywheel',
+    body: 'The more context flows into the Team Brain, the smarter it gets. It learns your patterns, habits, and needs — so you build better skills, with more context, faster.',
+  },
+  {
+    label: '02 — Best patterns spread',
+    body: 'Ship a skill or harness to the team repo and everyone adopts it. No re-inventing the wheel; no sharing prompt files in Slack.',
+  },
+  {
+    label: '03 — Codebase health',
+    body: 'Measure agentic readiness, test coverage, and release cadence. Learn best practices on the fly from real instrumentation — not blog posts.',
+  },
+  {
+    label: '04 — Real-time coaching',
+    body: 'Every AI session is evaluated for token efficiency and impact. Get targeted feedback on how to become a more effective agentic engineer.',
+  },
+  {
+    label: '05 — Toward orchestration',
+    body: 'Agents take on execution — even running the board. Humans run orchestration. The division of labour shifts permanently.',
+  },
+  {
+    label: '06 — Learning journeys',
+    body: 'Customised daily learning across 20+ job functions, in any tool. Coming next.',
+  },
+];
+---
+
+<section class="relative py-20 md:py-32 bg-background">
+  <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+
+    <div class="mb-14">
+      <span class="text-label text-muted-foreground block mb-2">THE VISION</span>
+      <span class="text-label text-muted-foreground block mb-6 opacity-60">Where we're headed</span>
+      <h2 class="text-heading-2 text-foreground max-w-[620px]">
+        A closed loop for humans <span class="serif-italic">and</span> agents.
+      </h2>
+    </div>
+
+    <p class="text-body-lg text-muted-foreground max-w-[680px] mb-12">
+      Every context push makes the system smarter; every query pulls the right signal back to the person who needs it. The result is a coordinated AI system that orchestrates work for maximum team productivity — without sacrificing individual autonomy.
+    </p>
+
+    <!-- Pull quote -->
+    <blockquote class="border-l-2 border-border pl-6 mb-14 max-w-[620px]">
+      <p class="text-heading-3 text-foreground">
+        "What Claude Code did for individual agent productivity, AIOS does for
+        <span class="serif-italic">team</span> agentic productivity."
+      </p>
+    </blockquote>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {points.map(({ label, body }) => (
+        <div class="feature-card feature-card--media flex flex-col">
+          <div class="card-media card-media--16x9">
+            <Placeholder fill variant="illustration" label={label} />
+          </div>
+          <div class="card-body flex flex-col flex-1">
+            <span class="text-label text-muted-foreground block mb-3">{label}</span>
+            <p class="text-body text-muted-foreground">{body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Vortex framing -->
+    <p class="text-body text-muted-foreground mt-12 max-w-[560px]">
+      It starts with one user, grows to a team, and transforms a company.
+      The flywheel of agentic transformation.
+    </p>
+
+  </div>
+</section>

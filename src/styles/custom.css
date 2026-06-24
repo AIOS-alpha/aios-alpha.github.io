@@ -15,8 +15,10 @@
 @import '@fontsource/jetbrains-mono/400.css';
 @import './design-tokens.css';
 
-/* ---- Brand: applied in BOTH themes. Accent resolves per-mode through the
-   design tokens (deeper #7c3aed on light, #8b5cf6 on dark). ---- */
+/* ---- Brand + surfaces: applied in BOTH themes. Accent + surfaces + hairlines
+   resolve per-mode through the design tokens (which flip on `.dark`, mirrored
+   from Starlight's data-theme by the astro.config head script). Light is the
+   token default (#1a1a1a ink on white); dark is the AIOS near-black palette. -- */
 :root {
   --sl-color-accent: var(--aios-violet);
   --sl-color-accent-high: var(--aios-violet-bright);
@@ -34,11 +36,35 @@
   --sl-color-hairline: var(--aios-border);
 }
 
-/* ---- Dark theme — the AIOS near-black palette (brand default) ---- */
+/* ---- Light theme (default) — clean paper docs: ink text on off-white.
+   Starlight wants gray-1 darkest → gray-7 lightest for light mode. ---- */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --sl-color-white: var(--aios-fg);          /* "white" = strongest text → ink */
+  --sl-color-gray-1: #2a2a2a;
+  --sl-color-gray-2: #404040;
+  --sl-color-gray-3: #6b6b6b;
+  --sl-color-gray-4: #8a8a8a;
+  --sl-color-gray-5: #d4d4d4;
+  --sl-color-gray-6: #e7e7e7;
+  --sl-color-gray-7: #f4f4f5;
+  --sl-color-black: var(--aios-bg);          /* "black" = page bg → white */
+
+  --sl-color-bg-nav: rgba(255, 255, 255, 0.85);
+  --sl-color-text: var(--aios-fg-secondary); /* body copy → #57534e */
+  --sl-color-text-invert: #ffffff;
+  --sl-color-hairline-light: rgba(0, 0, 0, 0.08);
+  --sl-color-hairline-shade: rgba(0, 0, 0, 0.06);
+  --sl-color-backdrop-overlay: rgba(250, 250, 250, 0.7);
+}
+
+/* ---- Dark theme — the AIOS near-black palette (brand default look) ---- */
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --sl-color-white: var(--aios-foreground);
+  --sl-color-white: var(--aios-fg);
   --sl-color-gray-1: #ececec;
   --sl-color-gray-2: #d2d2d2;
   --sl-color-gray-3: #9a9a9a;
@@ -56,15 +82,6 @@
   --sl-color-backdrop-overlay: rgba(5, 5, 5, 0.7);
 }
 
-/* ---- Light theme — off-white canvas; Starlight's default light ramp
-   carries the neutrals, AIOS tokens carry surfaces + accent. ---- */
-:root[data-theme='light'] {
-  color-scheme: light;
-
-  --sl-color-bg-nav: rgba(250, 250, 250, 0.85);
-  --sl-color-backdrop-overlay: rgba(250, 250, 250, 0.7);
-}
-
 /* ---- Typography: Instrument Serif for headings, tight tracking ---- */
 :is(h1, h2, h3, h4, h5, h6),
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
@@ -72,6 +89,26 @@
   font-weight: 400;
   letter-spacing: -0.02em;
   color: var(--sl-color-white);
+}
+
+/* ---- Site logo: small, subtle caret-A mark beside the "AIOS" title.
+   Starlight renders the logo as `.site-title img`; constrain its height and
+   give the title text the brand sans face. ---- */
+.site-title img {
+  height: 1.5rem;   /* ~24px — minimal, like the landing nav mark */
+  width: auto;
+}
+.site-title {
+  font-family: var(--aios-font-sans);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  gap: 0.5rem;
+}
+
+/* ---- Theme toggle: keep it visible (do NOT hide) so docs honour both modes. */
+starlight-theme-select {
+  display: inline-flex;
 }
 
 /* ---- Glass nav, hairline separators ---- */
@@ -87,8 +124,32 @@
   border-left: 2px solid var(--aios-lime);
 }
 
+/* ---- Prose links: subtle animated underline growing 0→100% on hover.
+   (Docs don't load the landing global.css, so define it here.) ---- */
+.sl-markdown-content a {
+  position: relative;
+  text-decoration: none;
+}
+.sl-markdown-content a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, currentColor, var(--aios-accent));
+  transition: width 0.28s ease;
+}
 .sl-markdown-content a:hover {
   color: var(--sl-color-accent-high);
+}
+.sl-markdown-content a:hover::after {
+  width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-markdown-content a::after {
+    transition: none;
+  }
 }
 
 /* ---- Inline code: muted surface, mono, subtle hairline ---- */

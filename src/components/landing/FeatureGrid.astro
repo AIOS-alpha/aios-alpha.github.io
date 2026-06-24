@@ -1,56 +1,53 @@
 ---
-import { FolderTree, Network, Layers, Bot, Plug, BookOpen } from 'lucide-astro';
+import Placeholder from './Placeholder.astro';
 
 const cards = [
   {
-    icon: FolderTree,
     headline: 'Your workspace, your rules.',
     body: 'A numbered folder spine, governance rules, validators, and multi-agent harnesses — one per person. You decide what leaves your machine.',
+    featured: true,
   },
   {
-    icon: Network,
-    headline: 'Shared memory, without the noise.',
-    body: 'Every workspace pushes tier-tagged context to one brain. Ask it questions in plain English across the team\'s shared memory. Self-host on your own Supabase.',
+    headline: 'Shared memory, managed context.',
+    body: 'Every workspace pushes tier-tagged context to one brain. Ask it questions in plain English across the team\'s shared memory. Self-host on your own Postgres.',
   },
   {
-    icon: Layers,
     headline: 'Nothing leaks without a push.',
     body: 'Private → team → external. You promote content deliberately through the spine, and the brain rejects admin-tier at the boundary. Audience tags are first-class, not afterthoughts.',
   },
   {
-    icon: Bot,
-    headline: 'Real work, not wrappers.',
+    headline: 'Automated workflows, delivered.',
     body: 'Turn meeting transcripts into decisions. Run weekly synthesis. Catch scope creep. Harnesses that ship deliverables, not chat logs.',
   },
   {
-    icon: Plug,
-    headline: 'A contract, not a vibe.',
-    body: 'Both repos build against one pinned brain-api spec. Version it, diff it, and never break a push silently.',
+    headline: 'All your tools in one place.',
+    body: 'Slack, Github, Linear, Notion, Granola and more—connected to your workspace and the team brain. No more juggling windows.',
   },
   {
-    icon: BookOpen,
     headline: 'Yours to run, start to finish.',
     body: 'Open source under MIT. Self-host the brain, clone the workspace per person. No cloud, no lock-in, no per-seat pricing.',
   },
 ];
 ---
 
-<section class="py-20 md:py-32 bg-background">
-  <div class="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+<section class="relative py-20 md:py-32 bg-background">
+  <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
 
     <div class="mb-14">
       <span class="text-label text-muted-foreground block mb-4">The system</span>
-      <h2 class="text-heading-2 text-foreground max-w-[540px]">Two repos. One system.</h2>
+      <h2 class="text-heading-2 text-foreground max-w-[540px]">A workspace for individuals, a brain for the team.</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {cards.map(({ icon: Icon, headline, body }) => (
-        <div class="feature-card">
-          <div class="mb-5 text-foreground">
-            <Icon size={20} stroke-width={1.6} />
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {cards.map(({ headline, body, featured }) => (
+        <div class={`feature-card feature-card--media flex flex-col${featured ? ' feature-card--featured' : ''}`}>
+          <div class="card-media card-media--16x9">
+            <Placeholder fill variant="illustration" label={headline} />
           </div>
-          <h3 class="text-heading-3 text-foreground mb-2">{headline}</h3>
-          <p class="text-body text-muted-foreground">{body}</p>
+          <div class="card-body flex flex-col flex-1">
+            <h3 class="text-heading-3 text-foreground mb-2">{headline}</h3>
+            <p class="text-body text-muted-foreground">{body}</p>
+          </div>
         </div>
       ))}
     </div>

@@ -1,0 +1,54 @@
+---
+import Placeholder from './Placeholder.astro';
+
+const cards = [
+  {
+    kicker: '01',
+    title: 'Context bloats.',
+    body: "Every agent's context balloons independently. No one on the team is working from the same picture.",
+  },
+  {
+    kicker: '02',
+    title: 'Tools entangle.',
+    body: 'MCPs, APIs, CLIs, and third-party sync tools pile up. Keeping them aligned costs more than the work itself.',
+  },
+  {
+    kicker: '03',
+    title: 'Agents move 10× faster.',
+    body: 'Contributors with agents outrun those without. The productivity gap creates chaos, not momentum.',
+  },
+  {
+    kicker: '04',
+    title: 'The team loses the plot.',
+    body: 'People tunnel into execution and drift from OKRs and customer needs. Speed in the wrong direction is waste.',
+  },
+];
+---
+
+<section class="relative py-20 md:py-32 bg-surface">
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+
+    <div class="mb-14">
+      <span class="text-label text-muted-foreground block mb-4">THE PROBLEM</span>
+      <h2 class="text-heading-2 text-foreground max-w-[600px]">
+        Working with agents is amazing. In a team, it breaks down fast.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {cards.map(({ kicker, title, body }) => (
+        <div class="feature-card feature-card--media flex flex-col">
+          <div class="card-media card-media--16x9">
+            <Placeholder fill variant="illustration" label={title} />
+          </div>
+          <div class="card-body flex flex-col flex-1">
+            <span class="text-label text-muted-foreground block mb-4">{kicker}</span>
+            <h3 class="text-heading-3 text-foreground mb-2">{title}</h3>
+            <p class="text-body text-muted-foreground">{body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
