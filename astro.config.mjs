@@ -8,8 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // Org GitHub Pages site — served at the root, so no `base` needed.
-  site: 'https://aios-alpha.github.io',
+  site: 'https://getaios.dev',
   integrations: [
       react(),
       starlight({
