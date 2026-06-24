@@ -8,6 +8,7 @@ draft: false
 ---
 
 import TierExplorer from '../../components/interactive/TierExplorer.tsx';
+import Figure from '../../components/blog/Figure.astro';
 
 We're releasing AIOS in the open. This is the first post, so it's worth saying
 plainly what it is.
@@ -18,6 +19,14 @@ work and helps you collaborate. It's MIT-licensed and self-hosted, and you
 decide what leaves your machine.
 
 It's two repos, one system. There is no third moving part to manage.
+
+<Figure
+  src="/blog/diagrams/workspace-brain"
+  alt="Several individual private workspaces connect to a single central team-brain hub, with tier-coloured packets travelling along the connectors into the brain."
+  caption="Every workspace pushes tier-tagged work to one shared brain."
+  width={880}
+  height={460}
+/>
 
 ## Why we built it
 
@@ -40,9 +49,25 @@ Each person works in a numbered folder spine: context, inbox, work, log,
 shared, personal. The same six folders every time, so an agent always knows
 where it is and where things go.
 
+<Figure
+  src="/blog/diagrams/folder-spine"
+  alt="The six-folder workspace spine from 0-context to 5-personal, each row tagged with a tier badge: private, team, or external."
+  caption="One numbered spine. Every folder carries the tier that decides whether it syncs."
+  width={520}
+  height={560}
+/>
+
 Everything you create carries an access tier, and the tier decides what is
 private, what reaches the team, and what goes to clients or the wider company.
 Nothing leaves your machine without a push.
+
+<Figure
+  src="/blog/diagrams/push-tiers"
+  alt="Three access tiers shown as a gate: private work stays in the workspace, team work flows to the brain, external work flows outward to clients and company."
+  caption="Private stays home. Team and external only move on a push."
+  width={760}
+  height={300}
+/>
 
 <TierExplorer client:visible />
 

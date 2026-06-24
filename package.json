@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "crosspost": "node scripts/substack-crosspost.mjs"
+    "crosspost": "node scripts/substack-crosspost.mjs",
+    "diagrams": "node scripts/rasterize-diagrams.mjs"
   },
   "dependencies": {
     "@aios-alpha/design": "^0.3.0",

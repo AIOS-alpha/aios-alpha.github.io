@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" role="img" aria-label="Three access tiers shown as a gate: private work stays home, team work flows right into the brain, and external work flows outward to clients. Nothing leaves without a push.">
+  <title>The three tiers as a gate — private stays home, team and external flow on a push</title>
+  <style>
+    .label { font-family: "Instrument Sans", system-ui, sans-serif; fill: #8a8a8a; }
+    .mono  { font-family: ui-monospace, monospace; fill: #8a8a8a; }
+
+    .pkt { offset-rotate: 0deg; }
+    @keyframes flow { from { offset-distance: 0%; opacity: 0; }
+                      10% { opacity: 1; }
+                      90% { opacity: 1; }
+                      to  { offset-distance: 100%; opacity: 0; } }
+
+    .pktTeam     { offset-path: path("M 250 110 L 470 110"); animation: flow 4.2s ease-in-out infinite; }
+    .pktExternal { offset-path: path("M 250 190 L 470 190"); animation: flow 4.6s ease-in-out infinite 1s; }
+
+    @keyframes homeBreathe { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+    .home-lock { animation: homeBreathe 4s ease-in-out infinite; }
+
+    @keyframes targetPulse { 0%,100% { transform: scale(1); opacity:.9;} 50% { transform: scale(1.05); opacity:1;} }
+    .target { transform-box: fill-box; transform-origin: center; animation: targetPulse 4.2s ease-in-out infinite; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <!-- ===== source: the workspace (left gate post) ===== -->
+  <g transform="translate(120,150)">
+    <rect x="-60" y="-78" width="120" height="156" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+    <text class="label" x="0" y="-54" font-size="11" font-weight="600" text-anchor="middle" letter-spacing="0.06em">WORKSPACE</text>
+
+    <!-- private dot stays inside -->
+    <g class="home-lock">
+      <circle cx="0" cy="-18" r="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+      <rect x="-9" y="-2" width="18" height="14" rx="3" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+      <path d="M -5 -2 v -5 a 5 5 0 0 1 10 0 v 5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+    </g>
+    <text class="mono" x="0" y="40" font-size="12" text-anchor="middle">private</text>
+    <text class="label" x="0" y="58" font-size="10.5" text-anchor="middle" opacity="0.8">stays home</text>
+  </g>
+
+  <!-- ===== flow lines (the gate channels) ===== -->
+  <g fill="none" stroke-linecap="round">
+    <line x1="250" y1="110" x2="470" y2="110" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+    <line x1="250" y1="190" x2="470" y2="190" stroke="#84cc16" stroke-width="1.5" opacity="0.5"/>
+  </g>
+  <!-- arrowheads -->
+  <path d="M 470 110 l -10 -5 v 10 z" fill="#8b5cf6" opacity="0.8"/>
+  <path d="M 470 190 l -10 -5 v 10 z" fill="#84cc16" opacity="0.8"/>
+
+  <!-- tier labels on channels -->
+  <text class="mono" x="360" y="100" font-size="12" text-anchor="middle" fill="#8a8a8a">team</text>
+  <text class="mono" x="360" y="214" font-size="12" text-anchor="middle" fill="#8a8a8a">external</text>
+
+  <!-- packets in flight (the push) — base x/y sit mid-channel for static fallback -->
+  <rect class="pkt pktTeam" x="356" y="106" width="8" height="8" rx="2" fill="#8b5cf6"/>
+  <rect class="pkt pktExternal" x="356" y="186" width="8" height="8" rx="2" fill="#84cc16"/>
+
+  <!-- ===== destinations ===== -->
+  <!-- team brain -->
+  <g class="target" transform="translate(520,110)">
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+    <circle cx="0" cy="-9" r="2.6" fill="#8b5cf6"/>
+    <circle cx="-8" cy="6" r="2.6" fill="#8b5cf6"/>
+    <circle cx="8" cy="6" r="2.6" fill="#8b5cf6"/>
+    <path d="M 0 -9 L -8 6 L 8 6 Z" fill="none" stroke="#8a8a8a" stroke-width="1" opacity="0.6"/>
+  </g>
+  <text class="label" x="560" y="114" font-size="13" font-weight="500">team brain</text>
+
+  <!-- external / outward -->
+  <g class="target" transform="translate(520,190)">
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#84cc16" stroke-width="2"/>
+    <path d="M -9 0 h 14 m -5 -5 l 6 5 l -6 5" fill="none" stroke="#84cc16" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text class="label" x="560" y="194" font-size="13" font-weight="500">clients / company</text>
+
+  <!-- ===== footer motto ===== -->
+  <text class="label" x="380" y="276" font-size="12.5" text-anchor="middle" font-style="italic" opacity="0.9">nothing leaves without a push</text>
+</svg>
