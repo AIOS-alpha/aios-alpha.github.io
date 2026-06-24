@@ -2,40 +2,39 @@
 /* How information flows — the privacy model.
 
    A left-to-right boundary flow: tier-tagged work on your machine passes guards
-   + validators, and the brain-api contract is the gateway in the boundary between
-   YOUR MACHINE and SHARED. Only team/external content crosses to the Team Brain;
-   programmable governance sits on the boundary. Insight returns to your machine.
+   + validators, and brain-api is the gateway in the boundary between YOUR MACHINE
+   and SHARED. Only team/external content crosses to the Team Brain; programmable
+   governance sits on the boundary. Insight returns to your machine.
 
    SINGLE-SVG pattern (see docs/diagram-system.md): every box, label, edge and
    token lives in ONE viewBox. Geometry is defined once as data below and label
    centres / edge endpoints derive from it, so nothing drifts or overflows.
    Token-driven, dual-mode, reduced-motion safe. Colour rationed: violet =
-   individual, emerald = collective/brain, lime = surfaced; the boundary, guards
-   and contract are greyscale chrome. */
+   individual, emerald = collective, lime = surfaced; the boundary + chrome stay
+   greyscale. */
 import '../../../styles/diagrams.css';
 
-const VB = { w: 1280, h: 720 };
+const VB = { w: 1280, h: 760 };
 const BX = 640;        // the boundary line x — the gutter centre
-const MID_Y = 395;     // the main-flow lane
+const MID_Y = 390;     // the main-flow lane
 
-// ---- Zone frames + node geometry: defined once; all else derives from it. ----
 const FR = {
-  machine: { x: 40,  y: 195, w: 490, h: 430, label: 'YOUR MACHINE' },
-  shared:  { x: 750, y: 195, w: 490, h: 430, label: 'SHARED' },
+  machine: { x: 40,  y: 185, w: 490, h: 485, label: 'YOUR MACHINE' },
+  shared:  { x: 750, y: 185, w: 490, h: 485, label: 'SHARED' },
 };
 
 const N = {
-  workspace: { x: 70,  y: 329, w: 200, h: 132, accent: 'ic',
+  workspace: { x: 70,  y: 324, w: 200, h: 132, accent: 'ic',
     title: ['Your workspace'],      meta: ['tiered · you control sync'] },
-  guards:    { x: 300, y: 329, w: 200, h: 132,
+  guards:    { x: 300, y: 324, w: 200, h: 132,
     title: ['Guards & validators'], meta: ['hook · validators', '· default-deny'] },
-  contract:  { x: 550, y: 325, w: 180, h: 140, gate: true,
-    title: ['brain-api', 'contract'], meta: ['/api/v1'] },
-  brain:     { x: 860, y: 329, w: 250, h: 132, accent: 'brain',
+  contract:  { x: 550, y: 324, w: 180, h: 132,
+    title: ['brain-api'],           meta: ['/api/v1'] },
+  brain:     { x: 860, y: 324, w: 250, h: 132, accent: 'brain',
     title: ['Team Brain'],          meta: ['tier-filtered memory', '· grounded query'] },
-  shared:    { x: 860, y: 503, w: 250, h: 132, accent: 'share',
+  shared:    { x: 860, y: 500, w: 250, h: 132, accent: 'share',
     title: ['Shared signal'],       meta: ['tasks · decisions · status'] },
-  governance:{ x: 545, y: 503, w: 190, h: 104,
+  governance:{ x: 545, y: 500, w: 190, h: 104,
     title: ['Programmable', 'Governance'], meta: [] },
 };
 
@@ -47,7 +46,7 @@ const bottom = (n) => n.y + n.h;
 // Vertically centred, baseline-resolved text lines for a card.
 function lines(n) {
   const items = [];
-  n.title.forEach((t) => items.push({ t, cls: n.gate ? 'if-title if-title--mono' : 'if-title', lh: n.gate ? 23 : 28 }));
+  n.title.forEach((t) => items.push({ t, cls: 'if-title', lh: 28 }));
   n.meta.forEach((t) => items.push({ t, cls: 'if-meta', lh: 18 }));
   const total = items.reduce((s, i) => s + i.lh, 0);
   let acc = 0;
@@ -56,7 +55,6 @@ function lines(n) {
 
 const nodes = Object.entries(N).map(([key, n]) => ({ key, ...n }));
 
-// Main-flow connectors (box edge → box edge), all on MID_Y.
 const flow = [
   [right(N.workspace), N.guards.x],
   [right(N.guards),    N.contract.x],
@@ -67,8 +65,8 @@ const flow = [
 <figure class="iflow dgm" aria-labelledby="iflow-cap">
   <p class="sr-only" id="iflow-cap">
     Each file in your workspace is tagged with an access tier. On your machine,
-    guards and validators enforce those tags. The versioned brain-api contract is
-    the gateway in the boundary between your machine and the shared side, backed by
+    guards and validators enforce those tags. The versioned brain-api is the
+    gateway in the boundary between your machine and the shared side, backed by
     programmable governance — only team and external content crosses to the Team
     Brain; private content stays local. Shared signal and grounded answers return
     to you, always within your tier.
@@ -103,34 +101,22 @@ const flow = [
           d={`M ${FR.shared.x + 150},${FR.shared.y} C ${FR.shared.x + 150},90 ${BX + 130},86 ${BX},86 C ${BX - 130},86 ${FR.machine.x + 340},90 ${FR.machine.x + 340},${FR.machine.y}`} />
     <text class="if-elabel if-elabel--return" x={BX} y="72" text-anchor="middle">↩ insight returns</text>
 
-    <!-- main-flow connectors (drawn behind the cards so they tuck under the edges) -->
+    <!-- main-flow connectors (behind the cards so they tuck under the edges) -->
     {flow.map(([x1, x2]) => (
       <line class="if-edge" x1={x1} y1={MID_Y} x2={x2} y2={MID_Y} marker-end="url(#if-arrow)" />
     ))}
     <line class="if-edge if-edge--faint" x1={BX} y1={bottom(N.contract)} x2={BX} y2={N.governance.y} />
     <path class="if-edge" marker-end="url(#if-arrow)"
-          d={`M ${cx(N.brain)},${bottom(N.brain)} L ${cx(N.shared)},${N.shared.y}`} />
-    <text class="if-elabel" x={cx(N.shared) + 52} y={(bottom(N.brain) + N.shared.y) / 2 + 4}>query</text>
+          d={`M ${cx(N.brain)},${bottom(N.brain)} C ${cx(N.brain)},478 ${cx(N.shared) - 45},478 ${cx(N.shared) - 45},${N.shared.y}`} />
+    <text class="if-elabel" x={cx(N.shared) + 30} y="480">query</text>
 
-    <!-- the accepted token crosses the boundary; visible only in the gaps -->
+    <!-- the one travelling token; visible only in the gaps between cards -->
     <circle class="if-tok-accepted" r="6" />
 
-    <!-- brain icon above the contract (Lucide brain, matches CollectiveBrain) -->
-    <g class="if-brain-icon" transform={`translate(${BX - 20}, 267) scale(1.667)`}>
-      <path d="M12 18V5" />
-      <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" />
-      <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" />
-      <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" />
-      <path d="M18 18a4 4 0 0 0 2-7.464" />
-      <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" />
-      <path d="M6 18a4 4 0 0 1-2-7.464" />
-      <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" />
-    </g>
-
-    <!-- node cards (dots tuck BEHIND each card, peeking above the top edge) -->
+    <!-- node cards (accent dot floats above each card, fully visible) -->
     {nodes.map((n) => (
-      <g class={`if-node${n.gate ? ' if-node--gate' : ''}`}>
-        {n.accent && <circle class={`if-dot if-dot--${n.accent}`} cx={cx(n)} cy={n.y} r="5" />}
+      <g class="if-node">
+        {n.accent && <circle class={`if-dot if-dot--${n.accent}`} cx={cx(n)} cy={n.y - 14} r="5" />}
         <rect class="if-box" x={n.x} y={n.y} width={n.w} height={n.h} rx="16" />
         {lines(n).map((l) => (
           <text class={l.cls} x={cx(n)} y={l.y} text-anchor="middle">{l.t}</text>
@@ -138,17 +124,12 @@ const flow = [
       </g>
     ))}
 
-    <!-- flow labels, all on one baseline -->
-    <text class="if-elabel" x={(right(N.workspace) + N.guards.x) / 2} y="303" text-anchor="middle">tier-tag · validate</text>
-    <text class="if-elabel" x={(right(N.guards) + N.contract.x) / 2} y="303" text-anchor="middle">push · team / external</text>
-    <text class="if-elabel if-elabel--ok" x={(right(N.contract) + N.brain.x) / 2} y="303" text-anchor="middle">accepted ✓</text>
-
     <!-- tier legend, centred beneath the diagram -->
-    <text class="if-legend-head" x={BX} y="664" text-anchor="middle">TIER TAGS</text>
+    <text class="if-legend-head" x={BX} y="706" text-anchor="middle">TIER TAGS</text>
     <g class="if-legend">
-      <g transform="translate(518, 683)"><rect width="74" height="24" rx="12" /><circle class="if-dot--ic"    cx="14" cy="12" r="4" /><text x="27" y="16">private</text></g>
-      <g transform="translate(606, 683)"><rect width="58" height="24" rx="12" /><circle class="if-dot--team"  cx="14" cy="12" r="4" /><text x="27" y="16">team</text></g>
-      <g transform="translate(678, 683)"><rect width="86" height="24" rx="12" /><circle class="if-dot--share" cx="14" cy="12" r="4" /><text x="27" y="16">external</text></g>
+      <g transform="translate(500, 726)"><rect width="87" height="26" rx="13" /><circle class="if-dot--ic"    cx="15" cy="13" r="4" /><text x="30" y="17">private</text></g>
+      <g transform="translate(603, 726)"><rect width="66" height="26" rx="13" /><circle class="if-dot--team"  cx="15" cy="13" r="4" /><text x="30" y="17">team</text></g>
+      <g transform="translate(685, 726)"><rect width="94" height="26" rx="13" /><circle class="if-dot--share" cx="15" cy="13" r="4" /><text x="30" y="17">external</text></g>
     </g>
   </svg>
 </figure>
@@ -159,7 +140,7 @@ const flow = [
     width: 100%;
     max-width: 1180px;
     margin-inline: auto;
-    aspect-ratio: 1280 / 720;
+    aspect-ratio: 1280 / 760;
   }
   .iflow svg { width: 100%; height: 100%; overflow: visible; }
 
@@ -182,8 +163,6 @@ const flow = [
     stroke-linecap: round;
     opacity: 0.55;
   }
-
-  /* the boundary — grey, dotted, calm */
   .if-boundary {
     stroke: var(--aios-border-strong);
     stroke-width: 1.5;
@@ -192,32 +171,13 @@ const flow = [
     opacity: 0.7;
   }
 
-  /* ---- brain icon ---- */
-  .if-brain-icon {
-    fill: none;
-    stroke: var(--aios-emerald);
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.85;
-  }
-
   /* ---- node cards ---- */
   .if-box { fill: var(--aios-surface); stroke: var(--aios-border); stroke-width: 1; }
-  .if-node--gate .if-box {
-    stroke: var(--aios-border-strong);
-    fill: color-mix(in srgb, var(--aios-fg) 3%, var(--aios-surface));
-  }
   .if-title {
     fill: var(--aios-fg);
     font-family: var(--aios-font-display);
     font-size: 22px;
     letter-spacing: -0.01em;
-  }
-  .if-title--mono {
-    font-family: var(--aios-font-mono);
-    font-size: 16px;
-    letter-spacing: 0.01em;
   }
   .if-meta {
     fill: var(--aios-fg-secondary);
@@ -237,19 +197,23 @@ const flow = [
     font-size: 12px;
     letter-spacing: 0.02em;
   }
-  .if-elabel--ok     { fill: color-mix(in srgb, var(--aios-emerald) 55%, var(--aios-fg-muted)); }
   .if-elabel--return { fill: var(--aios-fg-muted); }
 
-  /* ---- legend ---- */
-  .if-legend-head { fill: var(--aios-fg-muted); font-family: var(--aios-font-mono); font-size: 11px; letter-spacing: 2px; }
-  .if-legend rect { fill: none; stroke: var(--aios-border); stroke-width: 1; }
-  .if-legend text { fill: var(--aios-fg-secondary); font-family: var(--aios-font-mono); font-size: 12px; }
+  /* ---- legend (high-contrast, centred beneath) ---- */
+  .if-legend-head {
+    fill: var(--aios-fg-secondary);
+    font-family: var(--aios-font-mono);
+    font-size: 12px;
+    letter-spacing: 2.2px;
+  }
+  .if-legend rect { fill: color-mix(in srgb, var(--aios-fg) 5%, var(--aios-surface)); stroke: var(--aios-border-strong); stroke-width: 1; }
+  .if-legend text { fill: var(--aios-fg); font-family: var(--aios-font-mono); font-size: 12.5px; }
 
   /* ---- the one travelling token ---- */
   .if-tok-accepted {
     fill: url(#if-token);
     filter: drop-shadow(0 0 5px color-mix(in srgb, var(--aios-violet) 70%, transparent));
-    offset-path: path('M270,395 L860,395');
+    offset-path: path('M270,390 L860,390');
     animation: if-cross 11s linear infinite;
   }
   @keyframes if-cross {
@@ -258,7 +222,6 @@ const flow = [
     90%  { opacity: 1; }
     100% { offset-distance: 100%; opacity: 0; }
   }
-
   @media (prefers-reduced-motion: reduce) {
     .if-tok-accepted { animation: none; offset-distance: 30%; opacity: 1; }
   }
