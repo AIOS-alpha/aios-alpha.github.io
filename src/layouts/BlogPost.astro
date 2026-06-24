@@ -1,0 +1,197 @@
+---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-sans/400.css';
+import '@fontsource/instrument-sans/500.css';
+import '@fontsource/instrument-sans/600.css';
+import '@fontsource/instrument-sans/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '../styles/global.css';
+import '../styles/blog.css';
+import { Image } from 'astro:assets';
+import type { MarkdownHeading } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import Nav from '../components/landing/Nav.astro';
+import Footer from '../components/landing/Footer.astro';
+import ThemeBootstrap from '../components/landing/ThemeBootstrap.astro';
+import TableOfContents from '../components/blog/TableOfContents.astro';
+import { getReadingTime } from '../lib/reading-time';
+import { formatDate, authorAvatarSrc, DEFAULT_AVATAR } from '../lib/blog';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	headings: MarkdownHeading[];
+}
+
+const { post, headings } = Astro.props;
+const { title, description, pubDate, updatedDate, author, tags, heroImage } =
+	post.data;
+const minutes = getReadingTime(post.body ?? '');
+const canonical = new URL(`/blog/${post.id}/`, Astro.site).toString();
+const avatarSrc = authorAvatarSrc(author);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<ThemeBootstrap />
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<title>{title} — AIOS Blog</title>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="canonical" href={canonical} />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="AIOS Blog"
+			href="/rss.xml"
+		/>
+		<!-- Open Graph / social -->
+		<meta property="og:type" content="article" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="article:author" content={author} />
+		<meta property="article:published_time" content={pubDate.toISOString()} />
+	</head>
+	<body
+		class="bg-background text-foreground font-sans antialiased overflow-x-hidden"
+	>
+		<Nav />
+		<main>
+			<div class="post-grid">
+				<!-- HERO / header -->
+				<header class="post-header">
+					<a href="/blog" class="back-link text-small">← Blog</a>
+					{
+						tags.length > 0 && (
+							<p class="text-label text-accent mt-6 mb-3">{tags.join(' · ')}</p>
+						)
+					}
+					<h1 class="text-heading-1">{title}</h1>
+					<p class="text-body-lg text-muted-foreground mt-4">{description}</p>
+
+					<!-- author card -->
+					<div class="author-card">
+						<img
+							src={avatarSrc}
+							data-fallback={DEFAULT_AVATAR}
+							alt={author}
+							width="44"
+							height="44"
+							class="author-avatar"
+							onerror="if(this.src!==this.dataset.fallback){this.src=this.dataset.fallback}"
+						/>
+						<div class="flex-1">
+							<p class="font-semibold leading-tight">{author}</p>
+							<p class="text-small text-muted-foreground">
+								<time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+								{updatedDate && <span> · updated {formatDate(updatedDate)}</span>}
+							</p>
+						</div>
+						<span class="text-small text-muted-foreground whitespace-nowrap"
+							>{minutes} min read</span
+						>
+					</div>
+
+					{
+						heroImage && (
+							<Image
+								src={heroImage}
+								alt={title}
+								class="hero-image"
+								widths={[480, 800, 1200]}
+								sizes="(min-width: 1024px) 760px, 100vw"
+							/>
+						)
+					}
+				</header>
+
+				<!-- table of contents (left rail, desktop only) -->
+				<aside class="toc-col">
+					<TableOfContents headings={headings} />
+				</aside>
+
+				<!-- article body -->
+				<article class="blog-prose post-body">
+					<slot />
+				</article>
+			</div>
+		</main>
+		<Footer />
+
+		<style>
+			.post-grid {
+				max-width: 1040px;
+				margin: 0 auto;
+				padding: 0 1.5rem;
+			}
+			.post-header {
+				padding-top: 8rem;
+			}
+			.back-link {
+				color: var(--color-muted-foreground);
+				text-decoration: none;
+				transition: color 0.15s ease;
+			}
+			.back-link:hover {
+				color: var(--color-foreground);
+			}
+			.author-card {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				margin-top: 2rem;
+				padding: 1.25rem 0;
+				border-top: 1px solid var(--color-border);
+				border-bottom: 1px solid var(--color-border);
+			}
+			.author-avatar {
+				width: 44px;
+				height: 44px;
+				border-radius: 9999px;
+				object-fit: cover;
+				border: 1px solid var(--color-border);
+			}
+			.hero-image {
+				width: 100%;
+				height: auto;
+				margin-top: 2.5rem;
+				border-radius: var(--radius-xl);
+				border: 1px solid var(--color-border);
+			}
+			.post-body {
+				margin-top: 3rem;
+				padding-bottom: 6rem;
+				max-width: 720px;
+			}
+			.toc-col {
+				display: none;
+			}
+
+			/* Desktop: left TOC rail + main column. Header spans the main column. */
+			@media (min-width: 1024px) {
+				.post-grid {
+					display: grid;
+					grid-template-columns: 13rem minmax(0, 1fr);
+					column-gap: 3.5rem;
+					align-items: start;
+				}
+				.post-header {
+					grid-column: 2;
+				}
+				.toc-col {
+					display: block;
+					grid-column: 1;
+					padding-top: 3rem;
+				}
+				.post-body {
+					grid-column: 2;
+					margin-top: 2.5rem;
+				}
+			}
+		</style>
+	</body>
+</html>

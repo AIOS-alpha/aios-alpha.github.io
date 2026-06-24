@@ -1,0 +1,12 @@
+---
+title: "Draft example (should not appear in production)"
+description: "A draft post used to confirm that draft: true hides posts from the production build, list, and RSS."
+pubDate: 2026-06-25
+author: "John Ellison"
+tags: ["meta"]
+draft: true
+---
+
+If you can read this on the live site, draft filtering is broken. In `astro dev`
+this post is visible; after `npm run build` it should be absent from `/blog`,
+its own URL, and `/rss.xml`.

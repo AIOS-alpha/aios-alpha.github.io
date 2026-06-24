@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -9,6 +11,7 @@ export default defineConfig({
   // Org GitHub Pages site — served at the root, so no `base` needed.
   site: 'https://aios-alpha.github.io',
   integrations: [
+      react(),
       starlight({
           title: 'AIOS',
           logo: {
@@ -84,6 +87,7 @@ export default defineConfig({
           ],
           customCss: ['./src/styles/custom.css'],
       }),
+      mdx(),
 	],
 
   vite: {

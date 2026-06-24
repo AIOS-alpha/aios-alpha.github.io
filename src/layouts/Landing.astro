@@ -8,6 +8,7 @@ import '@fontsource/instrument-sans/700.css';
 import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '../styles/global.css';
+import ThemeBootstrap from '../components/landing/ThemeBootstrap.astro';
 
 interface Props {
   title: string;
@@ -35,23 +36,7 @@ const bokehPools = [
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- No-flash theme: set the class before first paint. Brand-default dark,
-         user choice persisted. Light + dark are both first-class. -->
-    <script is:inline>
-      (function () {
-        try {
-          /* Same key as Starlight docs (starlight-theme) so landing ↔ docs stay in sync. */
-          var stored =
-            localStorage.getItem('starlight-theme') || localStorage.getItem('aios-theme');
-          var dark = stored ? stored === 'dark' : true; // brand default = dark
-          document.documentElement.classList.toggle('dark', dark);
-          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-        } catch (e) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.dataset.theme = 'dark';
-        }
-      })();
-    </script>
+    <ThemeBootstrap />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
