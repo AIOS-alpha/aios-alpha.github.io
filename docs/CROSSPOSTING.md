@@ -41,6 +41,10 @@ the review step).
 ## What carries over (and what doesn't)
 
 - **Carries over:** headings, prose, links, images, code blocks.
+- **Diagrams carry over as static `.webp`.** Figures (`<Figure>`) render an
+  animated SVG on the web but expose a `.webp` fallback via `<picture>`, so the
+  importer picks up the static raster. The motion is web-only; the still reads
+  fine on Substack.
 - **Does not carry over:** React islands / interactive embeds (e.g. the tier
   explorer). That's expected — they only run on the blog. If a post leans on an
   embed, add a one-line note in the Substack version pointing readers to the
