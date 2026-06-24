@@ -1,0 +1,78 @@
+---
+title: "AIOS: a workspace for you, a brain for the team"
+description: "What AIOS is, why we built it, and what we're shipping. An open-source operating system for people and agents working together."
+pubDate: 2026-06-24
+author: "John Ellison"
+tags: ["introducing", "release"]
+draft: false
+---
+
+import TierExplorer from '../../components/interactive/TierExplorer.tsx';
+
+We're releasing AIOS in the open. This is the first post, so it's worth saying
+plainly what it is.
+
+AIOS is an AI-powered operating system for agentic teams. Every person gets a
+structured agent workspace. The team gets one shared brain that learns how you
+work and helps you collaborate. It's MIT-licensed and self-hosted, and you
+decide what leaves your machine.
+
+It's two repos, one system. There is no third moving part to manage.
+
+## Why we built it
+
+We built AIOS the way most useful tools get built: by hitting the same wall
+over and over.
+
+Agents move about ten times faster than the teams around them. That speed is
+real, but it breaks the things teams rely on. Context bloats. Tools entangle.
+Everyone is running their own agents in their own way, and the team loses the
+plot. The work happens, but nobody can see across it.
+
+AIOS isn't a replacement for any of that. It's the layer on top that helps a
+team manage rapidly evolving context, harnessing, and tooling. You keep your
+runtime, your editor, your stack. Claude, Claude Code, Cursor, Codex, whatever
+you reach for. AIOS gives that work a shape the team can share.
+
+## How it works
+
+Each person works in a numbered folder spine: context, inbox, work, log,
+shared, personal. The same six folders every time, so an agent always knows
+where it is and where things go.
+
+Everything you create carries an access tier, and the tier decides what is
+private, what reaches the team, and what goes to clients or the wider company.
+Nothing leaves your machine without a push.
+
+<TierExplorer client:visible />
+
+The shared tier is where the team brain comes in. Pushed work becomes shared
+memory: tasks, decisions, deliverables, all queryable in plain English across
+the whole team. One place to ask what's happening, instead of ten.
+
+## What we're shipping
+
+A few concrete things are live today:
+
+- **The individual workspace.** Scaffold a workspace in a few commands, with
+  the folder spine, governance conventions, validators, and multi-agent
+  harnesses built in.
+- **The team brain.** A shared hub that receives tier-tagged pushes from every
+  workspace and surfaces tasks, decisions, and deliverables, with a
+  natural-language query across shared memory.
+- **A sync contract between them.** The CLI and the brain build against one
+  versioned API, so the two halves never quietly drift apart.
+
+It pulls into the tools you already use: Slack, GitHub, Linear, Notion,
+Granola, and more.
+
+## Where this is going
+
+We're building in public. This blog is where we'll track releases and talk
+about what we're actually doing, including the parts that are still rough.
+Expect release notes, field notes, and the occasional deeper piece on agentic
+engineering.
+
+If you want to try it, [get the workspace](/guides/quickstart). If you want to
+shape it, [the project is on GitHub](https://github.com/AIOS-alpha). Either way,
+the [RSS feed](/rss.xml) will keep you posted.
