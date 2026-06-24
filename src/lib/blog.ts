@@ -20,17 +20,17 @@ export const formatDate = (d: Date) =>
 		day: 'numeric',
 	});
 
-const DEFAULT_AVATAR = '/blog/authors/john-ellison.svg';
+const DEFAULT_AVATAR = '/blog/authors/john-ellison.webp';
 
-/** Slug for author assets under `public/blog/authors/{slug}.svg`. */
+/** Slug for author assets under `public/blog/authors/{slug}.webp`. */
 export const authorSlug = (author: string) =>
 	author
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, '-')
 		.replace(/^-|-$/g, '');
 
-/** Avatar path derived from author name; falls back to the default monogram. */
+/** Avatar path derived from author name; falls back to the default headshot. */
 export const authorAvatarSrc = (author: string) =>
-	`/blog/authors/${authorSlug(author)}.svg`;
+	`/blog/authors/${authorSlug(author)}.webp`;
 
 export { DEFAULT_AVATAR };
