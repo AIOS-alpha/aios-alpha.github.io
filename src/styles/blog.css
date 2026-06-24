@@ -93,7 +93,7 @@
 
 /* Fenced code blocks are rendered by Expressive Code / Shiki, which brings its
    own background + radius. Just give them breathing room. */
-.blog-prose :global(.expressive-code),
+.blog-prose .expressive-code,
 .blog-prose pre {
 	margin-top: 1.5em;
 	margin-bottom: 1.5em;

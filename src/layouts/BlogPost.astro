@@ -14,9 +14,10 @@ import type { MarkdownHeading } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import Nav from '../components/landing/Nav.astro';
 import Footer from '../components/landing/Footer.astro';
+import ThemeBootstrap from '../components/landing/ThemeBootstrap.astro';
 import TableOfContents from '../components/blog/TableOfContents.astro';
 import { getReadingTime } from '../lib/reading-time';
-import { formatDate } from '../lib/blog';
+import { formatDate, authorAvatarSrc, DEFAULT_AVATAR } from '../lib/blog';
 
 interface Props {
 	post: CollectionEntry<'blog'>;
@@ -28,11 +29,13 @@ const { title, description, pubDate, updatedDate, author, tags, heroImage } =
 	post.data;
 const minutes = getReadingTime(post.body ?? '');
 const canonical = new URL(`/blog/${post.id}/`, Astro.site).toString();
+const avatarSrc = authorAvatarSrc(author);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
+		<ThemeBootstrap />
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content={description} />
@@ -73,11 +76,13 @@ const canonical = new URL(`/blog/${post.id}/`, Astro.site).toString();
 					<!-- author card -->
 					<div class="author-card">
 						<img
-							src="/blog/authors/john-ellison.svg"
+							src={avatarSrc}
+							data-fallback={DEFAULT_AVATAR}
 							alt={author}
 							width="44"
 							height="44"
 							class="author-avatar"
+							onerror="if(this.src!==this.dataset.fallback){this.src=this.dataset.fallback}"
 						/>
 						<div class="flex-1">
 							<p class="font-semibold leading-tight">{author}</p>

@@ -11,21 +11,27 @@ import '@fontsource/jetbrains-mono/500.css';
 import '../../styles/global.css';
 import Nav from '../../components/landing/Nav.astro';
 import Footer from '../../components/landing/Footer.astro';
+import ThemeBootstrap from '../../components/landing/ThemeBootstrap.astro';
 
 const posts = await getSortedPosts();
+const description = 'Releases and field notes from the AIOS team.';
+const canonical = new URL('/blog/', Astro.site).toString();
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
+		<ThemeBootstrap />
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			name="description"
-			content="Releases and field notes from the AIOS team."
-		/>
+		<meta name="description" content={description} />
 		<title>Blog — AIOS</title>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="canonical" href={canonical} />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="Blog — AIOS" />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
 		<link
 			rel="alternate"
 			type="application/rss+xml"

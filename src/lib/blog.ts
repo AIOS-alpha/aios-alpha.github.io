@@ -19,3 +19,18 @@ export const formatDate = (d: Date) =>
 		month: 'long',
 		day: 'numeric',
 	});
+
+const DEFAULT_AVATAR = '/blog/authors/john-ellison.svg';
+
+/** Slug for author assets under `public/blog/authors/{slug}.svg`. */
+export const authorSlug = (author: string) =>
+	author
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-|-$/g, '');
+
+/** Avatar path derived from author name; falls back to the default monogram. */
+export const authorAvatarSrc = (author: string) =>
+	`/blog/authors/${authorSlug(author)}.svg`;
+
+export { DEFAULT_AVATAR };

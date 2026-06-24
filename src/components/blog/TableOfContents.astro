@@ -90,22 +90,17 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 			active = next;
 		};
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				// Pick the topmost heading currently above the 30% line.
-				let topmost: IntersectionObserverEntry | null = null;
-				for (const e of entries) {
-					if (
-						e.isIntersecting &&
-						(!topmost || e.boundingClientRect.top < topmost.boundingClientRect.top)
-					) {
-						topmost = e;
-					}
-				}
-				if (topmost) setActive(topmost.target.id);
-			},
-			{ rootMargin: '0px 0px -70% 0px', threshold: 0 },
-		);
-		headings.forEach((h) => observer.observe(h));
+		// Scan all headings on scroll — IO callbacks only include changed entries.
+		const syncActive = () => {
+			const marker = window.innerHeight * 0.3;
+			let current = headings[0]?.id ?? '';
+			for (const h of headings) {
+				if (h.getBoundingClientRect().top <= marker) current = h.id;
+			}
+			setActive(current);
+		};
+
+		window.addEventListener('scroll', syncActive, { passive: true });
+		syncActive();
 	}
 </script>
