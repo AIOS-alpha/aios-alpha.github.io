@@ -14,20 +14,27 @@ Canonical reference to read first and mirror:
 `src/components/landing/diagrams/InfoFlow.astro`. Shared primitives + tokens:
 `src/styles/diagrams.css`. Deep notes: `docs/diagram-system.md`.
 
-## The one rule that prevents the mess
+## Default to single-SVG (it's what prevents the mess)
 
-**Everything lives in ONE SVG coordinate space.** Boxes are `<rect>`, labels are
-`<text>`, connectors are `<path>`/`<line>`, moving dots are `<circle>` — all in a
-single `viewBox`. Never position HTML elements on top of an SVG with `%`/`px` to
-fake a diagram.
+There are two valid patterns in the repo. **Unless you have a specific reason,
+author in single-SVG** — it is the one that does not drift.
 
-Why: an HTML-overlay-on-SVG "hybrid" keeps text in CSS-pixel/percent space while
-edges live in viewBox space. The two drift apart the moment text length, font
-metrics, or a coordinate changes — that is exactly how diagrams end up with
-clipped zone labels, titles overflowing their boxes, and labels colliding with
-arrows. One coordinate space makes alignment **deterministic**: a label centred on
-a box edge stays centred no matter what. (This is also how a clean reference like
-the fluora deck does it.)
+- **Single-SVG (default).** Boxes are `<rect>`, labels are `<text>`, connectors are
+  `<path>`/`<line>`, moving dots are `<circle>` — all in one `viewBox`. One
+  coordinate space, so alignment is **deterministic**: a label centred on a box
+  edge stays centred no matter what the text says. Reference: `InfoFlow.astro`.
+- **HTML-overlay hybrid (exception).** Node cards are real HTML (`.dgm-node`)
+  positioned by `%` over an SVG that draws only edges/token. Buys selectable,
+  translatable editorial text; good for **dense hub-and-spoke** layouts. Reference:
+  `CollectiveBrain.astro`. **Do not introduce this for a new diagram unless that
+  editorial-text payoff is the point** — it keeps text and edges in two coordinate
+  systems synced by hand, so it drifts (clipped labels, overflowing titles, labels
+  on arrows) the moment text length, font metrics, or a coordinate changes.
+
+If you are an agent and unsure, or the labels sit in tight corridors: **single-SVG.**
+The early InfoFlow mess came from running the hybrid in a layout that didn't suit
+it — not from the hybrid being categorically wrong. Never migrate an existing,
+working diagram between patterns without being asked.
 
 ## Geometry as data — define once, derive the rest
 

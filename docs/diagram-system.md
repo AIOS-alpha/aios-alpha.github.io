@@ -48,19 +48,31 @@ each node is distinct, a single centered accent dot per card is fine (`InfoFlow`
 | `.dgm-pulse` | soft breathing for a loop core / halo |
 | `.dgm-flow` | dashed drift along an edge — a direction-of-travel hint |
 
-### The single-SVG layout pattern
+### Two layout patterns — and when to use each
 
-**Everything lives in one SVG `viewBox` — boxes (`<rect>`), labels (`<text>`),
-connectors (`<path>`/`<line>`), and moving tokens (`<circle>`).** There is no HTML
-overlay. This is the rule that keeps a diagram from drifting.
+Both patterns are valid; both ship in this repo. Pick by the diagram's shape.
 
-> **Why not an HTML overlay?** An earlier version positioned node cards as HTML
-> with `left/top` percentages on top of an SVG that drew only the edges. That is
-> two coordinate systems (CSS percent vs. viewBox units) kept in sync by hand. The
-> moment a label's text length, the font metrics, or one coordinate changes, the
-> overlay drifts off the edges — clipped zone labels, titles overflowing their
-> boxes, labels landing on arrows. **One coordinate space makes alignment
-> deterministic.** A clean reference (the fluora deck) does exactly this.
+**1. Single-SVG (the default).** Everything lives in one SVG `viewBox` — boxes
+(`<rect>`), labels (`<text>`), connectors (`<path>`/`<line>`), moving tokens
+(`<circle>`). There is no HTML overlay, so there is one coordinate space and
+alignment is **deterministic**: a label centred on a box edge stays centred no
+matter what the text says. Reach for this for **new or agent-authored diagrams**,
+and for any layout with **tight label corridors** (e.g. a left-to-right boundary
+flow). Reference: **`InfoFlow.astro`**.
+
+**2. HTML-overlay hybrid.** Node cards are real HTML (`.dgm-node`) positioned by
+`%` on top of an SVG that draws only the edges/ring/token. This buys crisp,
+selectable, translatable editorial text and is comfortable for **dense
+hub-and-spoke** layouts with many cards. The cost: two coordinate systems (CSS
+percent vs. viewBox units) kept in sync **by hand** — so it drifts (clipped
+labels, titles overflowing, labels on arrows) the moment text length, font
+metrics, or a coordinate changes unless alignment is carefully maintained. Use it
+when the editorial-text payoff is worth that discipline. Reference:
+**`CollectiveBrain.astro`**.
+
+> Rule of thumb: if an agent is authoring it, or the labels are tight, go
+> single-SVG. The mess we chased on the early InfoFlow came from running the
+> hybrid in a layout that didn't suit it — not from the hybrid being "wrong."
 
 **Geometry as data.** Define node geometry once in frontmatter and derive every
 label centre and edge endpoint from it — never hand-type a magic number per label:
