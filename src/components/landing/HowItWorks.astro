@@ -1,137 +1,20 @@
 ---
+import Placeholder from './Placeholder.astro';
 ---
 
-<section class="py-20 md:py-32 bg-surface">
+<section class="relative py-20 md:py-32 bg-surface">
   <div class="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
 
-    <div class="mb-14">
-      <span class="text-label text-accent block mb-4">Architecture</span>
-      <h2 class="text-heading-2 text-foreground">How information flows</h2>
+    <div class="mb-14 max-w-[620px]">
+      <span class="text-label text-muted-foreground block mb-4">ARCHITECTURE</span>
+      <h2 class="text-heading-2 text-foreground mb-5">How information flows</h2>
+      <p class="text-body-lg text-muted-foreground">
+        A continuous loop, not a pipeline. Work surfaces from every workspace, enriches the
+        shared brain, and insights return to each individual — tightening with every cycle.
+      </p>
     </div>
 
-    <!-- Flow diagram -->
-    <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-0 mb-16">
-
-      <!-- Box 1 -->
-      <div class="flex-1 bg-surface-elevated border border-border-visible rounded-xl p-6">
-        <div class="text-label text-accent mb-1">01</div>
-        <div class="text-heading-3 text-foreground mb-4">Individual Workspace</div>
-        <ul class="space-y-1.5">
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span><code class="text-code text-link">private/</code> stays local</span>
-          </li>
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span><code class="text-code text-link">team/</code> gets pushed</span>
-          </li>
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span><code class="text-code text-link">external/</code> goes to docs</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Arrow -->
-      <div class="flow-arrow justify-center md:flex-col md:items-center px-4 py-2 md:py-0">
-        <span class="text-small text-muted-foreground hidden md:block mb-1">push</span>
-        <svg class="md:rotate-0 rotate-90" width="32" height="16" viewBox="0 0 32 16" fill="none" aria-hidden="true">
-          <path d="M0 8H28M28 8L21 1M28 8L21 15" stroke="#84cc16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- Box 2 -->
-      <div class="flex-1 bg-surface-elevated border border-border-visible rounded-xl p-6">
-        <div class="text-label text-accent mb-1">02</div>
-        <div class="text-heading-3 text-foreground mb-4">Team Brain API</div>
-        <ul class="space-y-1.5">
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span>Validates tier at boundary</span>
-          </li>
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span>Rejects <code class="text-code text-link">admin</code> tier (422)</span>
-          </li>
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span>Versioned sync contract</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Arrow -->
-      <div class="flow-arrow justify-center md:flex-col md:items-center px-4 py-2 md:py-0">
-        <span class="text-small text-muted-foreground hidden md:block mb-1">ingest</span>
-        <svg class="md:rotate-0 rotate-90" width="32" height="16" viewBox="0 0 32 16" fill="none" aria-hidden="true">
-          <path d="M0 8H28M28 8L21 1M28 8L21 15" stroke="#84cc16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- Box 3 -->
-      <div class="flex-1 bg-surface-elevated border border-border-visible rounded-xl p-6">
-        <div class="text-label text-accent mb-1">03</div>
-        <div class="text-heading-3 text-foreground mb-4">Shared Dashboard</div>
-        <ul class="space-y-1.5">
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span>Natural-language Q&amp;A</span>
-          </li>
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span>Task &amp; decision surfacing</span>
-          </li>
-          <li class="text-small text-muted-foreground flex items-start gap-2">
-            <span class="text-accent mt-0.5 shrink-0">·</span>
-            <span>Cross-workspace synthesis</span>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-
-    <!-- Code split -->
-    <div class="code-split">
-
-      <!-- Left: brain-api.md snippet -->
-      <div class="terminal">
-        <div class="terminal-header" aria-hidden="true">
-          <span class="terminal-dot"></span>
-          <span class="terminal-dot"></span>
-          <span class="terminal-dot"></span>
-          <span class="text-label text-muted-foreground ml-2">brain-api.md (v1 contract)</span>
-        </div>
-        <div class="terminal-body">
-          <div class="terminal-comment"># POST /v1/push</div>
-          <div class="terminal-comment"># Content-Type: application/json</div>
-          <div class="mt-2">{`{`}</div>
-          <div>&nbsp;&nbsp;<span class="text-link">"tier"</span>: <span class="text-accent">"team"</span>,</div>
-          <div>&nbsp;&nbsp;<span class="text-link">"workspace_id"</span>: <span class="text-accent">"ws_abc123"</span>,</div>
-          <div>&nbsp;&nbsp;<span class="text-link">"content"</span>: {`[...]`}</div>
-          <div>{`}`}</div>
-          <div class="mt-2 terminal-comment"># 422 if tier == "admin"</div>
-        </div>
-      </div>
-
-      <!-- Right: aios push terminal output -->
-      <div class="terminal">
-        <div class="terminal-header" aria-hidden="true">
-          <span class="terminal-dot"></span>
-          <span class="terminal-dot"></span>
-          <span class="terminal-dot"></span>
-          <span class="text-label text-muted-foreground ml-2">terminal — aios push</span>
-        </div>
-        <div class="terminal-body">
-          <div><span class="terminal-prompt">$</span> aios push --tier team</div>
-          <div class="mt-2 terminal-comment">→ scanning 2-work/ for team-tier content</div>
-          <div class="terminal-comment">→ found 4 files to push</div>
-          <div class="terminal-comment">→ validating against brain-api v1</div>
-          <div class="mt-2 text-accent">✓ pushed 4 files to team brain</div>
-          <div class="text-accent">✓ sync complete (847ms)</div>
-        </div>
-      </div>
-
-    </div>
+    <Placeholder variant="screenshot" ratio="16 / 9" label="How information flows — system diagram" />
 
   </div>
 </section>

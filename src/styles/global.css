@@ -1,26 +1,41 @@
 @import "tailwindcss";
 @import "./design-tokens.css";
 
-/* Tailwind theme — maps the canonical design tokens (design-tokens.css)
-   onto Tailwind's color/font/radius namespaces. Values reference the
-   --aios-* tokens so there is one source of truth shared with the docs. */
+/* Class-driven dark mode: `class="dark"` on <html> engages the @aios/design
+   dark palette (the theme toggle / no-flash script in Landing.astro sets it). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =====================================================================
+   Tailwind theme bridge — maps the canonical @aios-alpha/design tokens
+   (via design-tokens.css) onto Tailwind's namespaces. Values are CSS vars
+   that flip between light/dark, so every utility is dual-mode for free.
+   Editorial Minimal: greyscale chrome, colour rationed to badges/data.
+   ===================================================================== */
 @theme {
   --color-background: var(--aios-bg);
   --color-surface: var(--aios-surface);
   --color-surface-elevated: var(--aios-surface-elevated);
   --color-muted: var(--aios-muted);
+
   --color-border: var(--aios-border);
   --color-border-visible: var(--aios-border-visible);
+  --color-border-strong: var(--aios-border-strong);
+
   --color-foreground: var(--aios-foreground);
+  --color-foreground-secondary: var(--aios-fg-secondary);
   --color-muted-foreground: var(--aios-muted-foreground);
+
+  /* Black-pill in light, white-pill in dark — the primary inverts via tokens */
   --color-primary: var(--aios-primary);
   --color-primary-hover: var(--aios-primary-hover);
   --color-primary-foreground: var(--aios-primary-fg);
-  --color-accent: var(--aios-lime);
-  --color-label: var(--aios-lime);
-  --color-link: var(--aios-violet-light);
-  --color-code-bg: var(--aios-code-bg);
+
+  /* Rationed accents — badges, status, data only */
+  --color-accent: var(--aios-accent);
+  --color-accent-foreground: var(--aios-accent-fg);
   --color-emerald: var(--aios-emerald);
+  --color-link: var(--aios-foreground);
+  --color-code-bg: var(--aios-code-bg);
 
   --font-display: var(--aios-font-display);
   --font-sans: var(--aios-font-sans);
@@ -32,26 +47,93 @@
   --radius-xl: var(--aios-radius-xl);
   --radius-2xl: var(--aios-radius-2xl);
   --radius-full: var(--aios-radius-full);
-
-  --shadow-glow-violet: 0 0 60px rgba(139, 92, 246, 0.3);
-  --shadow-glow-lime: 0 0 60px rgba(132, 204, 22, 0.3);
-  --shadow-glow-emerald: 0 0 60px rgba(16, 185, 129, 0.3);
-  --shadow-btn-glow: 0 0 20px rgba(139, 92, 246, 0.4);
-
-  --background-image-gradient-prism: var(--aios-gradient-prism);
-  --background-image-gradient-primary: var(--aios-gradient-primary);
-  --background-image-gradient-text: var(--aios-gradient-text);
 }
 
-/* Fluid type utilities */
+/* ---------------------------------------------------------------------
+   Website-local decorative vars (NOT design-system tokens). These are
+   mode-specific surfaces unique to the landing page — kept here, out of
+   the shared token alias file, so the single source of truth stays clean.
+   --------------------------------------------------------------------- */
+:root {
+  --w-dot: rgba(0, 0, 0, 0.07);                  /* site-wide dot texture */
+  --w-nav-bg: rgba(255, 255, 255, 0.80);         /* scrolled glass nav */
+  --w-terminal-bg: #0c0c0c;                      /* the one dark "device" */
+  --w-terminal-border: rgba(255, 255, 255, 0.10);
+  --w-terminal-fg: #fafafa;
+  --w-spotlight-opacity: 0.16;                   /* hero ambient glow */
+
+  /* Bokeh palettes (light) — desaturated, rationed colour pools. Each is a
+     multi-radial with a SINGLE soft `transparent 70-76%` stop (no mid stops:
+     mid stops produce the visible banding / "CRT lines"). Per-pool alpha is
+     kept ≤.20 in light to stay premium, never lava-lamp. */
+  --bokeh-1:
+    radial-gradient(closest-side at 28% 38%, rgba(124, 58, 237, 0.20), transparent 72%),
+    radial-gradient(closest-side at 72% 60%, rgba(16, 185, 129, 0.16), transparent 72%);
+  --bokeh-2:
+    radial-gradient(closest-side at 35% 55%, rgba(13, 148, 136, 0.18), transparent 72%),
+    radial-gradient(closest-side at 68% 35%, rgba(132, 204, 22, 0.14), transparent 72%);
+  --bokeh-3:
+    radial-gradient(closest-side at 50% 45%, rgba(124, 58, 237, 0.16), transparent 72%),
+    radial-gradient(closest-side at 75% 65%, rgba(245, 158, 11, 0.10), transparent 74%);
+  --bokeh-4:
+    radial-gradient(closest-side at 30% 50%, rgba(16, 185, 129, 0.16), transparent 74%),
+    radial-gradient(closest-side at 70% 50%, rgba(34, 211, 238, 0.12), transparent 74%);
+  --bokeh-5:
+    radial-gradient(closest-side at 50% 40%, rgba(124, 58, 237, 0.14), transparent 76%);
+
+  /* Inline feTurbulence noise dither (120×120, fractalNoise, .9 / 2 octaves).
+     Used by .page-bokeh::after to kill gradient banding. */
+  --w-noise: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC45IiBudW1PY3RhdmVzPSIyIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbHRlcj0idXJsKCNuKSIvPjwvc3ZnPg==");
+  --w-noise-opacity: 0.015;                       /* ceiling .05 */
+}
+.dark {
+  --w-dot: rgba(255, 255, 255, 0.06);
+  --w-nav-bg: rgba(11, 11, 11, 0.85);
+  --w-terminal-bg: #161616;
+  --w-terminal-border: rgba(255, 255, 255, 0.09);
+  --w-terminal-fg: #fafafa;
+  --w-spotlight-opacity: 0.34;
+
+  /* Same hues, ~1.6× alpha — pools read on the matte dark surface but stay
+     under the .34 per-pool ceiling. */
+  --bokeh-1:
+    radial-gradient(closest-side at 28% 38%, rgba(139, 92, 246, 0.34), transparent 72%),
+    radial-gradient(closest-side at 72% 60%, rgba(16, 185, 129, 0.26), transparent 72%);
+  --bokeh-2:
+    radial-gradient(closest-side at 35% 55%, rgba(45, 212, 191, 0.30), transparent 72%),
+    radial-gradient(closest-side at 68% 35%, rgba(132, 204, 22, 0.22), transparent 72%);
+  --bokeh-3:
+    radial-gradient(closest-side at 50% 45%, rgba(139, 92, 246, 0.28), transparent 72%),
+    radial-gradient(closest-side at 75% 65%, rgba(245, 158, 11, 0.16), transparent 74%);
+  --bokeh-4:
+    radial-gradient(closest-side at 30% 50%, rgba(16, 185, 129, 0.26), transparent 74%),
+    radial-gradient(closest-side at 70% 50%, rgba(34, 211, 238, 0.20), transparent 74%);
+  --bokeh-5:
+    radial-gradient(closest-side at 50% 40%, rgba(139, 92, 246, 0.24), transparent 76%);
+
+  --w-noise-opacity: 0.035;                       /* ceiling .05 */
+}
+
+/* Guardrail: Instrument Serif is single-weight (400). Never let the browser
+   faux-bold it (smears + rounds the glyphs). Instrument Sans ships real weights. */
+@layer base {
+  html { scroll-behavior: smooth; }
+  html, body { font-synthesis: none; }
+  /* Positioned so the page-level bokeh field (position:absolute) sizes to it. */
+  body { position: relative; }
+  :is(h1, h2, h3, h4, h5, h6) { scroll-margin-top: 6rem; }
+}
+
+/* =====================================================================
+   Fluid type utilities — display = Instrument Serif (weight 400 ONLY).
+   ===================================================================== */
 @utility text-display {
   font-family: var(--font-display);
   font-size: clamp(3rem, 2.5rem + 2.5vw, 5rem);
   font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
 }
-
 @utility text-heading-1 {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 2rem + 2.5vw, 4rem);
@@ -59,53 +141,47 @@
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
-
 @utility text-heading-2 {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+  font-size: clamp(2rem, 1.5rem + 2.5vw, 3.25rem);
   font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
 }
-
 @utility text-heading-3 {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
   font-weight: 400;
-  line-height: 1.3;
+  line-height: 1.2;
   letter-spacing: -0.01em;
 }
-
 @utility text-body-lg {
   font-family: var(--font-sans);
-  font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.35rem);
+  font-size: clamp(1.1rem, 1.02rem + 0.4vw, 1.3rem);
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.65;
 }
-
 @utility text-body {
   font-family: var(--font-sans);
-  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.1rem);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
 }
-
 @utility text-small {
   font-family: var(--font-sans);
   font-size: clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.55;
 }
-
+/* Micro-label = JetBrains Mono, the editorial "spec sticker" */
 @utility text-label {
-  font-family: var(--font-sans);
-  font-size: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-
 @utility text-code {
   font-family: var(--font-mono);
   font-size: clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
@@ -113,94 +189,204 @@
   line-height: 1.6;
 }
 
-/* Dot grid background */
+/* Italic-serif emphasis (editorial accent in place of gradient text) */
+@utility serif-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* =====================================================================
+   Hero atmosphere — dot grid + a slow, desaturated spotlight glow.
+   Colour here is ambient (heavily blurred), not decorative.
+   ===================================================================== */
 @utility dot-grid {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(circle, var(--w-dot) 1px, transparent 1px);
+  background-size: 30px 30px;
 }
 
-/* Hero ambient glow blob */
-.hero-glow {
+/* Continuous site-wide dot texture. Painted directly on every section's
+   background (a fixed z-index:-1 backdrop was hidden behind opaque sections),
+   and `background-attachment: fixed` aligns the grid to the viewport so it
+   tiles seamlessly across section boundaries — no per-section seams. The
+   bg-color still comes from the Tailwind `bg-*` utility (separate property). */
+.bg-background,
+.bg-surface {
+  background-image: radial-gradient(circle, var(--w-dot) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-attachment: fixed;
+}
+
+/* Sections are transparent so the page-level bokeh field + dot texture show
+   THROUGH them continuously — the glow bleeds smoothly across section
+   boundaries instead of being clipped at each line. (Only the bg-COLOR is
+   removed; the fixed dot-grid background-image stays.) */
+main > section.bg-background,
+main > section.bg-surface {
+  background-color: transparent;
+}
+
+/* Page-level bokeh field — ONE continuous layer behind all content (z-index:-1,
+   above the body's dot grid, below the transparent sections). Pools are
+   staggered down the page on alternating sides to guide the eye; the field is
+   clipped to the page width so it never causes horizontal overflow, but it
+   bleeds freely between sections (no per-section clipping). */
+.page-bokeh {
   position: absolute;
-  background: var(--background-image-gradient-prism);
-  filter: blur(120px);
-  opacity: 0.15;
-  width: 600px;
-  height: 400px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
+  inset: 0;
+  z-index: -1;
+  overflow: clip;
   pointer-events: none;
+}
+/* Grain dither over the whole bokeh field — keeps soft gradients from banding. */
+.page-bokeh::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--w-noise);
+  mix-blend-mode: overlay;
+  opacity: var(--w-noise-opacity);
+  pointer-events: none;
+}
+.bokeh-pool {
+  position: absolute;
   border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
 }
 
-/* Terminal window */
+/* Stat strip = a frosted glass transition band (no bokeh of its own). */
+.stat-strip {
+  background: var(--aios-glass-bg);
+  -webkit-backdrop-filter: var(--aios-blur-glass) saturate(1.2);
+  backdrop-filter: var(--aios-blur-glass) saturate(1.2);
+}
+
+.hero-spotlight {
+  width: min(820px, 92vw);
+  height: 460px;
+  border-radius: 9999px;
+  filter: blur(72px);
+  opacity: var(--w-spotlight-opacity);
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side at 30% 42%, #8b5cf6 0%, rgba(139,92,246,0.5) 45%, transparent 80%),
+    radial-gradient(closest-side at 68% 52%, #10b981 0%, rgba(16,185,129,0.5) 45%, transparent 80%),
+    radial-gradient(closest-side at 50% 30%, #22d3ee 0%, rgba(34,211,238,0.45) 45%, transparent 82%);
+}
+
+@keyframes aios-spotlight {
+  0%, 100% { transform: translateX(-10%) translateY(-3%) scale(1); }
+  50%      { transform: translateX(10%)  translateY(3%)  scale(1.1); }
+}
+.aios-spotlight {
+  animation: aios-spotlight 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* =====================================================================
+   Terminal — a single dark "device", consistent in light AND dark.
+   ===================================================================== */
 .terminal {
-  background: var(--color-code-bg);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 10px;
+  background: var(--w-terminal-bg);
+  border: 1px solid var(--w-terminal-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
-
 .terminal-header {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
-
 .terminal-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
 }
-
 .terminal-body {
   padding: 1.5rem;
   font-family: var(--font-mono);
   font-size: clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
   line-height: 1.7;
-  color: #fafafa;
+  color: var(--w-terminal-fg);
+}
+.terminal-label { color: rgba(255, 255, 255, 0.45); }
+.terminal-prompt { color: #a3e635; }              /* soft lime — code signal */
+.terminal-comment { color: rgba(255, 255, 255, 0.38); }
+.terminal-success { color: #34d399; }             /* emerald success */
+.terminal-key { color: rgba(255, 255, 255, 0.7); }
+
+/* =====================================================================
+   Cards, arrows, nav — greyscale, hairline, no glow.
+   ===================================================================== */
+.feature-card {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  overflow: hidden;          /* clip full-bleed .card-media to the card radius */
+  /* Neutral graded glow at rest (per-mode token) — colourless resting state. */
+  box-shadow: var(--aios-shadow-glow-card);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+/* shadcn-style card media: a full-width image flush to the card's top/left/right
+   edges with a controllable aspect ratio. Put it on a `.feature-card--media`
+   (which drops the card's own padding); a `.card-body` re-adds content padding.
+   Structure:  .feature-card.feature-card--media > .card-media.card-media--16x9
+                                                  > .card-body */
+.feature-card--media { padding: 0; }
+.card-media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+.card-media--16x9 { aspect-ratio: 16 / 9; }
+.card-media--1x1  { aspect-ratio: 1 / 1; }
+.card-media--3x2  { aspect-ratio: 3 / 2; }
+.card-body { padding: 1.5rem; }
+.feature-card:hover {
+  border-color: var(--color-border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--aios-shadow-glow-card-hover);
+}
+/* Opt-in brand-tinted glow for a single highlighted card. Tint is capped in
+   the design tokens (≤.22 dark / .14 light). */
+.feature-card--featured {
+  box-shadow: var(--aios-shadow-glow-featured);
+}
+.feature-card--featured:hover {
+  box-shadow: var(--aios-shadow-glow-featured-hover);
 }
 
-.terminal-prompt {
-  color: #84cc16;
-}
-
-.terminal-comment {
-  color: rgba(255, 255, 255, 0.35);
-}
-
-/* Flow diagram arrows */
 .flow-arrow {
-  color: #84cc16;
+  color: var(--color-muted-foreground);
   display: flex;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
 }
 
-/* Card hover border transition */
-.feature-card {
-  background: var(--color-surface);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 14px;
-  padding: 1.5rem;
-  transition: border-color 0.2s ease;
-}
-
-.feature-card:hover {
-  border-color: rgba(139, 92, 246, 0.35);
-}
-
-/* Glass nav state — ID-scoped so it wins over the base nav without !important */
+/* Glass nav state — ID-scoped so it wins over the base nav without !important.
+   Uses the shared liquid-glass tokens (per-mode) so the scrolled nav matches
+   any other .glass surface. */
 #main-nav.nav-scrolled {
-  background: rgba(5, 5, 5, 0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: var(--aios-glass-bg);
+  backdrop-filter: var(--aios-blur-glass) saturate(1.4);
+  -webkit-backdrop-filter: var(--aios-blur-glass) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 var(--aios-glass-highlight),
+    inset 0 0 12px var(--aios-glass-inset);
+  border-bottom: 1px solid var(--color-border);
 }
+
+/* Theme toggle: show the icon matching the *next* mode */
+.theme-icon-dark { display: none; }
+.dark .theme-icon-dark { display: inline; }
+.dark .theme-icon-light { display: none; }
 
 /* Code split for HowItWorks */
 .code-split {
@@ -208,9 +394,102 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
-
 @media (max-width: 767px) {
-  .code-split {
-    grid-template-columns: 1fr;
+  .code-split { grid-template-columns: 1fr; }
+}
+
+/* =====================================================================
+   Shared effects layer — bokeh / noise / page backdrop / liquid glass /
+   prism-border button / link underline. All dual-mode, all with a
+   colourless resting state; colour appears only on hover / featured /
+   atmosphere. Coherence ceilings: bokeh ≤.34 dark/.20 light, noise ≤.05,
+   prism opacity ≤.9 / thickness ≤1.5px.
+   ===================================================================== */
+
+/* --- Liquid glass utility -------------------------------------------- */
+/* Frosted surface via the per-mode glass tokens. Use on nav, terminal header,
+   modals, any floating chrome. */
+@utility glass {
+  background: var(--aios-glass-bg);
+  backdrop-filter: var(--aios-blur-glass) saturate(1.4);
+  -webkit-backdrop-filter: var(--aios-blur-glass) saturate(1.4);
+  border: 1px solid var(--aios-glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--aios-glass-highlight),
+    inset 0 0 12px var(--aios-glass-inset);
+}
+
+/* --- Prism-border button -------------------------------------------- */
+/* Animated rationed-prism BORDER revealed on hover over the existing pill.
+   At rest: invisible (colourless). The border is masked so only the 1.5px
+   ring shows the gradient. */
+.btn-prism {
+  position: relative;
+  isolation: isolate;
+}
+.btn-prism::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: var(--aios-gradient-prism);
+  background-size: 300% 300%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.btn-prism:hover::before,
+.btn-prism:focus-visible::before {
+  opacity: 0.9;
+  animation: aios-prism-shift 4s linear infinite;
+}
+@keyframes aios-prism-shift {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* --- Link underline -------------------------------------------------- */
+/* Editorial growing underline — fg→accent, 0→100% on hover/focus. */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1.5px;
+  width: 0;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--color-foreground), var(--aios-accent));
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .aios-spotlight { animation: none; }
+  .feature-card { transition: border-color 0.2s ease, box-shadow 0.25s ease; }
+  .feature-card:hover { transform: none; }
+  /* Prism border: no shift animation, slightly calmer resting reveal. */
+  .btn-prism:hover::before,
+  .btn-prism:focus-visible::before {
+    animation: none;
+    opacity: 0.7;
   }
+  /* Link underline: snap, no slide. */
+  .link-underline::after { transition: none; }
 }

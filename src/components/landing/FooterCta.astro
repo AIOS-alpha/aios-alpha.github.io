@@ -1,26 +1,24 @@
 ---
 ---
 
-<section class="relative py-24 md:py-36 bg-background overflow-hidden">
-  <!-- Prism glow -->
-  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-    <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-      style="background: var(--background-image-gradient-prism); filter: blur(120px); opacity: 0.12; width: 700px; height: 400px;"
-    ></div>
+<section class="relative py-24 md:py-36 bg-background">
+  <!-- Faint spotlight echo of the hero — bookends the page. No longer clipped. -->
+  <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center pointer-events-none" aria-hidden="true">
+    <div class="hero-spotlight aios-spotlight" style="opacity: calc(var(--w-spotlight-opacity) * 0.8);"></div>
   </div>
 
   <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20 text-center">
-    <span class="text-label text-accent block mb-6">Open source</span>
-    <h2 class="text-heading-2 text-foreground mb-6 mx-auto max-w-[640px]">
-      Get your workspace running today.
+    <span class="text-label text-muted-foreground block mb-6">Agentic Transformation</span>
+    <h2 class="text-heading-2 text-foreground mb-6 mx-auto max-w-[680px]">
+      An operating system for humans and agents working <span class="serif-italic">together.</span>
     </h2>
-    <p class="text-body-lg text-muted-foreground mb-10 mx-auto max-w-[480px]">
-      Open source. Self-hosted. No vendor lock-in.
+    <p class="text-body-lg text-muted-foreground mb-10 mx-auto max-w-[620px]">
+      One structured place where humans and agents collaborate — built through practice of transforming 100+ companies. It protects privacy, preserves context, and surfaces the best patterns from any
+      contributor to the whole team. Your tools, skills, and memory in a single system that gets smarter the more you use it.
     </p>
     <a
       href="/guides/quickstart"
-      class="inline-flex items-center bg-primary text-primary-foreground font-semibold px-8 py-4 rounded-full no-underline transition-all duration-200 hover:bg-primary-hover text-body"
+      class="btn-prism inline-flex items-center bg-primary text-primary-foreground font-semibold px-8 py-4 rounded-full no-underline transition-colors duration-200 hover:bg-primary-hover text-body"
     >
       Get the workspace →
     </a>

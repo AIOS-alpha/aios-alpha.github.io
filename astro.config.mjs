@@ -12,8 +12,9 @@ export default defineConfig({
       starlight({
           title: 'AIOS',
           logo: {
-              src: './src/assets/aios-wordmark.svg',
-              replacesTitle: true,
+              light: './src/assets/aios-mark-light.svg',
+              dark: './src/assets/aios-mark-dark.svg',
+              replacesTitle: false,
           },
           favicon: '/favicon.svg',
           // Mirror Starlight's data-theme onto the `.dark` class so the
@@ -37,7 +38,7 @@ export default defineConfig({
               },
           },
           social: [
-              { icon: 'github', label: 'GitHub', href: 'https://github.com/your-github-org/aios-workspace' },
+              { icon: 'github', label: 'GitHub', href: 'https://github.com/AIOS-alpha' },
           ],
           sidebar: [
               {

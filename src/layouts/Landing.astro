@@ -1,9 +1,12 @@
 ---
 import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource/instrument-sans/400.css';
+import '@fontsource/instrument-sans/500.css';
 import '@fontsource/instrument-sans/600.css';
 import '@fontsource/instrument-sans/700.css';
 import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
 import '../styles/global.css';
 
 interface Props {
@@ -15,20 +18,58 @@ const {
   title,
   description = 'An open-source AI transformation toolkit — structured agent workspaces and a shared team memory service.',
 } = Astro.props;
+
+// Page-level bokeh pools — staggered down the page on alternating sides to guide
+// the eye. Data-driven so positions live in one place, not scattered inline.
+const bokehPools = [
+  { top: '2%',  side: 'left: -7%',  w: '46vw', h: '30rem', bokeh: 1, opacity: 0.7 },
+  { top: '15%', side: 'right: -9%', w: '48vw', h: '32rem', bokeh: 4, opacity: 0.62 },
+  { top: '30%', side: 'left: -6%',  w: '44vw', h: '30rem', bokeh: 2, opacity: 0.68 },
+  { top: '45%', side: 'right: -7%', w: '50vw', h: '34rem', bokeh: 3, opacity: 0.58 },
+  { top: '60%', side: 'left: -8%',  w: '46vw', h: '32rem', bokeh: 1, opacity: 0.62 },
+  { top: '75%', side: 'right: -6%', w: '48vw', h: '32rem', bokeh: 4, opacity: 0.58 },
+  { top: '90%', side: 'left: -5%',  w: '42vw', h: '30rem', bokeh: 5, opacity: 0.58 },
+];
 ---
 
 <!doctype html>
-<!-- Marketing landing is dark-first (brand default). The `dark` class engages
-     the @aios/design dark palette; a light variant is a follow-up (W2.5.6). -->
-<html lang="en" class="dark">
+<html lang="en">
   <head>
+    <!-- No-flash theme: set the class before first paint. Brand-default dark,
+         user choice persisted. Light + dark are both first-class. -->
+    <script is:inline>
+      (function () {
+        try {
+          /* Same key as Starlight docs (starlight-theme) so landing ↔ docs stay in sync. */
+          var stored =
+            localStorage.getItem('starlight-theme') || localStorage.getItem('aios-theme');
+          var dark = stored ? stored === 'dark' : true; // brand default = dark
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body class="bg-background text-foreground font-sans antialiased overflow-x-hidden">
+  <body class="bg-background text-foreground font-sans antialiased overflow-x-clip">
+    <!-- One continuous bokeh field behind everything: pools staggered down the
+         page on alternating sides, bleeding smoothly across section boundaries.
+         Sections are transparent so it shows through; clipped to page width. -->
+    <div class="page-bokeh" aria-hidden="true">
+      {bokehPools.map((p) => (
+        <span
+          class="bokeh-pool"
+          style={`top:${p.top}; ${p.side}; width:${p.w}; height:${p.h}; background:var(--bokeh-${p.bokeh}); opacity:${p.opacity};`}
+        ></span>
+      ))}
+    </div>
     <slot />
   </body>
 </html>

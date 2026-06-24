@@ -1,0 +1,143 @@
+---
+import { Plug, Server, LayoutDashboard } from 'lucide-astro';
+import Placeholder from './Placeholder.astro';
+
+const runtimes = [
+  'Claude',
+  'Claude Code',
+  'Cursor',
+  'Codex',
+  'OpenCode',
+  'OpenCall',
+  'Hermes',
+];
+
+const modes = [
+  {
+    icon: Plug,
+    kicker: 'BYOA',
+    title: 'Bring your own agent.',
+    body: 'Plug any agent into your workspace. AIOS gives it structure, governance, and sync — without touching how the agent itself works.',
+  },
+  {
+    icon: Server,
+    kicker: 'MCP',
+    title: 'Extend with what you already have.',
+    body: 'Connect existing tools over the Model Context Protocol. The Team Brain is just another MCP server — your agents talk to it natively.',
+  },
+  {
+    icon: LayoutDashboard,
+    kicker: 'GUI',
+    title: 'No terminal required.',
+    body: 'Prefer a UI? Drive the same harnesses and shared brain from the dashboard — every capability surfaces without a single command.',
+  },
+];
+---
+
+<section class="relative py-20 md:py-32 bg-background">
+  <div class="relative z-10 max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+
+    <!-- Header -->
+    <div class="mb-14 max-w-[660px]">
+      <span class="text-label text-muted-foreground block mb-4">RUNTIME-AGNOSTIC</span>
+      <h2 class="text-heading-2 text-foreground mb-5">
+        One interface for all your <span class="serif-italic">agentic</span> work.
+      </h2>
+      <p class="text-body-lg text-muted-foreground">
+        Go from juggling tools, windows, and workspaces to a single place to manage everything
+        your agents do — and coordinate it across the team.
+      </p>
+    </div>
+
+    <!-- Runtime chips -->
+    <div class="mb-14">
+      <p class="text-label text-muted-foreground mb-4">Works with the agents you already use</p>
+      <div class="flex flex-wrap gap-2">
+        {runtimes.map((name) => (
+          <span class="text-small border border-border-visible rounded-full px-4 py-1.5 text-foreground font-mono">
+            {name}
+          </span>
+        ))}
+        <span class="text-small border border-border rounded-full px-4 py-1.5 text-muted-foreground font-mono">
+          + any MCP client
+        </span>
+      </div>
+    </div>
+
+    <!-- Three modes -->
+    <div class="mb-20">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {modes.map(({ icon: Icon, kicker, title, body }) => (
+          <div class="feature-card">
+            <div class="mb-4 text-foreground">
+              <Icon size={20} stroke-width={1.6} />
+            </div>
+            <p class="text-label text-muted-foreground mb-2">{kicker}</p>
+            <h3 class="text-heading-3 text-foreground mb-2">{title}</h3>
+            <p class="text-body text-muted-foreground">{body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Integration loop — bridged from mode cards above -->
+    <div>
+      <div class="mb-10">
+        <span class="text-label text-muted-foreground block mb-3">TWO LEVELS, ONE LOOP</span>
+        <p class="text-body-lg text-muted-foreground max-w-[560px]">
+          Every integration plugs into the same spine — whether it's your private workspace
+          or the team's shared brain.
+        </p>
+      </div>
+
+      <!-- Top row: Workspace + Team Brain side by side -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+        <div class="feature-card feature-card--media flex flex-col">
+          <div class="card-media card-media--16x9">
+            <Placeholder fill variant="diagram" label="Workspace integrations" />
+          </div>
+          <div class="card-body flex flex-col flex-1">
+            <h3 class="text-heading-3 text-foreground mb-2">Workspace integrations</h3>
+            <p class="text-body text-muted-foreground">
+              Each agent gets a numbered folder spine, governance rules, and access to your
+              private context — only what you choose to expose.
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-card feature-card--media flex flex-col">
+          <div class="card-media card-media--16x9">
+            <Placeholder fill variant="diagram" label="Team Brain integrations" />
+          </div>
+          <div class="card-body flex flex-col flex-1">
+            <h3 class="text-heading-3 text-foreground mb-2">Team Brain integrations</h3>
+            <p class="text-body text-muted-foreground">
+              Agents across the team push to one shared brain. Memory, decisions, and
+              deliverables accumulate — queryable in plain English.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom row: skill-sharing card, centered, slightly wider -->
+      <div class="flex justify-center">
+        <div class="feature-card feature-card--media flex flex-col w-full md:w-[calc(50%+2rem)]">
+          <div class="card-media card-media--16x9">
+            <Placeholder fill variant="diagram" label="Skill → team repo → everyone" />
+          </div>
+          <div class="card-body flex flex-col flex-1">
+            <h3 class="text-heading-3 text-foreground mb-2">Share a skill, the whole team adopts it.</h3>
+            <p class="text-body text-muted-foreground">
+              Create a skill or harness once, ship it to the team repo, and everyone adopts it.
+              The loop closes automatically — no manual redistribution.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
