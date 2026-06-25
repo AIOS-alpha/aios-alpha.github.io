@@ -1,6 +1,7 @@
 ---
 import { Plug, Server, LayoutDashboard } from 'lucide-astro';
 import Placeholder from './Placeholder.astro';
+import Screenshot from './Screenshot.astro';
 
 const runtimes = [
   'Claude',
@@ -95,7 +96,12 @@ const modes = [
 
         <div class="feature-card feature-card--media flex flex-col">
           <div class="card-media card-media--16x9">
-            <Placeholder fill variant="diagram" label="Workspace integrations" />
+            <Screenshot
+              fill
+              light="/screenshots/integrations-light.png"
+              dark="/screenshots/integrations-dark.png"
+              alt="The AIOS workspace integrations page — connected tools like Slack, GitHub, Linear and Notion, with the Team Brain as a native MCP server"
+            />
           </div>
           <div class="card-body flex flex-col flex-1">
             <h3 class="text-heading-3 text-foreground mb-2">Workspace integrations</h3>
