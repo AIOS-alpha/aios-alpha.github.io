@@ -12,7 +12,7 @@ the review step).
 
 ## The flow
 
-1. **Publish on the blog.** Merge to `main`; GitHub Actions deploys to
+1. **Publish on the blog.** Merge to `main`; Vercel auto-deploys to
    `aiosbrain.dev`. Confirm the post is live at `aiosbrain.dev/blog/<slug>/`.
 
 2. **Run the helper.**
