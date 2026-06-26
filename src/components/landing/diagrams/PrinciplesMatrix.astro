@@ -1,8 +1,11 @@
 ---
+import PrincipleGlyph from './PrincipleGlyph.astro';
+
 interface Principle {
   id: string;
   title: string;
   body: string;
+  glyph: 'modular' | 'open' | 'permission' | 'privacy';
 }
 
 interface Props {
@@ -13,32 +16,41 @@ const { principles = [
   {
     id: 'P1',
     title: 'Modular',
+    glyph: 'modular',
     body: 'Each organ system is independently deployable. Adopt what you need — workspace only, brain only, or the full loop.',
   },
   {
     id: 'P2',
     title: 'Open source',
+    glyph: 'open',
     body: 'MIT-licensed and self-hosted. Clone the workspace per person, run the brain on your Postgres. No cloud lock-in.',
   },
   {
     id: 'P3',
     title: 'Permissioned',
+    glyph: 'permission',
     body: 'Every action is policy-governed. Teams define what runs autonomously and what requires human approval.',
   },
   {
     id: 'P4',
     title: 'Privacy by architecture',
+    glyph: 'privacy',
     body: 'Individual agent data stays personal by default. The collective brain receives only what members choose to push.',
   },
 ] } = Astro.props;
 ---
 
 <div class="principles-matrix grid grid-cols-1 md:grid-cols-2 gap-4">
-  {principles.map(({ id, title, body }) => (
-    <article class="feature-card flex flex-col">
-      <span class="text-label text-muted-foreground mb-4">{id}</span>
-      <h3 class="text-heading-3 text-foreground mb-2">{title}</h3>
-      <p class="text-body text-muted-foreground">{body}</p>
+  {principles.map(({ id, title, body, glyph }) => (
+    <article class="feature-card feature-card--media flex flex-col">
+      <div class="card-media card-media--16x9">
+        <PrincipleGlyph kind={glyph} />
+      </div>
+      <div class="card-body flex flex-col flex-1">
+        <span class="text-label text-muted-foreground mb-4">{id}</span>
+        <h3 class="text-heading-3 text-foreground mb-2">{title}</h3>
+        <p class="text-body text-muted-foreground">{body}</p>
+      </div>
     </article>
   ))}
 </div>

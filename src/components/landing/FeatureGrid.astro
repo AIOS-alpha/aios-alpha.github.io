@@ -1,10 +1,10 @@
 ---
-import Screenshot from './Screenshot.astro';
 import FeatureGlyph from './diagrams/FeatureGlyph.astro';
 
 const cards = [
   {
     headline: 'Your workspace, your rules.',
+    glyph: 'workspace',
     body: 'A numbered folder spine, governance rules, validators, and multi-agent harnesses — one per person. You decide what leaves your machine.',
     featured: true,
   },
@@ -48,16 +48,7 @@ const cards = [
       {cards.map(({ headline, body, featured, glyph }) => (
         <div class={`feature-card feature-card--media flex flex-col${featured ? ' feature-card--featured' : ''}`}>
           <div class="card-media card-media--16x9">
-            {featured ? (
-              <Screenshot
-                fill
-                light="/screenshots/workspace-gui-light.png"
-                dark="/screenshots/workspace-gui-dark.png"
-                alt="The AIOS workspace GUI — an agent chat session with tool calls, a context meter, and an automatic memory update"
-              />
-            ) : (
-              <FeatureGlyph kind={glyph} />
-            )}
+            <FeatureGlyph kind={glyph} />
           </div>
           <div class="card-body flex flex-col flex-1">
             <h3 class="text-heading-3 text-foreground mb-2">{headline}</h3>

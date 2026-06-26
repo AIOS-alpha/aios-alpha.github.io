@@ -46,7 +46,6 @@ const rays = [ { x: 250, y: 34, drift: true }, { x: 256, y: 74 }, { x: 252, y: 1
         {bloatBars.map((b) => (
           <rect class={`pg-bar${b.over ? ' pg-bar--over' : ''}`} x="64" y={b.y} width="192" height="10" rx="5" />
         ))}
-        <text class="pg-tag pg-tag--violet" x="276" y="58" text-anchor="end">over limit</text>
       </g>
     )}
 
@@ -67,9 +66,9 @@ const rays = [ { x: 250, y: 34, drift: true }, { x: 256, y: 74 }, { x: 252, y: 1
 
     {kind === 'speed' && (
       <g>
-        <line class="pg-trail" x1="56" y1="68" x2="150" y2="68" />
-        <circle class="pg-tok" cx="150" cy="68" r="7" />
-        <text class="pg-tag" x="150" y="50" text-anchor="middle">1×</text>
+        <line class="pg-trail" x1="56" y1="68" x2="75" y2="68" />
+        <circle class="pg-tok" cx="75" cy="68" r="7" />
+        <text class="pg-tag" x="75" y="50" text-anchor="middle">1×</text>
         <line class="pg-trail pg-trail--fast" x1="56" y1="116" x2="250" y2="116" />
         <circle class="pg-tok pg-tok--fast" cx="250" cy="116" r="8" />
         <text class="pg-tag pg-tag--lime" x="250" y="98" text-anchor="middle">10×</text>

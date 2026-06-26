@@ -1,0 +1,137 @@
+---
+/* Principle-card spot illustrations — one inline-SVG glyph per principle, in the
+   same key as FeatureGlyph: greyscale chrome, a single rationed accent each.
+     modular     — independently deployable organs; one pops out (violet)
+     open        — one source forks into many clones (lime)
+     permission  — a flow passes a policy gate, approved (cyan)
+     privacy     — private cluster behind a wall; only a chosen item crosses (violet→emerald)
+   Single-SVG, token-driven, dual-mode, decorative (aria-hidden). Fills the parent
+   .card-media box. */
+import '../../../styles/diagrams.css';
+
+interface Props { kind: 'modular' | 'open' | 'permission' | 'privacy'; }
+const { kind } = Astro.props;
+
+// open: one source forks to three clones
+const clones = [46, 90, 134];
+// privacy: three private items behind the wall
+const priv = [56, 90, 124];
+---
+
+<figure class={`pgl pgl--${kind}`} aria-hidden="true">
+  <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id={`pgl-ah-${kind}`} viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="pgl-arrowhead" />
+      </marker>
+    </defs>
+
+    {kind === 'modular' && (
+      <g>
+        {/* three modules wired into one spine */}
+        <line class="pgl-spine" x1="64" y1="90" x2="172" y2="90" />
+        {[40, 100, 160].map((x) => (
+          <g>
+            <rect class="pgl-mod" x={x} y="68" width="44" height="44" rx="9" />
+            <circle class="pgl-mod-dot" cx={x + 22} cy="90" r="2.8" />
+          </g>
+        ))}
+        {/* one module detached, adopted on its own */}
+        <line class="pgl-detach" x1="208" y1="90" x2="232" y2="90" />
+        <rect class="pgl-mod pgl-mod--accent" x="236" y="62" width="48" height="56" rx="10" />
+        <circle class="pgl-mod-dot pgl-mod-dot--accent" cx="260" cy="90" r="3.2" />
+      </g>
+    )}
+
+    {kind === 'open' && (
+      <g>
+        {clones.map((y) => (
+          <path class="pgl-branch" d={`M 84,90 C 150,90 168,${y} 232,${y}`} marker-end={`url(#pgl-ah-${kind})`} />
+        ))}
+        <rect class="pgl-source" x="44" y="74" width="40" height="32" rx="8" />
+        <circle class="pgl-source-dot" cx="64" cy="90" r="3.2" />
+        {clones.map((y) => (
+          <rect class="pgl-clone" x="240" y={y - 13} width="34" height="26" rx="6" />
+        ))}
+      </g>
+    )}
+
+    {kind === 'permission' && (
+      <g>
+        {/* approaching flow */}
+        <line class="pgl-flow" x1="40" y1="104" x2="138" y2="104" marker-end={`url(#pgl-ah-${kind})`} />
+        <rect class="pgl-token" x="46" y="96" width="18" height="18" rx="5" />
+        {/* policy gate: two posts + crossbar */}
+        <line class="pgl-post" x1="156" y1="56" x2="156" y2="148" />
+        <line class="pgl-post" x1="184" y1="56" x2="184" y2="148" />
+        <line class="pgl-bar" x1="150" y1="56" x2="190" y2="56" />
+        {/* approval */}
+        <circle class="pgl-stamp" cx="170" cy="40" r="12" />
+        <path class="pgl-check" d="M164,40 l4,4 l8,-9" />
+        {/* released, past the gate */}
+        <line class="pgl-flow" x1="200" y1="104" x2="280" y2="104" marker-end={`url(#pgl-ah-${kind})`} />
+      </g>
+    )}
+
+    {kind === 'privacy' && (
+      <g>
+        {/* private enclosure */}
+        <rect class="pgl-vault" x="34" y="44" width="104" height="92" rx="12" />
+        {priv.map((y) => (
+          <rect class="pgl-secret" x="54" y={y - 9} width="40" height="18" rx="5" />
+        ))}
+        {/* boundary wall */}
+        <line class="pgl-wall" x1="160" y1="40" x2="160" y2="140" />
+        {/* the one chosen item crosses to the collective */}
+        <rect class="pgl-secret pgl-secret--push" x="98" y="81" width="40" height="18" rx="5" />
+        <line class="pgl-push" x1="142" y1="90" x2="236" y2="90" marker-end={`url(#pgl-ah-${kind})`} />
+        <text class="pgl-tag" x="190" y="80" text-anchor="middle">push</text>
+        <rect class="pgl-store" x="240" y="58" width="46" height="64" rx="11" />
+        <circle class="pgl-store-dot" cx="263" cy="44" r="4.5" />
+      </g>
+    )}
+  </svg>
+</figure>
+
+<style>
+  .pgl {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    background: color-mix(in srgb, var(--aios-fg) 2.5%, var(--aios-surface));
+  }
+  .pgl svg { width: 100%; height: 100%; display: block; }
+
+  .pgl-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .pgl-tag { fill: var(--aios-fg-muted); font-family: var(--aios-font-mono); font-size: 11px; letter-spacing: 0.04em; }
+
+  /* modular */
+  .pgl-spine { stroke: var(--aios-border-strong); stroke-width: 1.5; }
+  .pgl-detach { stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-dasharray: 3 4; opacity: 0.8; }
+  .pgl-mod { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .pgl-mod--accent { fill: color-mix(in srgb, var(--aios-violet) 14%, var(--aios-surface)); stroke: var(--aios-violet); stroke-width: 1.5; }
+  .pgl-mod-dot { fill: var(--aios-fg-muted); }
+  .pgl-mod-dot--accent { fill: var(--aios-violet); }
+
+  /* open */
+  .pgl-branch { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .pgl-source { fill: color-mix(in srgb, var(--aios-accent) 14%, var(--aios-surface)); stroke: color-mix(in srgb, var(--aios-accent) 60%, var(--aios-border-strong)); stroke-width: 1.5; }
+  .pgl-source-dot { fill: var(--aios-accent); }
+  .pgl-clone { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+
+  /* permission */
+  .pgl-flow { stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-linecap: round; }
+  .pgl-token { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .pgl-post { stroke: var(--aios-cyan); stroke-width: 1.6; stroke-linecap: round; }
+  .pgl-bar { stroke: color-mix(in srgb, var(--aios-cyan) 70%, var(--aios-border-strong)); stroke-width: 1.6; stroke-linecap: round; }
+  .pgl-stamp { fill: none; stroke: var(--aios-cyan); stroke-width: 1.5; }
+  .pgl-check { fill: none; stroke: var(--aios-cyan); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* privacy */
+  .pgl-vault { fill: none; stroke: var(--aios-violet); stroke-width: 1.5; }
+  .pgl-secret { fill: color-mix(in srgb, var(--aios-violet) 16%, var(--aios-surface)); stroke: var(--aios-violet); stroke-width: 1.3; }
+  .pgl-secret--push { fill: var(--aios-surface); stroke: var(--aios-border-strong); }
+  .pgl-wall { stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; opacity: 0.8; }
+  .pgl-push { stroke: var(--aios-border-strong); stroke-width: 1.4; fill: none; }
+  .pgl-store { fill: var(--aios-surface); stroke: color-mix(in srgb, var(--aios-emerald) 55%, var(--aios-border-strong)); stroke-width: 1.5; }
+  .pgl-store-dot { fill: var(--aios-emerald); }
+</style>
