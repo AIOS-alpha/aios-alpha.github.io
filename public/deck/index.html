@@ -566,15 +566,21 @@
   const counter = document.getElementById('counter');
   let currentSlide = 0;
   const totalSlides = slides.length;
+  let slideTimer = null;
 
   function showSlide(n) {
     const prev = slides[currentSlide];
     prev.classList.add('exit');
     prev.classList.remove('active');
     currentSlide = (n + totalSlides) % totalSlides;
-    setTimeout(() => {
-      prev.classList.remove('exit');
-      slides[currentSlide].classList.add('active');
+    if (slideTimer) clearTimeout(slideTimer);
+    slideTimer = setTimeout(() => {
+      // settle deterministically: exactly one active slide, no stray exits
+      slides.forEach((s, i) => {
+        s.classList.remove('exit');
+        s.classList.toggle('active', i === currentSlide);
+      });
+      slideTimer = null;
     }, 50);
     progress.style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
     counter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
@@ -584,6 +590,8 @@
   function prevSlide() { showSlide(currentSlide - 1); }
 
   document.addEventListener('keydown', (e) => {
+    // don't hijack Enter/Space when a link, button or field is focused
+    if (e.target.closest('a, button, input, textarea, select, [contenteditable]')) return;
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       nextSlide();
