@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://getaios.dev',
+  site: 'https://aiosbrain.dev',
   integrations: [
       react(),
       starlight({

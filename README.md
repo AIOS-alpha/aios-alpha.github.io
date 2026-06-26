@@ -2,7 +2,7 @@
 
 The public site and documentation for **AIOS**: structured agent workspaces for every person, plus one shared team brain. Open source, MIT-licensed, self-hosted.
 
-🔗 **Live:** https://getaios.dev
+🔗 **Live:** https://aiosbrain.dev
 
 Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build). The landing page is custom; the docs are Starlight.
 
