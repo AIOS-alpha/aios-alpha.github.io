@@ -1,0 +1,148 @@
+---
+/* Feature-grid spot illustrations — a consistent set of inline-SVG glyphs, one
+   per non-featured feature card. Greyscale chrome, one rationed accent each:
+     memory     — tier-tagged context flows into one shared store (emerald)
+     boundary   — nothing crosses the wall without an explicit push (violet)
+     workflow   — input → process → delivered artifact (lime)
+     hub        — every tool wired into one ordered hub (cyan)
+     ownership  — yours to run end-to-end, self-hosted (violet)
+   Single-SVG, token-driven, dual-mode, decorative (aria-hidden). Fills the parent
+   .card-media box. */
+import '../../../styles/diagrams.css';
+
+interface Props { kind: 'memory' | 'boundary' | 'workflow' | 'hub' | 'ownership'; }
+const { kind } = Astro.props;
+
+const tools = [ { x: 54, y: 42 }, { x: 240, y: 42 }, { x: 54, y: 112 }, { x: 240, y: 112 } ];
+const TS = 26;
+const hub = { x: 147, y: 77, w: 26, h: 26 };
+const hubC = { x: hub.x + hub.w / 2, y: hub.y + hub.h / 2 };
+const tCtr = (t) => ({ x: t.x + TS / 2, y: t.y + TS / 2 });
+---
+
+<figure class={`fg fg--${kind}`} aria-hidden="true">
+  <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id={`fg-ah-${kind}`} viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="fg-arrowhead" />
+      </marker>
+    </defs>
+
+    {kind === 'memory' && (
+      <g>
+        {[54, 90, 126].map((y) => (
+          <g>
+            <circle class="fg-src" cx="44" cy={y} r="4.5" />
+            <line class="fg-edge" x1="52" y1={y} x2="150" y2={90} marker-end={`url(#fg-ah-${kind})`} />
+          </g>
+        ))}
+        <circle class="fg-dot fg-dot--emerald" cx="215" cy="38" r="5" />
+        <rect class="fg-store" x="150" y="50" width="130" height="80" rx="12" />
+        {[68, 84, 100, 116].map((y) => (
+          <line class="fg-line" x1="166" y1={y} x2="264" y2={y} />
+        ))}
+      </g>
+    )}
+
+    {kind === 'boundary' && (
+      <g>
+        <line class="fg-wall" x1="174" y1="40" x2="174" y2="148" />
+        <rect class="fg-lockbody" x="166" y="86" width="16" height="13" rx="3" />
+        <path class="fg-lockshackle" d="M169,86 V81 a5,5 0 0 1 10,0 V86" />
+        <rect class="fg-held" x="64" y="54" width="34" height="34" rx="8" />
+        <text class="fg-tag fg-tag--violet" x="81" y="104" text-anchor="middle">private</text>
+        <rect class="fg-item" x="64" y="116" width="30" height="30" rx="7" />
+        <line class="fg-edge" x1="98" y1="131" x2="240" y2="131" marker-end={`url(#fg-ah-${kind})`} />
+        <text class="fg-tag" x="150" y="124" text-anchor="middle">push</text>
+        <rect class="fg-ghost" x="246" y="116" width="30" height="30" rx="7" />
+      </g>
+    )}
+
+    {kind === 'workflow' && (
+      <g>
+        <rect class="fg-doc" x="48" y="66" width="36" height="48" rx="5" />
+        <line class="fg-line" x1="56" y1="80" x2="76" y2="80" />
+        <line class="fg-line" x1="56" y1="90" x2="76" y2="90" />
+        <line class="fg-line" x1="56" y1="100" x2="70" y2="100" />
+        <line class="fg-edge" x1="88" y1="90" x2="128" y2="90" marker-end={`url(#fg-ah-${kind})`} />
+        <rect class="fg-proc" x="130" y="66" width="48" height="48" rx="10" />
+        {[80, 90, 100].map((y) => <circle class="fg-step" cx="154" cy={y} r="2.6" />)}
+        <line class="fg-edge" x1="182" y1="90" x2="222" y2="90" marker-end={`url(#fg-ah-${kind})`} />
+        <rect class="fg-out" x="226" y="62" width="40" height="56" rx="5" />
+        <path class="fg-check" d="M236,90 l6,6 l12,-13" />
+      </g>
+    )}
+
+    {kind === 'hub' && (
+      <g>
+        {tools.map((t) => (
+          <line class="fg-edge" x1={tCtr(t).x} y1={tCtr(t).y} x2={hubC.x} y2={hubC.y} />
+        ))}
+        {tools.map((t) => (
+          <g>
+            <rect class="fg-tool" x={t.x} y={t.y} width={TS} height={TS} rx="7" />
+            <circle class="fg-tool-dot" cx={tCtr(t).x} cy={tCtr(t).y} r="2.6" />
+          </g>
+        ))}
+        <circle class="fg-dot fg-dot--cyan" cx={hubC.x} cy={hub.y - 13} r="5" />
+        <rect class="fg-hub" x={hub.x} y={hub.y} width={hub.w} height={hub.h} rx="8" />
+      </g>
+    )}
+
+    {kind === 'ownership' && (
+      <g>
+        <path class="fg-loop" marker-end={`url(#fg-ah-${kind})`}
+              d="M160,34 A82,54 0 1 1 158,34" />
+        <rect class="fg-machine" x="112" y="64" width="96" height="52" rx="10" />
+        <text class="fg-prompt" x="160" y="96" text-anchor="middle">&gt;_</text>
+        <text class="fg-tag fg-tag--violet" x="160" y="140" text-anchor="middle">MIT · self-host</text>
+      </g>
+    )}
+  </svg>
+</figure>
+
+<style>
+  .fg {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    background: color-mix(in srgb, var(--aios-fg) 2.5%, var(--aios-surface));
+  }
+  .fg svg { width: 100%; height: 100%; display: block; }
+
+  .fg-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .fg-edge { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .fg-line { stroke: color-mix(in srgb, var(--aios-fg) 24%, var(--aios-surface)); stroke-width: 2.4; stroke-linecap: round; }
+  .fg-tag { fill: var(--aios-fg-muted); font-family: var(--aios-font-mono); font-size: 11px; }
+  .fg-tag--violet { fill: var(--aios-violet); }
+  .fg-dot--emerald { fill: var(--aios-emerald); }
+  .fg-dot--cyan { fill: var(--aios-cyan); }
+
+  /* memory */
+  .fg-src { fill: var(--aios-fg-muted); }
+  .fg-store { fill: var(--aios-surface); stroke: color-mix(in srgb, var(--aios-emerald) 55%, var(--aios-border-strong)); stroke-width: 1.5; }
+
+  /* boundary */
+  .fg-wall { stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; opacity: 0.8; }
+  .fg-lockbody { fill: var(--aios-surface); stroke: var(--aios-fg-muted); stroke-width: 1.4; }
+  .fg-lockshackle { fill: none; stroke: var(--aios-fg-muted); stroke-width: 1.4; }
+  .fg-held { fill: color-mix(in srgb, var(--aios-violet) 16%, var(--aios-surface)); stroke: var(--aios-violet); stroke-width: 1.5; }
+  .fg-item { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .fg-ghost { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; stroke-dasharray: 3 4; }
+
+  /* workflow */
+  .fg-doc, .fg-out { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .fg-out { stroke: color-mix(in srgb, var(--aios-accent) 55%, var(--aios-border-strong)); }
+  .fg-proc { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .fg-step { fill: var(--aios-fg-muted); }
+  .fg-check { fill: none; stroke: var(--aios-accent); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* hub */
+  .fg-tool { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .fg-tool-dot { fill: var(--aios-fg-muted); }
+  .fg-hub { fill: color-mix(in srgb, var(--aios-cyan) 12%, var(--aios-surface)); stroke: var(--aios-cyan); stroke-width: 1.5; }
+
+  /* ownership */
+  .fg-loop { fill: none; stroke: var(--aios-violet); stroke-width: 1.6; stroke-linecap: round; }
+  .fg-machine { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .fg-prompt { fill: var(--aios-fg); font-family: var(--aios-font-mono); font-size: 20px; }
+</style>

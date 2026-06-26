@@ -1,0 +1,167 @@
+---
+/* Vision-card spot illustrations — one inline-SVG glyph per vision point.
+   Greyscale chrome, one rationed accent each (the flywheel is the brand prism):
+     flywheel     — a slow-spinning prism wheel (violet+emerald+lime)
+     spread       — one pattern radiates out to the whole team (lime)
+     health       — codebase vitals trending up (emerald)
+     coaching     — each session loops back as feedback (violet)
+     orchestration— one orchestrator directs many agents (cyan)
+     journeys     — a path of milestones climbing to the goal (lime)
+   Single-SVG, token-driven, dual-mode, reduced-motion safe, decorative
+   (aria-hidden). Fills the parent .card-media box. */
+import '../../../styles/diagrams.css';
+
+interface Props { kind: 'flywheel' | 'spread' | 'health' | 'coaching' | 'orchestration' | 'journeys'; }
+const { kind } = Astro.props;
+
+const C = { x: 160, y: 90 };
+// flywheel rim dots (top / lower-left / lower-right)
+const rim = [
+  { x: C.x, y: C.y - 46, cls: 'violet' },
+  { x: C.x - 40, y: C.y + 23, cls: 'emerald' },
+  { x: C.x + 40, y: C.y + 23, cls: 'lime' },
+];
+// spread targets
+const targets = [ { x: 46, y: 46 }, { x: 244, y: 46 }, { x: 46, y: 114 }, { x: 244, y: 114 } ];
+// orchestration agents
+const agents = [ { x: 48, y: 116 }, { x: 135, y: 116 }, { x: 222, y: 116 } ];
+// journeys milestones
+const steps = [ { x: 48, y: 138, goal: false }, { x: 112, y: 114, goal: false }, { x: 178, y: 88, goal: false }, { x: 246, y: 54, goal: true } ];
+const bars = [ { x: 60, h: 40 }, { x: 108, h: 58 }, { x: 156, h: 78 }, { x: 204, h: 98 } ];
+---
+
+<figure class={`vg vg--${kind}`} aria-hidden="true">
+  <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id={`vg-ah-${kind}`} viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="vg-arrowhead" />
+      </marker>
+    </defs>
+
+    {kind === 'flywheel' && (
+      <g>
+        <path class="vg-spin-arrow" marker-end={`url(#vg-ah-${kind})`}
+              d="M196,52 A58,58 0 0 1 210,96" />
+        <g class="vg-wheel">
+          <circle class="vg-ring" cx={C.x} cy={C.y} r="46" />
+          {rim.map((d) => <line class="vg-spoke" x1={C.x} y1={C.y} x2={d.x} y2={d.y} />)}
+          {rim.map((d) => <circle class={`vg-dot vg-dot--${d.cls}`} cx={d.x} cy={d.y} r="6" />)}
+          <circle class="vg-hub" cx={C.x} cy={C.y} r="12" />
+        </g>
+      </g>
+    )}
+
+    {kind === 'spread' && (
+      <g>
+        {targets.map((t) => (
+          <line class="vg-edge" x1={C.x} y1={C.y} x2={t.x} y2={t.y} marker-end={`url(#vg-ah-${kind})`} />
+        ))}
+        {targets.map((t) => <circle class="vg-dot vg-dot--lime" cx={t.x} cy={t.y} r="9" />)}
+        <rect class="vg-src" x="146" y="76" width="28" height="28" rx="8" />
+        <circle class="vg-src-dot" cx={C.x} cy={C.y} r="3" />
+      </g>
+    )}
+
+    {kind === 'health' && (
+      <g>
+        {bars.map((b) => (
+          <rect class="vg-bar" x={b.x} y={150 - b.h} width="26" height={b.h} rx="4" />
+        ))}
+        <polyline class="vg-pulse" points="40,84 92,84 108,84 120,60 134,108 150,84 280,84" />
+      </g>
+    )}
+
+    {kind === 'coaching' && (
+      <g>
+        <rect class="vg-session" x="46" y="64" width="92" height="52" rx="10" />
+        <line class="vg-line" x1="60" y1="82" x2="116" y2="82" />
+        <line class="vg-line" x1="60" y1="96" x2="100" y2="96" />
+        <line class="vg-edge" x1="142" y1="78" x2="208" y2="64" marker-end={`url(#vg-ah-${kind})`} />
+        <path class="vg-star" d="M236,52 l5,12 l13,1 l-10,9 l3,13 l-11,-7 l-11,7 l3,-13 l-10,-9 l13,-1 z" />
+        <path class="vg-return" marker-end={`url(#vg-ah-${kind})`}
+              d="M236,92 C236,126 150,128 138,108" />
+        <text class="vg-tag vg-tag--violet" x="186" y="140" text-anchor="middle">feedback</text>
+      </g>
+    )}
+
+    {kind === 'orchestration' && (
+      <g>
+        {agents.map((a) => (
+          <line class="vg-edge" x1={C.x} y1="70" x2={a.x + 25} y2={a.y} marker-end={`url(#vg-ah-${kind})`} />
+        ))}
+        <circle class="vg-dot vg-dot--cyan" cx={C.x} cy="22" r="5" />
+        <rect class="vg-orch" x="128" y="36" width="64" height="34" rx="9" />
+        {agents.map((a) => (
+          <g>
+            <rect class="vg-agent" x={a.x} y={a.y} width="50" height="34" rx="8" />
+            <circle class="vg-agent-dot" cx={a.x + 25} cy={a.y + 17} r="3" />
+          </g>
+        ))}
+      </g>
+    )}
+
+    {kind === 'journeys' && (
+      <g>
+        <polyline class="vg-path" points={steps.map((s) => `${s.x},${s.y}`).join(' ')} />
+        {steps.map((s) => (
+          <circle class={`vg-step${s.goal ? ' vg-step--goal' : ''}`} cx={s.x} cy={s.y} r={s.goal ? 8 : 5} />
+        ))}
+        <line class="vg-flag" x1="246" y1="54" x2="246" y2="30" />
+        <path class="vg-flag-fab" d="M246,31 l16,5 l-16,5 z" />
+      </g>
+    )}
+  </svg>
+</figure>
+
+<style>
+  .vg {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    background: color-mix(in srgb, var(--aios-fg) 2.5%, var(--aios-surface));
+  }
+  .vg svg { width: 100%; height: 100%; display: block; }
+
+  .vg-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .vg-edge { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .vg-line { stroke: color-mix(in srgb, var(--aios-fg) 24%, var(--aios-surface)); stroke-width: 2.4; stroke-linecap: round; }
+  .vg-tag { fill: var(--aios-fg-muted); font-family: var(--aios-font-mono); font-size: 11px; }
+  .vg-tag--violet { fill: var(--aios-violet); }
+  .vg-dot--violet  { fill: var(--aios-violet); }
+  .vg-dot--emerald { fill: var(--aios-emerald); }
+  .vg-dot--lime    { fill: var(--aios-accent); }
+  .vg-dot--cyan    { fill: var(--aios-cyan); }
+
+  /* flywheel */
+  .vg-ring { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-dasharray: 3 6; }
+  .vg-spoke { stroke: var(--aios-border); stroke-width: 1.3; }
+  .vg-hub { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.5; }
+  .vg-spin-arrow { fill: none; stroke: var(--aios-fg-muted); stroke-width: 1.4; stroke-linecap: round; }
+  .vg-wheel { transform-origin: 160px 90px; animation: vg-spin 18s linear infinite; }
+  @keyframes vg-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .vg-wheel { animation: none; } }
+
+  /* spread */
+  .vg-src { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.5; }
+  .vg-src-dot { fill: var(--aios-fg-secondary); }
+
+  /* health */
+  .vg-bar { fill: color-mix(in srgb, var(--aios-fg) 16%, var(--aios-surface)); }
+  .vg-pulse { fill: none; stroke: var(--aios-emerald); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* coaching */
+  .vg-session { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .vg-star { fill: color-mix(in srgb, var(--aios-violet) 18%, var(--aios-surface)); stroke: var(--aios-violet); stroke-width: 1.4; stroke-linejoin: round; }
+  .vg-return { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.3; stroke-dasharray: 4 5; }
+
+  /* orchestration */
+  .vg-orch { fill: color-mix(in srgb, var(--aios-cyan) 12%, var(--aios-surface)); stroke: var(--aios-cyan); stroke-width: 1.5; }
+  .vg-agent { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .vg-agent-dot { fill: var(--aios-fg-muted); }
+
+  /* journeys */
+  .vg-path { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5; }
+  .vg-step { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.6; }
+  .vg-step--goal { fill: var(--aios-accent); stroke: none; }
+  .vg-flag { stroke: var(--aios-fg-muted); stroke-width: 1.4; stroke-linecap: round; }
+  .vg-flag-fab { fill: var(--aios-accent); }
+</style>
