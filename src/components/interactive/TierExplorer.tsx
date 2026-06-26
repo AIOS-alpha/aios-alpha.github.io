@@ -46,15 +46,14 @@ export default function TierExplorer() {
 
 	return (
 		<div className="not-prose my-10 rounded-xl border border-border bg-surface p-5">
-			<div className="flex flex-wrap gap-2" role="tablist" aria-label="Access tiers">
+			<div className="flex flex-wrap gap-2" role="group" aria-label="Access tiers">
 				{ORDER.map((key) => {
 					const selected = key === active;
 					return (
 						<button
 							key={key}
 							type="button"
-							role="tab"
-							aria-selected={selected}
+							aria-pressed={selected}
 							onClick={() => setActive(key)}
 							className={
 								'rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ' +

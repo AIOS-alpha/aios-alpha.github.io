@@ -20,7 +20,7 @@ the review step).
    ```bash
    npm run crosspost              # newest post
    npm run crosspost <slug>       # a specific post, e.g. introducing-aios
-   npm run crosspost <slug> --open  # also opens the URLs in the browser
+   npm run crosspost <slug> -- --open  # also opens the URLs in the browser
    ```
 
    It copies the canonical post URL to your clipboard and prints the steps.

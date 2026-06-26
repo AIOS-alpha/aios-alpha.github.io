@@ -8,13 +8,13 @@
 //
 //   npm run crosspost            # newest post
 //   npm run crosspost <slug>     # a specific post
-//   npm run crosspost <slug> --open   # also open the URLs in the browser
+//   npm run crosspost <slug> -- --open   # also open the URLs in the browser
 //
 // Optional: set SUBSTACK_IMPORT_URL to your publication's import page
 // (e.g. https://yourpub.substack.com/publish/import) to deep-link step 1.
 
 import { readFileSync, readdirSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -75,16 +75,18 @@ const site = siteUrl();
 const url = `${site}/blog/${slug}/`;
 const importUrl = process.env.SUBSTACK_IMPORT_URL;
 
+let copied = true;
 try {
 	execSync('pbcopy', { input: url });
 } catch {
 	/* clipboard is best-effort */
+	copied = false;
 }
 
 console.log(`
 Cross-post → Substack: ${fm.title || slug}
 
-  Canonical URL : ${url}   (copied to clipboard)
+  Canonical URL : ${url}   ${copied ? '(copied to clipboard)' : '(copy manually)'}
   RSS feed      : ${site}/rss.xml
 
 On Substack:
@@ -101,7 +103,7 @@ On Substack:
 if (args.includes('--open')) {
 	const open = (u) => {
 		try {
-			execSync(`open "${u}"`);
+			execFileSync('open', [u]);
 		} catch {
 			/* macOS only */
 		}
