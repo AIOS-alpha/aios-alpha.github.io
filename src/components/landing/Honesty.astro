@@ -1,0 +1,56 @@
+---
+const problems = [
+  {
+    num: '01',
+    title: 'Context overload',
+    body: 'Too many signals, too much noise. Attention and prioritization is the hardest design challenge. A brain that pages you about everything is worse than no brain at all.',
+  },
+  {
+    num: '02',
+    title: 'Contribution incentives',
+    body: 'The system is only as good as what people push. Social design matters as much as technical design — tier tags and governance only work when the team participates.',
+  },
+  {
+    num: '03',
+    title: 'Governance',
+    body: 'Building a coordination system requires coordinating the builders. Early decisions set the cultural tone permanently — policy defaults and approval flows are not afterthoughts.',
+  },
+  {
+    num: '04',
+    title: 'Trust in autonomous agents',
+    body: 'Earned incrementally. Start narrow, demonstrate reliability on team-tier work, then expand scope. The action layer stays policy-gated for a reason.',
+  },
+  {
+    num: '05',
+    title: 'The schema problem',
+    body: 'What is the unit of knowledge? How information is represented decides whether the whole thing is queryable or just a fancier search index. OKF and tier-tagged items are our bet.',
+  },
+];
+---
+
+<section id="honesty" class="relative py-20 md:py-32 bg-surface">
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20">
+
+    <div class="mb-14 max-w-[660px]">
+      <span class="text-label text-muted-foreground block mb-4">Honesty</span>
+      <h2 class="text-heading-2 text-foreground mb-5">The hard problems we're solving in the open.</h2>
+      <p class="text-body-lg text-muted-foreground">
+        A collective brain is not a solved problem. These are the design challenges
+        we track publicly — and the reason architecture choices matter from the start.
+      </p>
+    </div>
+
+    <div class="space-y-3">
+      {problems.map(({ num, title, body }) => (
+        <article class="feature-card flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8">
+          <span class="text-label text-muted-foreground shrink-0 sm:w-12">{num}</span>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-heading-3 text-foreground mb-2">{title}</h3>
+            <p class="text-body text-muted-foreground">{body}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>

@@ -78,6 +78,7 @@ export default defineConfig({
                       { label: 'Brain API v1', slug: 'reference/brain-api' },
                       { label: 'CLI Commands', slug: 'reference/cli' },
                       { label: 'Design System', slug: 'reference/design-system' },
+                      { label: 'The 8 organ systems', slug: 'reference/anatomy' },
                       { label: 'Glossary', slug: 'reference/glossary' },
                   ],
               },

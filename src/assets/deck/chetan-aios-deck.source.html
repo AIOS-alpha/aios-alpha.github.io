@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AIOS — A Collective AI Brain</title>
+<meta name="description" content="AIOS: A Collective AI Brain for Teams, Companies, Organizations, and Cities" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,18..72,400;1,18..72,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* warm paper substrate, tinted neutrals (OKLCH) */
+    --paper:        oklch(0.985 0.004 95);
+    --paper-2:      oklch(0.968 0.005 95);
+    --ink:          oklch(0.255 0.012 285);
+    --ink-soft:     oklch(0.475 0.014 285);
+    --ink-faint:    oklch(0.625 0.012 285);
+    --rule:         oklch(0.885 0.007 285);
+    --rule-strong:  oklch(0.80 0.01 285);
+    --dot:          oklch(0.55 0.02 285 / 0.07);
+
+    /* single accent, tied to brand periwinkle #7F77DD */
+    --accent:       oklch(0.505 0.19 283);   /* deep violet, text emphasis */
+    --accent-2:     oklch(0.625 0.155 285);  /* brand periwinkle, fills */
+    --wash:         oklch(0.955 0.03 285);    /* light violet fill */
+
+    /* diagram tints, depth-tuned for light ground */
+    --c-teal:  oklch(0.53 0.085 195);
+    --c-amber: oklch(0.585 0.115 70);
+    --c-blue:  oklch(0.525 0.13 255);
+    --c-coral: oklch(0.565 0.15 32);
+    --c-green: oklch(0.55 0.105 150);
+    --c-arrow: oklch(0.62 0.012 285);
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --margin: 26px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "DM Sans", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .mono { font-family: "DM Mono", ui-monospace, monospace; }
+
+  /* faint engineering dot-grid, faded at the edges */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+    background-size: 30px 30px;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, #000 55%, transparent 100%);
+            mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, #000 55%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #deck {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 13vh 9vw 14vh;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+
+  /* staggered content reveal (transform + opacity only) */
+  .stage > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s var(--ease), transform 0.7s var(--ease);
+  }
+  .slide.active .stage > * { opacity: 1; transform: none; }
+  .slide.active .stage > *:nth-child(1) { transition-delay: 0.05s; }
+  .slide.active .stage > *:nth-child(2) { transition-delay: 0.12s; }
+  .slide.active .stage > *:nth-child(3) { transition-delay: 0.19s; }
+  .slide.active .stage > *:nth-child(4) { transition-delay: 0.26s; }
+  .slide.active .stage > *:nth-child(5) { transition-delay: 0.33s; }
+
+  /* ---- eyebrow: index + label + extending hairline ---- */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1.9rem;
+  }
+  .eyebrow .idx {
+    font-family: "DM Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .eyebrow .lbl {
+    font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .eyebrow .line {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  h2.headline {
+    font-size: clamp(1.9rem, 4vw, 3.25rem);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1.07;
+    max-width: 20ch;
+    color: var(--ink);
+  }
+
+  /* ---- Title slide ---- */
+  .title-slide { justify-content: center; }
+  .title-eyebrow {
+    font-family: "DM Mono", monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.4rem;
+  }
+  h1.title {
+    font-size: clamp(5.5rem, 16vw, 14rem);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    color: var(--ink);
+  }
+  .title-slide .subtitle {
+    margin-top: 1.9rem;
+    font-size: clamp(1.05rem, 2vw, 1.5rem);
+    color: var(--ink-soft);
+    font-weight: 400;
+    max-width: 32ch;
+    line-height: 1.4;
+  }
+  .title-meta {
+    margin-top: 3.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    font-family: "DM Mono", monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .title-meta .dot { color: var(--accent-2); }
+
+  /* ---- body line blocks (hook) ---- */
+  .body-lines {
+    margin-top: 2.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    max-width: 62ch;
+  }
+  .body-lines p {
+    font-size: clamp(1rem, 1.55vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .body-lines p.lead { color: var(--ink); }
+  .body-lines p strong { color: var(--accent); font-weight: 600; }
+
+  /* ---- indexed list (motivation) ---- */
+  .ix-list {
+    list-style: none;
+    margin-top: 2.4rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 74ch;
+  }
+  .ix-list li {
+    display: grid;
+    grid-template-columns: 2.6rem 1fr;
+    gap: 1.2rem;
+    align-items: baseline;
+    padding: 1.05rem 0;
+    border-top: 1px solid var(--rule);
+    font-size: clamp(0.98rem, 1.45vw, 1.22rem);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .ix-list li:last-child { border-bottom: 1px solid var(--rule); }
+  .ix-list li .n {
+    font-family: "DM Mono", monospace;
+    font-size: 0.82rem;
+    color: var(--accent);
+  }
+
+  /* ---- scale rail ---- */
+  .rail {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+  .rail .stop {
+    font-family: "DM Mono", monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    padding: 0.5rem 1rem;
+    color: var(--ink-soft);
+    background: var(--paper);
+  }
+  .rail .stop.peak {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .rail .arr { color: var(--ink-faint); font-size: 0.85rem; }
+
+  /* ---- spec matrix (principles / organ systems) ---- */
+  .matrix {
+    margin-top: 2.5rem;
+    display: grid;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--rule);
+    gap: 1px;
+  }
+  .matrix.cols-2 { grid-template-columns: 1fr 1fr; max-width: 1000px; }
+  .matrix.cols-3 { grid-template-columns: repeat(3, 1fr); max-width: 1160px; }
+  .matrix.organ { grid-template-columns: repeat(12, 1fr); max-width: 1240px; }
+  .cell {
+    background: var(--paper);
+    padding: 1.6rem 1.8rem;
+  }
+  .cell .tag {
+    font-family: "DM Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 0.7rem;
+  }
+  .cell h3 {
+    font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .cell p {
+    font-size: clamp(0.86rem, 1.2vw, 1rem);
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .matrix.cols-2 .cell { padding: 1.9rem 2.1rem; }
+  .matrix.cols-3 .cell { padding: 1.35rem 1.5rem; }
+  .matrix.cols-3 .cell h3 { font-size: clamp(1rem, 1.4vw, 1.18rem); }
+  .matrix.cols-3 .cell p { font-size: clamp(0.8rem, 1.05vw, 0.93rem); }
+  .matrix.cols-3 .cell.center-last { grid-column: 1 / -1; text-align: center; }
+  .matrix.cols-3 .cell.center-last p { max-width: 46ch; margin: 0 auto; }
+  .matrix.organ .cell { padding: 1.3rem 1.45rem; }
+  .matrix.organ .cell .tag { margin-bottom: 0.55rem; }
+  .matrix.organ .cell h3 { font-size: clamp(0.95rem, 1.2vw, 1.12rem); margin-bottom: 0.4rem; }
+  .matrix.organ .cell p { font-size: clamp(0.78rem, 0.98vw, 0.9rem); }
+  /* row 1: four cells (span 3 of 12); row 2: three cells (span 4); feedback: full width */
+  .matrix.organ .cell:nth-child(-n+4) { grid-column: span 3; }
+  .matrix.organ .cell:nth-child(n+5):nth-child(-n+7) { grid-column: span 4; }
+  .matrix.organ .cell.center-last { grid-column: 1 / -1; text-align: center; }
+  .matrix.organ .cell.center-last p { max-width: 52ch; margin: 0 auto; }
+
+  /* ---- section break (divider) ---- */
+  .section-break .title { font-size: clamp(4.5rem, 12vw, 10rem); }
+
+  /* ---- definition rows (use cases / challenges) ---- */
+  .rows {
+    margin-top: 2.1rem;
+    max-width: 1120px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 2.4rem 17rem 1fr;
+    gap: 1.4rem;
+    align-items: baseline;
+    padding: 1.05rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .row:last-child { border-bottom: 1px solid var(--rule); }
+  .row .n { font-family: "DM Mono", monospace; font-size: 0.8rem; color: var(--accent); }
+  .row h3 { font-size: clamp(1rem, 1.45vw, 1.22rem); font-weight: 600; letter-spacing: -0.01em; }
+  .row p { font-size: clamp(0.86rem, 1.2vw, 1rem); color: var(--ink-soft); line-height: 1.45; }
+
+  /* ---- callout ---- */
+  .callout {
+    margin-top: 2.3rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: clamp(1rem, 1.55vw, 1.3rem);
+    color: var(--ink);
+  }
+  .callout .label {
+    font-family: "DM Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 0.28rem 0.6rem;
+  }
+  .callout strong { color: var(--accent); font-weight: 600; }
+
+  /* ---- next steps ---- */
+  .steps {
+    margin-top: 2.3rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 92ch;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 3.4rem 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .step .num {
+    font-family: "DM Mono", monospace;
+    font-size: 1.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .step h3 { font-size: clamp(1.05rem, 1.6vw, 1.35rem); font-weight: 600; margin-bottom: 0.32rem; letter-spacing: -0.01em; }
+  .step p { font-size: clamp(0.88rem, 1.2vw, 1.05rem); color: var(--ink-soft); line-height: 1.45; }
+
+  .closing-line {
+    margin-top: 2.8rem;
+    padding-top: 2.4rem;
+    border-top: 1px solid var(--rule);
+    font-family: "Newsreader", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    text-align: center;
+    font-size: clamp(1.35rem, 2.6vw, 2.2rem);
+    line-height: 1.28;
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--ink);
+  }
+
+  /* ---- system diagram ---- */
+  .diagram-wrap {
+    margin-top: 1.2rem;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .diagram-wrap svg { width: 100%; height: 100%; max-height: 66vh; }
+  .diagram-note {
+    margin-top: 0.5rem;
+    font-family: "DM Mono", monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .diagram-note b { color: var(--accent); font-weight: 500; }
+
+  /* svg theming */
+  .d-colhead { fill: var(--ink-faint); font-size: 14px; letter-spacing: 1.6px; font-family: "DM Mono", monospace; }
+  .d-colhead.acc { fill: var(--accent); }
+  .d-box { fill: var(--paper); }
+  .d-agent { stroke: var(--c-teal); }   .d-agent-t { fill: var(--c-teal); }
+  .d-stream { stroke: var(--ink-faint); } .d-stream-t { fill: var(--ink-soft); }
+  .d-brain-fill { fill: var(--wash); stroke: var(--accent); stroke-width: 1.5; }
+  .d-brain-t { fill: var(--ink); }
+  .d-brain-sub { fill: var(--accent); }
+  .d-amber { stroke: var(--c-amber); } .d-amber-t { fill: var(--c-amber); }
+  .d-blue  { stroke: var(--c-blue); }  .d-blue-t  { fill: var(--c-blue); }
+  .d-coral { stroke: var(--c-coral); } .d-coral-t { fill: var(--c-coral); }
+  .d-green { stroke: var(--c-green); } .d-green-t { fill: var(--c-green); }
+  .d-cap { fill: var(--ink-soft); font-size: 12.5px; }
+  .d-flow-p { stroke: var(--accent); stroke-width: 1.4; fill: none; }
+  .d-flow { stroke: var(--c-arrow); stroke-width: 1.1; fill: none; }
+  .d-flow-d { stroke: var(--ink-faint); stroke-width: 1.1; fill: none; stroke-dasharray: 5 4; }
+  .d-flow-fb { stroke: var(--accent); stroke-width: 1.8; fill: none; }
+  .d-lbl-fb { fill: var(--accent); font-size: 13px; font-family: "DM Mono", monospace; letter-spacing: 0.04em; }
+  .d-lbl-p { fill: var(--accent); font-size: 12.5px; font-family: "DM Mono", monospace; }
+  .d-lbl { fill: var(--ink-faint); font-size: 12.5px; font-family: "DM Mono", monospace; }
+  .mk-p { fill: var(--accent); }
+  .mk { fill: var(--c-arrow); }
+  .mk-d { fill: var(--ink-faint); }
+
+  /* ---- chrome: frame, headers, nav ---- */
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 30;
+    transition: width 0.45s var(--ease);
+  }
+  .crop { position: fixed; width: 13px; height: 13px; border: 0 solid var(--rule-strong); z-index: 5; pointer-events: none; }
+  .crop.tl { top: var(--margin); left: var(--margin); border-top-width: 1px; border-left-width: 1px; }
+  .crop.tr { top: var(--margin); right: var(--margin); border-top-width: 1px; border-right-width: 1px; }
+  .crop.bl { bottom: var(--margin); left: var(--margin); border-bottom-width: 1px; border-left-width: 1px; }
+  .crop.br { bottom: var(--margin); right: var(--margin); border-bottom-width: 1px; border-right-width: 1px; }
+
+  .runhead {
+    position: fixed;
+    top: calc(var(--margin) + 4px);
+    font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    z-index: 10;
+  }
+  .runhead.left { left: 9vw; }
+  .runhead.left b { color: var(--ink); font-weight: 500; }
+  .runhead.right { right: 9vw; }
+
+  .counter {
+    position: fixed;
+    bottom: calc(var(--margin) + 8px);
+    left: 9vw;
+    font-family: "DM Mono", monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    z-index: 10;
+  }
+  .counter .cur { color: var(--ink); }
+
+  .nav {
+    position: fixed;
+    bottom: calc(var(--margin) + 2px);
+    right: 9vw;
+    display: flex;
+    gap: 0.55rem;
+    z-index: 10;
+  }
+  .nav button {
+    width: 2.5rem; height: 2.5rem;
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    color: var(--ink);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .nav button:disabled:hover { border-color: var(--rule-strong); color: var(--ink); }
+
+  .hint {
+    position: fixed;
+    bottom: calc(var(--margin) + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "DM Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    opacity: 0.7;
+    z-index: 10;
+  }
+  .hint kbd {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.05rem 0.35rem;
+    font-size: 0.66rem;
+  }
+
+  @media (max-width: 860px) {
+    .slide { padding: 12vh 7vw 13vh; }
+    .matrix.cols-2, .matrix.cols-3, .matrix.organ { grid-template-columns: 1fr; }
+    .matrix.cols-3 .cell.center-last { grid-column: auto; }
+    .matrix.organ .cell { grid-column: auto !important; text-align: left; }
+    .row { grid-template-columns: 2rem 1fr; }
+    .row p { grid-column: 1 / -1; }
+    .hint { display: none; }
+    .runhead { font-size: 0.62rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="crop tl"></div><div class="crop tr"></div><div class="crop bl"></div><div class="crop br"></div>
+<div class="runhead left"><b>AIOS</b></div>
+<div class="runhead right">A Collective AI Brain</div>
+
+<div id="deck">
+
+  <!-- Slide 1 — Title -->
+  <section class="slide title-slide" data-slide>
+    <div class="stage">
+      <h1 class="title">AIOS</h1>
+      <p class="subtitle">A Collective AI Brain for Teams, Companies, Organizations, and Cities</p>
+      <div class="title-meta">
+        <span class="dot">●</span><span>Open Source</span>
+        <span class="dot">●</span><span>MIT Licensed</span>
+        <span class="dot">●</span><span>2026</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 — Opening Hook -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">01</span><span class="lbl">The problem</span><span class="line"></span></div>
+      <h2 class="headline">Your organization already has a brain. You just can't access it.</h2>
+      <div class="body-lines">
+        <p class="lead">It's scattered across Slack threads, stale docs, meeting notes, and the person who left six months ago.</p>
+        <p>The question isn't whether your team has collective intelligence. It's whether you can access it.</p>
+        <p><strong>AIOS</strong> is the missing layer that makes collective intelligence queryable, actionable, and alive.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 — Motivation -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">02</span><span class="lbl">Motivation</span><span class="line"></span></div>
+      <h2 class="headline">Why now?</h2>
+      <ul class="ix-list">
+        <li><span class="n">01</span><span>The unit of intelligent action is shifting from individual humans to human-agent ensembles.</span></li>
+        <li><span class="n">02</span><span>Our institutions were designed for individual human actors, not hybrid teams of people and agents.</span></li>
+        <li><span class="n">03</span><span>Most AI tools are personal productivity. Nobody has built the coordination layer.</span></li>
+        <li><span class="n">04</span><span>The coordination tax is crushing organizations: repeated meetings, lost decisions, repeated mistakes.</span></li>
+      </ul>
+      <div class="rail">
+        <span class="stop">Teams</span><span class="arr">→</span>
+        <span class="stop">Companies</span><span class="arr">→</span>
+        <span class="stop">Organizations</span><span class="arr">→</span>
+        <span class="stop peak">Cities</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4 — Design Principles -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">03</span><span class="lbl">Principles</span><span class="line"></span></div>
+      <h2 class="headline">Built on four principles</h2>
+      <div class="matrix cols-2">
+        <div class="cell"><div class="tag mono">P1</div><h3>Modular</h3><p>Each organ system is independently deployable. Adopt what you need.</p></div>
+        <div class="cell"><div class="tag mono">P2</div><h3>Open Source</h3><p>MIT licensed, community governed. The standard, not a product.</p></div>
+        <div class="cell"><div class="tag mono">P3</div><h3>Permissioned</h3><p>Every action is policy-governed. Organizations define what's autonomous and what requires human approval.</p></div>
+        <div class="cell"><div class="tag mono">P4</div><h3>Privacy by architecture</h3><p>Individual agent data is personal by default. The collective brain receives only what members choose to share.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5 — System Diagram -->
+  <section class="slide" data-slide>
+    <div class="stage" style="height:100%;display:flex;flex-direction:column;">
+      <div class="eyebrow"><span class="idx mono">04</span><span class="lbl">Architecture</span><span class="line"></span></div>
+      <h2 class="headline">How it works</h2>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 1280 600" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="aP" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" class="mk-p" /></marker>
+            <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" class="mk" /></marker>
+            <marker id="aD" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" class="mk-d" /></marker>
+          </defs>
+
+          <text x="150" y="36" class="d-colhead" text-anchor="middle">INDIVIDUAL AGENTS</text>
+          <text x="640" y="36" class="d-colhead acc" text-anchor="middle">COLLECTIVE BRAIN</text>
+          <text x="1080" y="36" class="d-colhead" text-anchor="middle">SURFACES</text>
+          <text x="1080" y="392" class="d-colhead" text-anchor="middle">ACTIONS</text>
+
+          <!-- agents -->
+          <g fill="none" stroke-width="1.2">
+            <rect class="d-box d-agent" x="50" y="66" width="200" height="46" rx="6" />
+            <rect class="d-box d-agent" x="50" y="122" width="200" height="46" rx="6" />
+            <rect class="d-box d-agent" x="50" y="178" width="200" height="46" rx="6" />
+          </g>
+          <g class="d-agent-t" font-size="16" text-anchor="middle">
+            <text x="150" y="94">Agent A</text><text x="150" y="150">Agent B</text><text x="150" y="206">Agent C</text>
+          </g>
+
+          <!-- data streams -->
+          <text x="150" y="274" class="d-lbl" text-anchor="middle" font-size="12.5">DATA STREAMS</text>
+          <g fill="none" stroke-width="1.1" stroke-dasharray="4 4">
+            <rect class="d-stream" x="50" y="288" width="200" height="44" rx="6" />
+            <rect class="d-stream" x="50" y="342" width="200" height="44" rx="6" />
+          </g>
+          <g class="d-stream-t" font-size="14" text-anchor="middle">
+            <text x="150" y="315">Slack · Notion</text><text x="150" y="369">Linear · GitHub</text>
+          </g>
+
+          <!-- brain -->
+          <rect class="d-brain-fill" x="500" y="66" width="280" height="368" rx="12" />
+          <text x="640" y="196" class="d-brain-t" font-size="23" font-weight="600" text-anchor="middle">Collective</text>
+          <text x="640" y="228" class="d-brain-t" font-size="23" font-weight="600" text-anchor="middle">Brain</text>
+          <g class="d-brain-sub" font-size="15" text-anchor="middle">
+            <text x="640" y="288">Knowledge · Memory</text><text x="640" y="314">Reasoning · Policy</text>
+          </g>
+
+          <!-- agents -> brain -->
+          <g marker-end="url(#aP)">
+            <path class="d-flow-p" d="M250,89 C360,89 400,158 498,178" />
+            <path class="d-flow-p" d="M250,145 C360,145 400,198 498,208" />
+            <path class="d-flow-p" d="M250,201 C360,201 400,222 498,233" />
+          </g>
+          <text x="372" y="146" class="d-lbl-p" text-anchor="middle">daily updates</text>
+
+          <!-- streams -> brain -->
+          <g marker-end="url(#aD)">
+            <path class="d-flow-d" d="M250,310 C370,310 410,328 498,330" />
+            <path class="d-flow-d" d="M250,364 C370,364 420,362 498,358" />
+          </g>
+          <text x="375" y="390" class="d-lbl" text-anchor="middle">ingestion</text>
+
+          <!-- brain -> surfaces / actions -->
+          <g marker-end="url(#a)">
+            <path class="d-flow" d="M780,148 C850,148 880,93 928,93" />
+            <path class="d-flow" d="M780,198 C850,198 880,190 928,190" />
+            <path class="d-flow" d="M780,250 C850,250 880,285 928,285" />
+            <path class="d-flow" d="M780,330 C852,330 880,452 928,452" />
+            <path class="d-flow" d="M780,380 C852,380 880,520 928,520" />
+          </g>
+
+          <!-- surfaces -->
+          <g font-size="14">
+            <rect class="d-box d-amber" x="928" y="68" width="302" height="50" rx="6" fill="none" stroke-width="1.2" />
+            <text x="945" y="88" class="d-amber-t" font-weight="600">Kanban board</text>
+            <text x="945" y="107" class="d-cap">Agent-claimable tasks</text>
+            <rect class="d-box d-blue" x="928" y="165" width="302" height="50" rx="6" fill="none" stroke-width="1.2" />
+            <text x="945" y="185" class="d-blue-t" font-weight="600">KPI dashboard</text>
+            <text x="945" y="204" class="d-cap">Published metrics</text>
+            <rect class="d-box d-coral" x="928" y="260" width="302" height="50" rx="6" fill="none" stroke-width="1.2" />
+            <text x="945" y="280" class="d-coral-t" font-weight="600">Query interface</text>
+            <text x="945" y="299" class="d-cap">Ask the brain anything</text>
+          </g>
+
+          <!-- actions -->
+          <g font-size="14">
+            <rect class="d-box d-green" x="928" y="427" width="302" height="50" rx="6" fill="none" stroke-width="1.2" />
+            <text x="945" y="447" class="d-green-t" font-weight="600">Spawn agents</text>
+            <text x="945" y="466" class="d-cap">Research, outreach, drafting</text>
+            <rect class="d-box d-green" x="928" y="497" width="302" height="50" rx="6" fill="none" stroke-width="1.2" />
+            <text x="945" y="517" class="d-green-t" font-weight="600">Execute tasks</text>
+            <text x="945" y="536" class="d-cap">Pull from kanban autonomously</text>
+          </g>
+
+          <!-- recursive self-loop: the brain learns from itself as it's used more -->
+          <path class="d-flow-fb" d="M678,436 C712,508 708,556 640,556 C572,556 568,508 602,436" marker-end="url(#aP)" />
+          <text x="640" y="582" class="d-lbl-fb" text-anchor="middle">self-improves with every use</text>
+        </svg>
+      </div>
+      <p class="diagram-note">Agent spawning is <b>permissioned</b> by organizational policy.</p>
+    </div>
+  </section>
+
+  <!-- Slide 6 — Use Cases -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">05</span><span class="lbl">Use cases</span><span class="line"></span></div>
+      <h2 class="headline">What this unlocks</h2>
+      <div class="rows">
+        <div class="row"><span class="n">01</span><h3>Coordination without meetings</h3><p>Query the AI instead of scheduling a sync. Get a coherent answer about what any team is working on, instantly.</p></div>
+        <div class="row"><span class="n">02</span><h3>Chief of staff AI</h3><p>The global brain as a new kind of team member. Feedback at individual and collective levels: what we do well, where we drift, whether to reconsider our target.</p></div>
+        <div class="row"><span class="n">03</span><h3>Progressive offloading</h3><p>Permissioned agents take on more of the actual work over time. Humans focus on judgment; agents handle execution.</p></div>
+        <div class="row"><span class="n">04</span><h3>Institutional memory</h3><p>Onboard a new person in minutes. Every decision, rationale, and failed experiment. Nothing is lost when someone leaves.</p></div>
+      </div>
+      <div class="callout"><span class="label">Goal</span><span><strong>10x–100x</strong> output per person</span></div>
+    </div>
+  </section>
+
+  <!-- Slide 7 — Organ Systems -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">06</span><span class="lbl">Anatomy</span><span class="line"></span></div>
+      <h2 class="headline">The 8 organ systems</h2>
+      <div class="matrix organ">
+        <div class="cell"><div class="tag mono">01</div><h3>Knowledge repository</h3><p>Queryable shared brain; everything the org knows, structured and retrievable.</p></div>
+        <div class="cell"><div class="tag mono">02</div><h3>Ingestion layer</h3><p>Pipes from Slack, Drive, Notion, Linear, GitHub, meeting notes.</p></div>
+        <div class="cell"><div class="tag mono">03</div><h3>Context management</h3><p>Decides what surfaces and what stays quiet; prioritizes signal over noise so the brain informs without overwhelming.</p></div>
+        <div class="cell"><div class="tag mono">04</div><h3>Action layer</h3><p>Policy-governed agents that act in the world on behalf of the collective.</p></div>
+        <div class="cell"><div class="tag mono">05</div><h3>Identity & membership</h3><p>Who belongs, with what role and permissions; the root of everything.</p></div>
+        <div class="cell"><div class="tag mono">06</div><h3>Policy engine</h3><p>The constitutional layer; what's autonomous, what needs approval, who decides.</p></div>
+        <div class="cell"><div class="tag mono">07</div><h3>Audit log</h3><p>Immutable record of every action, query, and ingestion event; the trust layer.</p></div>
+        <div class="cell center-last"><div class="tag mono">08</div><h3>Feedback loop</h3><p>Closes the loop; the brain learns from outcomes over time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide — Proprietary -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">07</span><span class="lbl">Commercial layer</span><span class="line"></span></div>
+      <h2 class="headline">Proprietary</h2>
+      <div class="matrix cols-3">
+        <div class="cell"><div class="tag mono">M1</div><h3>Agent workstations</h3><p>A pre-configured NemoClaw setup for each individual agent. Every member starts with a tuned, ready workstation, not a blank slate.</p></div>
+        <div class="cell"><div class="tag mono">M2</div><h3>Human onboarding know-how</h3><p>The playbook for getting people and their agents productive fast. Codified practice, not tribal knowledge.</p></div>
+        <div class="cell"><div class="tag mono">M3</div><h3>Industry presets</h3><p>Pre-configured setups for specific industries (legal, and beyond). Domain policies, sources, and workflows out of the box.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide — Extra (appendix divider) -->
+  <section class="slide title-slide section-break" data-slide>
+    <div class="stage">
+      <div class="title-eyebrow">Appendix</div>
+      <h1 class="title">Extra</h1>
+      <p class="subtitle">The hard problems, and what comes next.</p>
+    </div>
+  </section>
+
+  <!-- Slide — Challenges -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">08</span><span class="lbl">Honesty</span><span class="line"></span></div>
+      <h2 class="headline">The hard problems</h2>
+      <div class="rows">
+        <div class="row"><span class="n">01</span><h3>Context overload</h3><p>Too many signals, too much noise. Attention and prioritization is the hardest design challenge. A brain that pages you about everything is worse than no brain at all.</p></div>
+        <div class="row"><span class="n">02</span><h3>Contribution incentives</h3><p>The system is only as good as what people post. Social design matters as much as technical design.</p></div>
+        <div class="row"><span class="n">03</span><h3>Governance</h3><p>Building a coordination system requires coordinating the builders. Early decisions set the cultural tone permanently.</p></div>
+        <div class="row"><span class="n">04</span><h3>Trust in autonomous agents</h3><p>Earned incrementally. Start narrow, demonstrate reliability, expand scope.</p></div>
+        <div class="row"><span class="n">05</span><h3>The schema problem</h3><p>What is the unit of knowledge? How information is represented decides whether the whole thing is queryable or just a fancier search index.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9 — Next Steps -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow"><span class="idx mono">09</span><span class="lbl">What comes next</span><span class="line"></span></div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><div><h3>Find pilot teams</h3><p>10–50 person companies that are AI-native, already running internal agents, feeling the coordination pain.</p></div></div>
+        <div class="step"><span class="num">2</span><div><h3>Define MVP scope</h3><p>Ingestion from 2–3 sources, a queryable knowledge layer, and a basic policy engine.</p></div></div>
+        <div class="step"><span class="num">3</span><div><h3>Open source governance</h3><p>Establish the project charter, contribution model, and decision process before there are contributors.</p></div></div>
+      </div>
+      <p class="closing-line">Every institution that exists today was designed for human actors. We are building the infrastructure for what comes next.</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="counter mono"><span class="cur">01</span> / <span id="total">09</span></div>
+<div class="hint"><kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>F</kbd> fullscreen</div>
+<div class="nav">
+  <button id="prev" aria-label="Previous slide">←</button>
+  <button id="next" aria-label="Next slide">→</button>
+</div>
+
+<script>
+  (function () {
+    var slides = Array.prototype.slice.call(document.querySelectorAll("[data-slide]"));
+    var cur = 0;
+    var curEl = document.querySelector(".counter .cur");
+    var totalEl = document.getElementById("total");
+    var prevBtn = document.getElementById("prev");
+    var nextBtn = document.getElementById("next");
+    var bar = document.getElementById("progress");
+
+    function pad(n) { return (n < 10 ? "0" : "") + n; }
+    totalEl.textContent = pad(slides.length);
+
+    function render() {
+      slides.forEach(function (s, i) { s.classList.toggle("active", i === cur); });
+      curEl.textContent = pad(cur + 1);
+      bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === slides.length - 1;
+      try { history.replaceState(null, "", "#" + (cur + 1)); } catch (e) {}
+    }
+    function go(n) { cur = Math.max(0, Math.min(slides.length - 1, n)); render(); }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); go(cur + 1); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(cur - 1); }
+      else if (e.key === "Home") { go(0); }
+      else if (e.key === "End") { go(slides.length - 1); }
+      else if (e.key === "f" || e.key === "F") {
+        if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+        else { document.exitFullscreen(); }
+      }
+    });
+    prevBtn.addEventListener("click", function () { go(cur - 1); });
+    nextBtn.addEventListener("click", function () { go(cur + 1); });
+
+    var startHash = parseInt((location.hash || "").replace("#", ""), 10);
+    if (startHash >= 1 && startHash <= slides.length) { cur = startHash - 1; }
+    render();
+  })();
+</script>
+</body>
+</html>
