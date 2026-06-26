@@ -2,6 +2,7 @@
 import { Plug, Server, LayoutDashboard } from 'lucide-astro';
 import Placeholder from './Placeholder.astro';
 import Screenshot from './Screenshot.astro';
+import Governance from './diagrams/Governance.astro';
 
 const runtimes = [
   'Claude',
@@ -114,13 +115,14 @@ const modes = [
 
         <div class="feature-card feature-card--media flex flex-col">
           <div class="card-media card-media--16x9">
-            <Placeholder fill variant="diagram" label="Team Brain integrations" />
+            <Governance />
           </div>
           <div class="card-body flex flex-col flex-1">
-            <h3 class="text-heading-3 text-foreground mb-2">Team Brain integrations</h3>
+            <h3 class="text-heading-3 text-foreground mb-2">Programmable governance</h3>
             <p class="text-body text-muted-foreground">
-              Agents across the team push to one shared brain. Memory, decisions, and
-              deliverables accumulate — queryable in plain English.
+              One gate on the sync boundary. Tier rules and compliance policies — EU AI Act,
+              GDPR, data residency — run on every push. Team and external content crosses;
+              private and admin stay local.
             </p>
           </div>
         </div>

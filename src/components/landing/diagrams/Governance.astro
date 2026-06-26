@@ -1,0 +1,235 @@
+---
+/* Programmable governance — the compliance gate on the sync boundary.
+
+   Tier-tagged work leaves your workspace and hits one programmable gate: tier
+   rules plus compliance policies (EU AI Act, GDPR, data residency) are evaluated
+   on every push. Team / external content is approved and crosses to the Team
+   Brain; private / admin content is rejected at the wall (422).
+
+   SINGLE-SVG pattern (see docs/diagram-system.md): every box, label, edge and
+   token lives in ONE viewBox (exactly 16/9 so it fills a .card-media box).
+   Geometry is data; label centres + edge endpoints derive from it. Token-driven,
+   dual-mode, reduced-motion safe. Colour rationed: violet = your workspace,
+   emerald = Team Brain, cyan = the policy gate; the rest stays greyscale. */
+import '../../../styles/diagrams.css';
+
+const VB = { w: 1280, h: 720 };
+const MID_Y = 360;
+
+const N = {
+  workspace: { x: 60,  y: 285, w: 240, h: 150, accent: 'ic',
+    title: ['Your workspace'], meta: ['tier-tagged work'] },
+  brain:     { x: 980, y: 285, w: 240, h: 150, accent: 'brain',
+    title: ['Team Brain'],     meta: ['shared memory'] },
+};
+
+const GATE = { x: 470, y: 96, w: 340, h: 520, accent: 'policy' };
+
+const chips = [
+  { t: 'EU AI Act',     m: 'risk tier · transparency' },
+  { t: 'GDPR',          m: 'consent · erasure · DPA' },
+  { t: 'Data residency', m: 'region-pinned storage' },
+  { t: 'Access tiers',  m: 'private → team → external' },
+];
+const CHIP = { x: GATE.x + 28, w: GATE.w - 56, h: 64, gap: 16, top: 214 };
+const chipY = (i) => CHIP.top + i * (CHIP.h + CHIP.gap);
+
+const cx = (n) => n.x + n.w / 2;
+const cy = (n) => n.y + n.h / 2;
+const right = (n) => n.x + n.w;
+const bottom = (n) => n.y + n.h;
+
+function lines(n) {
+  const items = [];
+  n.title.forEach((t) => items.push({ t, cls: 'gov-title', lh: 28 }));
+  n.meta.forEach((t) => items.push({ t, cls: 'gov-meta', lh: 18 }));
+  const total = items.reduce((s, i) => s + i.lh, 0);
+  let acc = 0;
+  return items.map((i) => { const y = cy(n) - total / 2 + acc + i.lh * 0.72; acc += i.lh; return { ...i, y }; });
+}
+const nodes = Object.entries(N).map(([key, n]) => ({ key, ...n }));
+---
+
+<figure class="gov dgm" aria-labelledby="gov-cap">
+  <p class="sr-only" id="gov-cap">
+    Every item leaving your workspace passes one programmable governance gate.
+    Tier rules and compliance policies — the EU AI Act, GDPR, and regional data
+    residency — are evaluated on each push. Team and external content is approved
+    and crosses to the Team Brain; private and admin content is rejected at the
+    boundary with a 422.
+  </p>
+
+  <svg viewBox={`0 0 ${VB.w} ${VB.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs>
+      <marker id="gov-arrow" viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="gov-arrowhead" />
+      </marker>
+      <radialGradient id="gov-token" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="var(--aios-emerald)" />
+        <stop offset="55%" stop-color="var(--aios-violet)" />
+        <stop offset="100%" stop-color="var(--aios-violet)" />
+      </radialGradient>
+    </defs>
+
+    <!-- zone hints -->
+    <text class="gov-zone" x={N.workspace.x} y="150">YOUR MACHINE</text>
+    <text class="gov-zone" x={right(N.brain)} y="150" text-anchor="end">SHARED</text>
+
+    <!-- main flow connectors (behind cards, so they tuck under the edges) -->
+    <line class="gov-edge" x1={right(N.workspace)} y1={MID_Y} x2={GATE.x} y2={MID_Y} marker-end="url(#gov-arrow)" />
+    <line class="gov-edge" x1={right(GATE)} y1={MID_Y} x2={N.brain.x} y2={MID_Y} marker-end="url(#gov-arrow)" />
+    <text class="gov-elabel gov-elabel--ok" x={(right(GATE) + N.brain.x) / 2} y={MID_Y - 14} text-anchor="middle">✓ approved</text>
+
+    <!-- rejected branch: kicked back down at the wall -->
+    <path class="gov-edge gov-edge--reject" marker-end="url(#gov-arrow)"
+          d={`M ${cx(GATE)},${bottom(GATE)} C ${cx(GATE)},664 ${cx(GATE) - 120},664 ${cx(GATE) - 120},664`} />
+    <g class="gov-reject" transform={`translate(${cx(GATE) - 304}, 642)`}>
+      <rect width="368" height="44" rx="22" />
+      <text class="gov-reject-x" x="22" y="28">✕</text>
+      <text class="gov-reject-t" x="42" y="28">private / admin — rejected · 422</text>
+    </g>
+
+    <!-- the one travelling token: enters the gate, emerges approved -->
+    <circle class="gov-tok" r="6" />
+
+    <!-- the governance gate (the boundary) -->
+    <circle class={`gov-dot gov-dot--${GATE.accent}`} cx={cx(GATE)} cy={GATE.y - 14} r="5" />
+    <rect class="gov-gate" x={GATE.x} y={GATE.y} width={GATE.w} height={GATE.h} rx="18" />
+    <text class="gov-kicker" x={cx(GATE)} y={GATE.y + 42} text-anchor="middle">POLICY GATE</text>
+    <text class="gov-gate-title" x={cx(GATE)} y={GATE.y + 78} text-anchor="middle">Programmable governance</text>
+    {chips.map((c, i) => (
+      <g>
+        <rect class="gov-chip" x={CHIP.x} y={chipY(i)} width={CHIP.w} height={CHIP.h} rx="11" />
+        <circle class="gov-dot--policy" cx={CHIP.x + 18} cy={chipY(i) + CHIP.h / 2} r="3.5" />
+        <text class="gov-chip-title" x={CHIP.x + 34} y={chipY(i) + 27}>{c.t}</text>
+        <text class="gov-chip-meta"  x={CHIP.x + 34} y={chipY(i) + 47}>{c.m}</text>
+      </g>
+    ))}
+
+    <!-- node cards (accent dot floats above each card) -->
+    {nodes.map((n) => (
+      <g class="gov-node">
+        {n.accent && <circle class={`gov-dot gov-dot--${n.accent}`} cx={cx(n)} cy={n.y - 14} r="5" />}
+        <rect class="gov-box" x={n.x} y={n.y} width={n.w} height={n.h} rx="16" />
+        {lines(n).map((l) => (
+          <text class={l.cls} x={cx(n)} y={l.y} text-anchor="middle">{l.t}</text>
+        ))}
+      </g>
+    ))}
+  </svg>
+</figure>
+
+<style>
+  .gov {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+  .gov svg { width: 100%; height: 100%; display: block; }
+
+  /* chrome */
+  .gov-zone {
+    fill: var(--aios-fg-muted);
+    font-family: var(--aios-font-mono);
+    font-size: 14px;
+    letter-spacing: 2.4px;
+  }
+  .gov-edge { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.25; }
+  .gov-edge--reject { stroke: var(--aios-border-strong); stroke-dasharray: 4 6; opacity: 0.6; }
+  .gov-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* node cards */
+  .gov-box { fill: var(--aios-surface); stroke: var(--aios-border); stroke-width: 1; }
+  .gov-title {
+    fill: var(--aios-fg);
+    font-family: var(--aios-font-display);
+    font-size: 23px;
+    letter-spacing: -0.01em;
+  }
+  .gov-meta {
+    fill: var(--aios-fg-secondary);
+    font-family: var(--aios-font-mono);
+    font-size: 12px;
+  }
+
+  /* the gate */
+  .gov-gate {
+    fill: color-mix(in srgb, var(--aios-cyan) 5%, var(--aios-surface));
+    stroke: color-mix(in srgb, var(--aios-cyan) 45%, var(--aios-border-strong));
+    stroke-width: 1.25;
+  }
+  .gov-kicker {
+    fill: var(--aios-cyan);
+    font-family: var(--aios-font-mono);
+    font-size: 12px;
+    letter-spacing: 3px;
+  }
+  .gov-gate-title {
+    fill: var(--aios-fg);
+    font-family: var(--aios-font-display);
+    font-size: 23px;
+    letter-spacing: -0.01em;
+  }
+  .gov-chip { fill: var(--aios-surface); stroke: var(--aios-border); stroke-width: 1; }
+  .gov-chip-title {
+    fill: var(--aios-fg);
+    font-family: var(--aios-font-display);
+    font-size: 17px;
+  }
+  .gov-chip-meta {
+    fill: var(--aios-fg-secondary);
+    font-family: var(--aios-font-mono);
+    font-size: 11px;
+  }
+
+  /* accent dots — rationed */
+  .gov-dot--ic     { fill: var(--aios-violet); }
+  .gov-dot--brain  { fill: var(--aios-emerald); }
+  .gov-dot--policy { fill: var(--aios-cyan); }
+
+  /* flow labels */
+  .gov-elabel {
+    fill: var(--aios-fg-muted);
+    font-family: var(--aios-font-mono);
+    font-size: 12.5px;
+  }
+  .gov-elabel--ok { fill: var(--aios-emerald); }
+
+  /* rejected pill */
+  .gov-reject rect { fill: color-mix(in srgb, var(--aios-fg) 5%, var(--aios-surface)); stroke: var(--aios-border-strong); stroke-width: 1; }
+  .gov-reject-x { fill: var(--aios-fg-muted); font-family: var(--aios-font-mono); font-size: 15px; }
+  .gov-reject-t { fill: var(--aios-fg-secondary); font-family: var(--aios-font-mono); font-size: 13px; }
+
+  /* the one travelling token */
+  .gov-tok {
+    fill: url(#gov-token);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--aios-violet) 70%, transparent));
+    offset-path: path('M300,360 L980,360');
+    animation: gov-cross 11s linear infinite;
+  }
+  @keyframes gov-cross {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    7%   { opacity: 1; }
+    44%  { opacity: 1; }
+    52%  { opacity: 0; }            /* swallowed by the gate */
+    60%  { opacity: 1; }            /* emerges, approved */
+    92%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gov-tok { animation: none; offset-distance: 78%; opacity: 1; }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
