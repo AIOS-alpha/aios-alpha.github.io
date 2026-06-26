@@ -18,12 +18,12 @@ import AiosLogo from './AiosLogo.astro';
     </div>
 
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Theme toggle -->
+      <!-- Theme toggle (bumped to ≥44px tap target on mobile, unchanged 36px on desktop) -->
       <button
         id="theme-toggle"
         type="button"
         aria-label="Toggle colour theme"
-        class="inline-flex items-center justify-center size-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200"
+        class="inline-flex items-center justify-center size-11 md:size-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200"
       >
         <!-- shown in light mode (click → dark) -->
         <svg class="theme-icon-light" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -49,13 +49,107 @@ import AiosLogo from './AiosLogo.astro';
       </a>
       <a
         href="/guides/quickstart"
-        class="btn-prism inline-flex items-center bg-primary text-primary-foreground text-small font-semibold px-5 py-[9px] rounded-full no-underline transition-colors duration-200 hover:bg-primary-hover"
+        class="btn-prism inline-flex items-center max-md:min-h-11 bg-primary text-primary-foreground text-small font-semibold px-5 py-[9px] rounded-full no-underline transition-colors duration-200 hover:bg-primary-hover"
       >
         Get started →
+      </a>
+
+      <!-- Mobile menu toggle — shown only below md (where the desktop link row is hidden). -->
+      <button
+        id="mobile-menu-toggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="md:hidden inline-flex items-center justify-center size-11 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200"
+      >
+        <svg class="menu-icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+        <svg class="menu-icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile nav panel (below md only). Closed by default via [hidden]-style mechanics. -->
+  <div id="mobile-menu" class="mobile-menu md:hidden" tabindex="-1" inert>
+    <div class="max-w-[1200px] mx-auto px-6 flex flex-col py-3">
+      <a href="/guides/quickstart" class="mobile-link" data-mobile-link>Docs</a>
+      <a href="/guides/workspace" class="mobile-link" data-mobile-link>Workspace</a>
+      <a href="/guides/team-brain" class="mobile-link" data-mobile-link>Team Brain</a>
+      <a href="/blog" class="mobile-link" data-mobile-link>Blog</a>
+      <a href="/contributing" class="mobile-link" data-mobile-link>Contributing</a>
+      <a
+        href="https://github.com/AIOS-alpha"
+        class="mobile-link inline-flex items-center gap-2.5"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-mobile-link
+      >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
       </a>
     </div>
   </div>
 </nav>
+
+<style>
+  /* Mobile nav panel — dropdown under the fixed header (h-16 = 4rem). */
+  .mobile-menu {
+    position: fixed;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - 4rem);
+    overflow-y: auto;
+    background: var(--aios-surface-elevated, var(--color-background));
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.5rem);
+    /* visibility flips immediately on open (0s) but is delayed on close so the
+       fade-out is visible; this also lets the panel receive focus on open. */
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+  }
+  .mobile-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu { transition: none; }
+  }
+
+  .mobile-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.25rem 0.25rem;
+    font-family: var(--font-sans);
+    font-size: clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
+    color: var(--color-muted-foreground);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    transition: color 0.2s ease;
+  }
+  /* The panel is only a programmatic focus target (tabindex=-1); suppress its
+     focus ring. Focusable children keep their own :focus-visible styles. */
+  .mobile-menu:focus { outline: none; }
+
+  .mobile-link:last-child { border-bottom: none; }
+  .mobile-link:hover { color: var(--color-foreground); }
+
+  /* Toggle button icon swap. */
+  .menu-icon-close { display: none; }
+  #mobile-menu-toggle[aria-expanded="true"] .menu-icon-open { display: none; }
+  #mobile-menu-toggle[aria-expanded="true"] .menu-icon-close { display: inline; }
+</style>
 
 <script>
   const nav = document.getElementById('main-nav');
@@ -65,6 +159,45 @@ import AiosLogo from './AiosLogo.astro';
   }
   window.addEventListener('scroll', updateNav, { passive: true });
   updateNav();
+
+  // Mobile menu — accessible disclosure (no framework, scoped to the nav).
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+  const menuPanel = document.getElementById('mobile-menu');
+  if (menuToggle && menuPanel) {
+    const openMenu = () => {
+      menuPanel.classList.add('is-open');
+      menuPanel.removeAttribute('inert');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Close navigation menu');
+      // Defer focus: the panel is visibility:hidden until styles flush, and a
+      // hidden element can't receive focus synchronously.
+      requestAnimationFrame(() => menuPanel.focus());
+    };
+    const closeMenu = ({ returnFocus = true } = {}) => {
+      menuPanel.classList.remove('is-open');
+      menuPanel.setAttribute('inert', '');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open navigation menu');
+      if (returnFocus) menuToggle.focus();
+    };
+    menuToggle.addEventListener('click', () => {
+      if (menuToggle.getAttribute('aria-expanded') === 'true') closeMenu();
+      else openMenu();
+    });
+    // Clicking any link closes the panel (links are real navigations).
+    menuPanel.querySelectorAll('[data-mobile-link]').forEach((link) => {
+      link.addEventListener('click', () => closeMenu({ returnFocus: false }));
+    });
+    // Escape closes and returns focus to the toggle.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
+        closeMenu();
+      }
+    });
+    // Close if we cross into desktop layout (panel is md:hidden anyway).
+    const mq = window.matchMedia('(min-width: 768px)');
+    mq.addEventListener('change', (e) => { if (e.matches) closeMenu({ returnFocus: false }); });
+  }
 
   // Theme toggle — keep landing in sync with Starlight docs (starlight-theme + data-theme).
   document.getElementById('theme-toggle')?.addEventListener('click', () => {
