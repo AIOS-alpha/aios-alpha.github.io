@@ -1,6 +1,6 @@
 # Cross-posting to Substack
 
-The blog at `getaios.dev/blog` is the **canonical** home for every post.
+The blog at `aiosbrain.dev/blog` is the **canonical** home for every post.
 Substack is a distribution channel. The blog is where interactive embeds work
 and where search engines should send people; Substack is where subscribers read.
 
@@ -13,7 +13,7 @@ the review step).
 ## The flow
 
 1. **Publish on the blog.** Merge to `main`; GitHub Actions deploys to
-   `getaios.dev`. Confirm the post is live at `getaios.dev/blog/<slug>/`.
+   `aiosbrain.dev`. Confirm the post is live at `aiosbrain.dev/blog/<slug>/`.
 
 2. **Run the helper.**
 
@@ -33,7 +33,7 @@ the review step).
    > will print/open it directly.
 
 4. **Set the canonical URL.** In the draft's settings, set **Canonical URL** to
-   `getaios.dev/blog/<slug>/`. This tells search engines the blog is the
+   `aiosbrain.dev/blog/<slug>/`. This tells search engines the blog is the
    original, so the Substack copy doesn't compete with it.
 
 5. **Review and publish.** Check formatting and images, then publish/send.

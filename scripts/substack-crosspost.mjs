@@ -24,7 +24,7 @@ const BLOG_DIR = join(root, 'src/content/blog');
 function siteUrl() {
 	const cfg = readFileSync(join(root, 'astro.config.mjs'), 'utf8');
 	const m = cfg.match(/site:\s*['"]([^'"]+)['"]/);
-	return (m ? m[1] : 'https://getaios.dev').replace(/\/$/, '');
+	return (m ? m[1] : 'https://aiosbrain.dev').replace(/\/$/, '');
 }
 
 function frontmatter(file) {
