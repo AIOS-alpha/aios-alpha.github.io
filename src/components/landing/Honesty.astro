@@ -25,6 +25,11 @@ const problems = [
     title: 'The schema problem',
     body: 'What is the unit of knowledge? How information is represented decides whether the whole thing is queryable or just a fancier search index. OKF and tier-tagged items are our bet.',
   },
+  {
+    num: '06',
+    title: 'Staleness and decay',
+    body: 'Knowledge expires. A brain that surfaces a stale decision as if it were current does real damage — so what to retain, what to archive, and when to forget is as hard as what to store in the first place.',
+  },
 ];
 ---
 
@@ -40,25 +45,11 @@ const problems = [
       </p>
     </div>
 
-    {/* Lead problem — full-width featured row, split title / body across the width */}
-    <article class="group border-t border-border pt-8 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12">
-      <div class="lg:col-span-5 flex items-start gap-5">
-        <span
-          class="font-[family-name:var(--font-display)] text-5xl md:text-6xl leading-[0.85] text-muted-foreground/30 tabular-nums select-none"
-          aria-hidden="true"
-        >
-          {problems[0].num}
-        </span>
-        <h3 class="text-heading-3 text-foreground pt-1">{problems[0].title}</h3>
-      </div>
-      <p class="lg:col-span-7 text-body-lg text-muted-foreground max-w-[60ch]">
-        {problems[0].body}
-      </p>
-    </article>
-
-    {/* Remaining problems — 2-column editorial index, hairline dividers, no boxes */}
-    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-20">
-      {problems.slice(1).map(({ num, title, body }) => (
+    {/* Six problems — uniform editorial index that lines up evenly:
+        1 col (mobile) → 2 cols → 3 cols (lg). 6 = 2×3 = 3×2 at every step.
+        Hairline top dividers, oversized faded serif numerals, no boxes. */}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 lg:gap-x-14">
+      {problems.map(({ num, title, body }) => (
         <article class="group border-t border-border pt-7 md:pt-8 pb-2 flex items-start gap-5">
           <span
             class="font-[family-name:var(--font-display)] text-4xl md:text-5xl leading-[0.85] text-muted-foreground/30 tabular-nums select-none shrink-0"
