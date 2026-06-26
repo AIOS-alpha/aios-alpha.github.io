@@ -1,9 +1,18 @@
 ---
 /* A real product screenshot with light + dark sources that swap on theme.
    Mirrors Placeholder.astro's API so it drops into the same slots.
+
+   FRAMING: echoes the shared `.dgm-frame` primitive (src/styles/diagrams.css)
+   — a hairline border + a soft NEUTRAL elevation shadow (greyscale, no colour
+   glow, per Editorial Minimal) — so the shot reads as a raised surface that
+   separates from the section background in BOTH themes.
+
    - `fill`  = absolutely fill the parent `.card-media` box (which owns the
-               aspect ratio + clipping) — the shadcn-style card-image pattern.
-   - `ratio` = own aspect ratio when standalone (ignored when `fill`).
+               aspect ratio + clipping and supplies the outer card border). The
+               drop shadow would be clipped, so we keep a hairline inset ring so
+               the shot's edge stays defined instead of stripping the border.
+   - `ratio` = own aspect ratio when standalone (ignored when `fill`); gets the
+               full frame: border, radius, and elevation shadow.
    Both sources are rendered and cross-toggled via opacity on `data-theme`
    (Starlight's source of truth, mirrored to `.dark` by the head script). */
 interface Props {
@@ -13,6 +22,7 @@ interface Props {
   ratio?: string;       // e.g. "4 / 5" — standalone only
   fill?: boolean;
   eager?: boolean;      // above-the-fold (hero) → eager-load
+  label?: string;       // accepted for caller compatibility; not rendered
   class?: string;
 }
 const {
@@ -22,6 +32,7 @@ const {
   ratio = '16 / 9',
   fill = false,
   eager = false,
+  label: _label = '',
   class: className = '',
 } = Astro.props;
 const loading = eager ? 'eager' : 'lazy';
@@ -52,6 +63,8 @@ const fetchpriority = eager ? 'high' : 'auto';
 </div>
 
 <style>
+  /* Framed like .dgm-frame: hairline border + soft NEUTRAL elevation (greyscale
+     token — no colour glow) so the shot lifts off the page in light and dark. */
   .ss {
     position: relative;
     width: 100%;
@@ -60,9 +73,15 @@ const fetchpriority = eager ? 'high' : 'auto';
     border-radius: var(--aios-radius-xl);
     overflow: hidden;
     background: var(--aios-surface);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 16px 40px -24px rgba(0, 0, 0, 0.34);
     line-height: 0;
   }
-  /* Fill the parent `.card-media` box (which owns the aspect ratio + clipping). */
+  /* Fill the parent `.card-media` box (which owns the aspect ratio + clipping
+     and supplies the outer card border). The drop shadow would be clipped here,
+     so define the shot's edge with a hairline inset ring rather than stripping
+     the border — this is the frame the fill path was missing. */
   .ss--fill {
     position: absolute;
     inset: 0;
@@ -72,6 +91,7 @@ const fetchpriority = eager ? 'high' : 'auto';
     border: 0;
     border-radius: 0;
     background: transparent;
+    box-shadow: inset 0 0 0 1px var(--aios-border);
   }
   .ss-img {
     position: absolute;
@@ -87,4 +107,8 @@ const fetchpriority = eager ? 'high' : 'auto';
   .ss-dark { opacity: 0; }
   :global(:root[data-theme='dark']) .ss-light { opacity: 0; }
   :global(:root[data-theme='dark']) .ss-dark { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ss-img { transition: none; }
+  }
 </style>
