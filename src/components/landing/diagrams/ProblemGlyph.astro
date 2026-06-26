@@ -1,0 +1,141 @@
+---
+/* Problem-card spot illustrations — a consistent set of four small inline-SVG
+   glyphs, one per failure mode. Greyscale chrome, one rationed accent each:
+     bloat    — context overflows its window (violet)
+     entangle — tools knot together (amber)
+     speed    — one agent races 10× ahead (lime)
+     drift    — the team scatters off a shared direction (violet)
+   Single-SVG, token-driven, dual-mode. These are decorative (aria-hidden); the
+   card title/body carry the meaning. Fills the parent .card-media box. */
+import '../../../styles/diagrams.css';
+
+interface Props { kind: 'bloat' | 'entangle' | 'speed' | 'drift'; }
+const { kind } = Astro.props;
+
+const VB = { w: 320, h: 180 };
+
+// bloat: bars stack and the top two spill above the limit line
+const bloatBars = [
+  { y: 128, over: false }, { y: 112, over: false },
+  { y: 96,  over: false }, { y: 80,  over: false },
+  { y: 56,  over: true },  { y: 40,  over: true },
+];
+// entangle: four tools, connectors cross at the centre
+const tools = [ { x: 54, y: 42 }, { x: 238, y: 42 }, { x: 54, y: 110 }, { x: 238, y: 110 } ];
+const TS = 28;
+const tc = (t) => ({ x: t.x + TS / 2, y: t.y + TS / 2 });
+const links = [[0, 3], [1, 2], [0, 1], [2, 3], [1, 3]];
+// drift: arrows fan out from one origin, scattered, one drifting off
+const origin = { x: 64, y: 90 };
+const rays = [ { x: 250, y: 34, drift: true }, { x: 256, y: 74 }, { x: 252, y: 116 }, { x: 238, y: 150 } ];
+---
+
+<figure class={`pg pg--${kind}`} aria-hidden="true">
+  <svg viewBox={`0 0 ${VB.w} ${VB.h}`} preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id={`pg-ah-${kind}`} viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="pg-arrowhead" />
+      </marker>
+    </defs>
+
+    {kind === 'bloat' && (
+      <g>
+        <rect class="pg-frame" x="48" y="64" width="224" height="92" rx="12" />
+        <line class="pg-limit" x1="40" y1="64" x2="280" y2="64" />
+        {bloatBars.map((b) => (
+          <rect class={`pg-bar${b.over ? ' pg-bar--over' : ''}`} x="64" y={b.y} width="192" height="10" rx="5" />
+        ))}
+        <text class="pg-tag pg-tag--violet" x="276" y="58" text-anchor="end">over limit</text>
+      </g>
+    )}
+
+    {kind === 'entangle' && (
+      <g>
+        {links.map(([a, b]) => (
+          <path class="pg-link" d={`M ${tc(tools[a]).x},${tc(tools[a]).y} Q 160,90 ${tc(tools[b]).x},${tc(tools[b]).y}`} />
+        ))}
+        {tools.map((t) => (
+          <g>
+            <rect class="pg-tool" x={t.x} y={t.y} width={TS} height={TS} rx="7" />
+            <circle class="pg-tool-dot" cx={t.x + TS / 2} cy={t.y + TS / 2} r="2.6" />
+          </g>
+        ))}
+        <circle class="pg-knot" cx="160" cy="90" r="6.5" />
+      </g>
+    )}
+
+    {kind === 'speed' && (
+      <g>
+        <line class="pg-trail" x1="56" y1="68" x2="150" y2="68" />
+        <circle class="pg-tok" cx="150" cy="68" r="7" />
+        <text class="pg-tag" x="150" y="50" text-anchor="middle">1×</text>
+        <line class="pg-trail pg-trail--fast" x1="56" y1="116" x2="250" y2="116" />
+        <circle class="pg-tok pg-tok--fast" cx="250" cy="116" r="8" />
+        <text class="pg-tag pg-tag--lime" x="250" y="98" text-anchor="middle">10×</text>
+      </g>
+    )}
+
+    {kind === 'drift' && (
+      <g>
+        {rays.map((r) => (
+          <line class={`pg-ray${r.drift ? ' pg-ray--drift' : ''}`} x1={origin.x} y1={origin.y} x2={r.x} y2={r.y} marker-end={`url(#pg-ah-${kind})`} />
+        ))}
+        <circle class="pg-origin" cx={origin.x} cy={origin.y} r="7" />
+        <circle class="pg-target" cx="276" cy="90" r="11" />
+        <line class="pg-target-x" x1="270" y1="84" x2="282" y2="96" />
+        <line class="pg-target-x" x1="282" y1="84" x2="270" y2="96" />
+      </g>
+    )}
+  </svg>
+</figure>
+
+<style>
+  .pg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: color-mix(in srgb, var(--aios-fg) 2.5%, var(--aios-surface));
+  }
+  .pg svg { width: 100%; height: 100%; display: block; }
+
+  .pg-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .pg-tag {
+    fill: var(--aios-fg-muted);
+    font-family: var(--aios-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .pg-tag--violet { fill: var(--aios-violet); }
+  .pg-tag--lime   { fill: var(--aios-accent); }
+
+  /* bloat */
+  .pg-frame { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .pg-limit { stroke: var(--aios-border-strong); stroke-width: 1.4; stroke-dasharray: 4 5; opacity: 0.7; }
+  .pg-bar { fill: color-mix(in srgb, var(--aios-fg) 22%, var(--aios-surface)); }
+  .pg-bar--over { fill: var(--aios-violet); }
+
+  /* entangle */
+  .pg-link { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.5; opacity: 0.6; }
+  .pg-tool { fill: var(--aios-surface); stroke: var(--aios-border-strong); stroke-width: 1.4; }
+  .pg-tool-dot { fill: var(--aios-fg-muted); }
+  .pg-knot { fill: var(--aios-amber); }
+
+  /* speed */
+  .pg-trail { stroke: color-mix(in srgb, var(--aios-fg) 28%, var(--aios-surface)); stroke-width: 3; stroke-linecap: round; }
+  .pg-trail--fast { stroke: var(--aios-accent); }
+  .pg-tok { fill: var(--aios-fg-muted); }
+  .pg-tok--fast {
+    fill: var(--aios-accent);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--aios-accent) 60%, transparent));
+  }
+
+  /* drift */
+  .pg-ray { stroke: var(--aios-border-strong); stroke-width: 1.6; stroke-linecap: round; }
+  .pg-ray--drift { stroke: var(--aios-violet); }
+  .pg-origin { fill: var(--aios-fg-secondary); }
+  .pg-target { fill: none; stroke: var(--aios-border); stroke-width: 1.4; stroke-dasharray: 3 4; }
+  .pg-target-x { stroke: var(--aios-fg-muted); stroke-width: 1.4; stroke-linecap: round; }
+</style>
