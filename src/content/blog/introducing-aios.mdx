@@ -1,0 +1,191 @@
+---
+title: "AIOS: a workspace for you, a brain for the team"
+description: "What AIOS is, why we built it, and what we're shipping. An open-source operating system for people and agents working together."
+pubDate: 2026-06-24
+author: "John Ellison"
+tags: ["introducing", "release"]
+draft: false
+---
+
+import TierExplorer from '../../components/interactive/TierExplorer.tsx';
+import Figure from '../../components/blog/Figure.astro';
+import Shot from '../../components/blog/Shot.astro';
+
+After nine months of working on AI transformations for 50 to 150 person
+companies, we've packaged up our learnings into an open-source toolkit anyone
+can use.
+
+AIOS is an AI-powered operating system for agentic teams. Every person gets a
+structured agent workspace. The team gets one shared brain that learns how you
+work and helps you collaborate. It's MIT-licensed and self-hosted, and you
+decide what leaves your machine.
+
+It's two repos, one system. There is no third moving part to manage.
+
+<Figure
+  src="/blog/diagrams/workspace-brain"
+  alt="Four private individual workspaces push team-tier work along connectors into one central team-brain hub, and a single client-tier flow runs outward from the brain to a client node on the right."
+  caption="Private workspaces push team work into one brain. Some of it flows out to clients."
+  width={880}
+  height={460}
+/>
+
+## Why we built it
+
+We built AIOS by helping companies become AI-native organizations. Along the
+way we built the systems and tools that reduce the friction of working with
+agents, and the safeguards that keep teams out of the traps that usually get in
+the way.
+
+The first thing you notice is that the bottleneck moved. For twenty years, the
+way teams organize work assumed developer time was the scarce resource. Sprints,
+story points, and backlog grooming all exist to ration it. Agents broke that
+assumption. When everyone can build, the scarce resource is no longer hours.
+It's context: who knows what, what's been decided, and what's actually true
+right now. (I wrote about why the old operating model breaks in
+[Beyond the Sprint](https://john-ellison.com/blog/beyond-the-sprint).)
+
+Working with agents on your own is amazing. In a team, it breaks down fast.
+
+- **Context bloats.** Every agent's context balloons on its own, and no two
+  people are working from the same picture.
+- **Tools entangle.** MCPs, APIs, CLIs, and sync tools pile up until keeping
+  them aligned costs more than the work itself.
+- **The speed gap widens.** Contributors with agents move ten times faster than
+  those without. With no shared structure, that gap creates chaos, not momentum.
+- **The team drifts.** People tunnel into execution and lose the thread on OKRs
+  and customers. Speed in the wrong direction is just faster waste.
+
+None of this is only a tooling problem. Becoming AI-native is a human one.
+Leadership has to actually decide to do it, then create the space and conditions
+for people to learn. Working with agents is a maturity spectrum, and people need
+tooling that meets them where they are, not a terminal they were never going to
+open.
+
+There's a coordination problem too, and it shows up quickly. Agentic teams move
+at a velocity the rest of the org simply can't match. If only the
+terminal-comfortable engineers can keep up, the team splits in two. Everyone
+needs a way to work agentically and stay coordinated, whether or not they live
+in a command line. And left alone, everyone reinvents the same harnesses and
+skills to do the same jobs, with the best patterns stuck on one person's
+machine.
+
+AIOS is the layer on top that addresses this. You keep your runtime, your
+editor, your stack. Claude, Claude Code, Cursor, Codex, whatever you reach for.
+AIOS gives that work a shape the team can share.
+
+## How it works
+
+Each person works in a numbered folder spine: context, inbox, work, log,
+shared, personal. The same six folders every time, so an agent always knows
+where it is and where things go.
+
+<Figure
+  src="/blog/diagrams/folder-spine"
+  alt="The six-folder workspace spine from 0-context to 5-personal, each row tagged with a tier badge: private, team, or external."
+  caption="One numbered spine. Every folder carries the tier that decides whether it syncs."
+  width={520}
+  height={560}
+/>
+
+Everything you create carries an access tier, and the tier decides what is
+private, what reaches the team, and what goes to clients or the wider company.
+Nothing leaves your machine without a push.
+
+<Figure
+  src="/blog/diagrams/push-tiers"
+  alt="Three access tiers shown as a gate: private work stays in the workspace, team work flows to the brain, external work flows outward to clients and company."
+  caption="Private stays home. Team and external only move on a push."
+  width={760}
+  height={300}
+/>
+
+<TierExplorer client:visible />
+
+The shared tier is where the team brain comes in. Pushed work becomes shared
+memory: tasks, decisions, deliverables, all queryable in plain English across
+the whole team. One place to ask what's happening, instead of ten.
+
+## What we're shipping
+
+A few concrete pieces are live today.
+
+### The individual workspace
+
+Scaffold a workspace in a few commands and you get the numbered spine,
+governance conventions, validators, and multi-agent harnesses out of the box.
+There's a UI as well, so people who don't live in a terminal get the same
+harnesses, connections, and memory one click away. And when someone finds a
+harness or skill that works, the AIOS MCP syncs it to the rest of the team, in
+Claude Code, Claude Desktop, Cursor, wherever they work, so the best patterns
+spread instead of getting reinvented.
+
+<Shot
+  src="/blog/shots/individual-workspace"
+  alt="The AIOS individual workspace GUI: a chat panel where an agent reads the decision log and reports what changed this week, beside a sidebar of workspace tools (Chat, Integrations, Skills, Review & Push, Settings) and recent history."
+  caption="The workspace UI: chat with an agent that reads your log, ships deliverables, and updates memory, all on your machine."
+  width={1600}
+  height={1044}
+/>
+
+### The team brain
+
+A shared hub that receives tier-tagged pushes from every workspace and turns
+them into shared memory: tasks, decisions, and deliverables you can query in
+plain English. It holds the team's OKRs and KPIs next to the work, so people
+prioritize against the real, current state instead of a status meeting. Scope
+and drift guards flag when a workstream wanders off the top-level goals.
+
+<Shot
+  src="/blog/shots/team-brain"
+  alt="The AIOS team brain dashboard: a plain-English query bar over headline stats for memories, decisions, and open tasks, plus knowledge-growth, recent activity, and tasks-by-member panels."
+  caption="The team brain: tasks, decisions, and memory, queryable in plain English."
+  width={1600}
+  height={1985}
+/>
+
+### The Insights Engine
+
+The newest piece, built by my co-founder Chetan. A context engine that learns
+from everything flowing through the brain and surfaces the signal: the patterns
+worth copying, the work that's drifting, the context each person needs next.
+It's where some genuinely interesting ML lives, and it's what turns shared
+memory into something that actively makes the team smarter.
+
+<Figure
+  src="/blog/diagrams/insights-engine"
+  alt="The Insights Engine as a vertical pipeline: sources feed grain extraction, grains sort across working, episodic, and semantic memory tiers, then compose into a context window that answers queries with cited responses, with a feedback loop returning to ingestion."
+  caption="The Insights Engine: it breaks everything in the brain into typed grains, files them by temperature across three memory tiers, and composes just the right context to answer any query, with citations."
+  width={880}
+  height={760}
+/>
+
+It all pulls into the tools you already use: Slack, GitHub, Linear, Notion,
+Granola, and more.
+
+## Where this is going
+
+We're building in public, and the direction is a flywheel. The more context
+flows into the brain, the smarter it gets; the smarter it gets, the better the
+skills people build; the better the skills, the more context flows back. What
+Claude Code did for individual agent productivity, we want AIOS to do for a
+whole team.
+
+A few of the things on the way:
+
+- **Learning journeys.** We built a readiness assessment and tailored training
+  to a person's role and where they sit on the maturity curve. Those become
+  learning journeys inside AIOS, across 20-plus job functions, so people level
+  up in whatever tool they already use.
+- **Real-time coaching.** Every agent session gets evaluated for token
+  efficiency and impact, with targeted feedback on becoming a more effective
+  agentic engineer.
+- **Toward orchestration.** As agents take on more of the execution, even
+  running the board, people move up into orchestration. The division of labor
+  shifts for good.
+- **A public, live roadmap board**, so this list stops living in a blog post.
+
+If you want to try it, [get the workspace](/guides/quickstart). If you want to
+shape it, [the project is on GitHub](https://github.com/AIOS-alpha). Either way,
+the [RSS feed](/rss.xml) will keep you posted, and the parts that are still
+rough will show up here too.

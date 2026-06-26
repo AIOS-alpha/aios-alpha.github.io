@@ -1,0 +1,50 @@
+---
+// A figure for blog diagrams. Browsers load the animated SVG (via <source>);
+// importers/email (Substack) fall back to the static .webp <img>. Pass `src`
+// as the path WITHOUT extension; both <src>.svg and <src>.webp must exist
+// (run `npm run diagrams` to (re)generate the .webp from the .svg).
+interface Props {
+	src: string;
+	alt: string;
+	caption?: string;
+	width?: number;
+	height?: number;
+}
+const { src, alt, caption, width, height } = Astro.props;
+---
+
+<figure class="diagram not-prose">
+	<picture>
+		<source srcset={`${src}.svg`} type="image/svg+xml" />
+		<img
+			src={`${src}.webp`}
+			alt={alt}
+			width={width}
+			height={height}
+			loading="lazy"
+			decoding="async"
+		/>
+	</picture>
+	{caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+	.diagram {
+		margin: 2.75rem 0;
+	}
+	.diagram :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-width: 100%;
+		margin-inline: auto;
+	}
+	.diagram figcaption {
+		margin-top: 0.85rem;
+		text-align: center;
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: var(--color-muted-foreground);
+	}
+</style>
