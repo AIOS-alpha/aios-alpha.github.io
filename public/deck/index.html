@@ -38,7 +38,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .deck { position: relative; width: 100vw; height: 100vh; }
+  .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
 
   .slide {
     position: absolute;
@@ -346,7 +346,15 @@
   .rail span:not(:last-child)::after { content: '→'; margin-left: 8px; opacity: 0.5; }
 
   @media (max-width: 768px) {
-    .slide { padding: 40px 24px 64px; }
+    /* Top-align + allow vertical scroll so content-heavy slides (organ grid,
+       principles, roadmap) are never clipped on a phone. Centering only works
+       when content fits; on small viewports readability wins. */
+    .slide {
+      padding: 40px 24px 72px;
+      justify-content: flex-start;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
     .principles-grid, .three-up, .roadmap-cols, .organs { grid-template-columns: 1fr; }
   }
 </style>
