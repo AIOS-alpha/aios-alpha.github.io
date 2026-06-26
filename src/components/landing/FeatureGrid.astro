@@ -1,6 +1,6 @@
 ---
-import Placeholder from './Placeholder.astro';
 import Screenshot from './Screenshot.astro';
+import FeatureGlyph from './diagrams/FeatureGlyph.astro';
 
 const cards = [
   {
@@ -10,22 +10,27 @@ const cards = [
   },
   {
     headline: 'Shared memory, managed context.',
+    glyph: 'memory',
     body: 'Every workspace pushes tier-tagged context to one brain. Ask it questions in plain English across the team\'s shared memory. Self-host on your own Postgres.',
   },
   {
     headline: 'Nothing leaks without a push.',
+    glyph: 'boundary',
     body: 'Private → team → external. You promote content deliberately through the spine, and the brain rejects admin-tier at the boundary. Audience tags are first-class, not afterthoughts.',
   },
   {
     headline: 'Automated workflows, delivered.',
+    glyph: 'workflow',
     body: 'Turn meeting transcripts into decisions. Run weekly synthesis. Catch scope creep. Harnesses that ship deliverables, not chat logs.',
   },
   {
     headline: 'All your tools in one place.',
+    glyph: 'hub',
     body: 'Slack, GitHub, Linear, Notion, Granola and more—wired into your workspace via MCP and CLI, with Team Brain sync where the integration supports it.',
   },
   {
     headline: 'Yours to run, start to finish.',
+    glyph: 'ownership',
     body: 'Open source under MIT. Self-host the brain, clone the workspace per person. No cloud, no lock-in, no per-seat pricing.',
   },
 ];
@@ -40,7 +45,7 @@ const cards = [
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {cards.map(({ headline, body, featured }) => (
+      {cards.map(({ headline, body, featured, glyph }) => (
         <div class={`feature-card feature-card--media flex flex-col${featured ? ' feature-card--featured' : ''}`}>
           <div class="card-media card-media--16x9">
             {featured ? (
@@ -51,7 +56,7 @@ const cards = [
                 alt="The AIOS workspace GUI — an agent chat session with tool calls, a context meter, and an automatic memory update"
               />
             ) : (
-              <Placeholder fill variant="illustration" label={headline} />
+              <FeatureGlyph kind={glyph} />
             )}
           </div>
           <div class="card-body flex flex-col flex-1">

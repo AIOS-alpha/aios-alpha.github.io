@@ -1,29 +1,35 @@
 ---
-import Placeholder from './Placeholder.astro';
+import VisionGlyph from './diagrams/VisionGlyph.astro';
 
 const points = [
   {
     label: '01 — The flywheel',
+    glyph: 'flywheel',
     body: 'The more context flows into the Team Brain, the smarter it gets. It learns your patterns, habits, and needs — so you build better skills, with more context, faster.',
   },
   {
     label: '02 — Best patterns spread',
+    glyph: 'spread',
     body: 'Ship a skill or harness to the team repo and everyone adopts it. No re-inventing the wheel; no sharing prompt files in Slack.',
   },
   {
     label: '03 — Codebase health',
+    glyph: 'health',
     body: 'Measure agentic readiness, test coverage, and release cadence. Learn best practices on the fly from real instrumentation — not blog posts.',
   },
   {
     label: '04 — Real-time coaching',
+    glyph: 'coaching',
     body: 'Every AI session is evaluated for token efficiency and impact. Get targeted feedback on how to become a more effective agentic engineer.',
   },
   {
     label: '05 — Toward orchestration',
+    glyph: 'orchestration',
     body: 'Agents take on execution — even running the board. Humans run orchestration. The division of labour shifts permanently.',
   },
   {
     label: '06 — Learning journeys',
+    glyph: 'journeys',
     body: 'Customised daily learning across 20+ job functions, in any tool. Coming next.',
   },
 ];
@@ -53,10 +59,10 @@ const points = [
     </blockquote>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {points.map(({ label, body }) => (
+      {points.map(({ label, body, glyph }) => (
         <div class="feature-card feature-card--media flex flex-col">
           <div class="card-media card-media--16x9">
-            <Placeholder fill variant="illustration" label={label} />
+            <VisionGlyph kind={glyph} />
           </div>
           <div class="card-body flex flex-col flex-1">
             <span class="text-label text-muted-foreground block mb-3">{label}</span>
