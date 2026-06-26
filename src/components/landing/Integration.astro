@@ -1,8 +1,8 @@
 ---
 import { Plug, Server, LayoutDashboard } from 'lucide-astro';
-import Placeholder from './Placeholder.astro';
 import Screenshot from './Screenshot.astro';
 import Governance from './diagrams/Governance.astro';
+import SkillShare from './diagrams/SkillShare.astro';
 
 const runtimes = [
   'Claude',
@@ -133,7 +133,7 @@ const modes = [
       <div class="flex justify-center">
         <div class="feature-card feature-card--media flex flex-col w-full md:w-[calc(50%+2rem)]">
           <div class="card-media card-media--16x9">
-            <Placeholder fill variant="diagram" label="Skill → team repo → everyone" />
+            <SkillShare />
           </div>
           <div class="card-body flex flex-col flex-1">
             <h3 class="text-heading-3 text-foreground mb-2">Share a skill, the whole team adopts it.</h3>

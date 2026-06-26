@@ -1,0 +1,163 @@
+---
+/* Share a skill, the whole team adopts it.
+
+   Build a skill or harness once in your workspace → ship it to the team repo →
+   every teammate adopts it automatically. A hub flow: one author on the left, the
+   shared team repo in the middle, teammates fanning out on the right. The skill
+   token travels left → repo → team.
+
+   SINGLE-SVG pattern (see docs/diagram-system.md): one viewBox (exactly 16/9 so it
+   fills a .card-media box), geometry as data, label centres + edge endpoints
+   derived. Token-driven, dual-mode, reduced-motion safe. Colour rationed: violet =
+   you (the author), lime = the shared skill / adoption; chrome stays greyscale. */
+import '../../../styles/diagrams.css';
+
+const VB = { w: 1280, h: 720 };
+const MID_Y = 360;
+
+const author = { x: 60,  y: 285, w: 240, h: 150, accent: 'ic',
+  title: ['Create a skill'], meta: ['or harness · once'] };
+const repo   = { x: 500, y: 250, w: 250, h: 220, accent: 'share',
+  title: ['Team repo'], meta: ['skills · harnesses', '· versioned'] };
+const team = [
+  { x: 960, y: 150, w: 250, h: 120, title: ['Maya'],   meta: ['adopted'] },
+  { x: 960, y: 300, w: 250, h: 120, title: ['Chetan'], meta: ['adopted'] },
+  { x: 960, y: 450, w: 250, h: 120, title: ['Sam'],    meta: ['adopted'] },
+];
+
+const cx = (n) => n.x + n.w / 2;
+const cy = (n) => n.y + n.h / 2;
+const right = (n) => n.x + n.w;
+
+function lines(n) {
+  const items = [];
+  n.title.forEach((t) => items.push({ t, cls: 'sk-title', lh: 28 }));
+  n.meta.forEach((t) => items.push({ t, cls: 'sk-meta', lh: 18 }));
+  const total = items.reduce((s, i) => s + i.lh, 0);
+  let acc = 0;
+  return items.map((i) => { const y = cy(n) - total / 2 + acc + i.lh * 0.72; acc += i.lh; return { ...i, y }; });
+}
+const cards = [author, repo, ...team];
+
+// fan paths repo → each teammate
+const RX = right(repo), RY = cy(repo);
+const fan = team.map((t) => `M ${RX},${RY} C ${(RX + t.x) / 2},${RY} ${(RX + t.x) / 2},${cy(t)} ${t.x},${cy(t)}`);
+---
+
+<figure class="sk dgm" aria-labelledby="sk-cap">
+  <p class="sr-only" id="sk-cap">
+    Build a skill or harness once in your workspace, ship it to the shared team
+    repository, and every teammate adopts it automatically — no manual
+    redistribution. The skill travels from you, to the team repo, out to the whole
+    team.
+  </p>
+
+  <svg viewBox={`0 0 ${VB.w} ${VB.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs>
+      <marker id="sk-arrow" viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9" class="sk-arrowhead" />
+      </marker>
+      <radialGradient id="sk-token" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="var(--aios-accent)" />
+        <stop offset="55%" stop-color="var(--aios-violet)" />
+        <stop offset="100%" stop-color="var(--aios-violet)" />
+      </radialGradient>
+    </defs>
+
+    <!-- author → repo -->
+    <line class="sk-edge" x1={right(author)} y1={MID_Y} x2={repo.x} y2={MID_Y} marker-end="url(#sk-arrow)" />
+    <text class="sk-elabel" x={(right(author) + repo.x) / 2} y={MID_Y - 14} text-anchor="middle">push</text>
+
+    <!-- repo → team (fan) -->
+    {fan.map((d) => (
+      <path class="sk-edge" d={d} marker-end="url(#sk-arrow)" />
+    ))}
+    <text class="sk-elabel sk-elabel--share" x={(RX + team[0].x) / 2} y={cy(team[0]) - 16} text-anchor="middle">auto-adopt</text>
+
+    <!-- the one travelling skill token: you → repo → team -->
+    <circle class="sk-tok" r="6" />
+
+    <!-- cards -->
+    {cards.map((n) => (
+      <g class="sk-node">
+        {n.accent && <circle class={`sk-dot sk-dot--${n.accent}`} cx={cx(n)} cy={n.y - 14} r="5" />}
+        <rect class="sk-box" x={n.x} y={n.y} width={n.w} height={n.h} rx="16" />
+        {lines(n).map((l) => (
+          <text class={l.cls} x={cx(n)} y={l.y} text-anchor="middle">{l.t}</text>
+        ))}
+      </g>
+    ))}
+
+    <!-- a lime adopted-check on each teammate -->
+    {team.map((t) => (
+      <text class="sk-check" x={right(t) - 22} y={t.y + 28} text-anchor="middle">✓</text>
+    ))}
+  </svg>
+</figure>
+
+<style>
+  .sk {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+  .sk svg { width: 100%; height: 100%; display: block; }
+
+  .sk-edge { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.25; }
+  .sk-arrowhead { fill: none; stroke: var(--aios-border-strong); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  .sk-box { fill: var(--aios-surface); stroke: var(--aios-border); stroke-width: 1; }
+  .sk-title {
+    fill: var(--aios-fg);
+    font-family: var(--aios-font-display);
+    font-size: 23px;
+    letter-spacing: -0.01em;
+  }
+  .sk-meta {
+    fill: var(--aios-fg-secondary);
+    font-family: var(--aios-font-mono);
+    font-size: 12px;
+  }
+  .sk-dot--ic    { fill: var(--aios-violet); }
+  .sk-dot--share { fill: var(--aios-accent); }
+  .sk-check { fill: var(--aios-accent); font-family: var(--aios-font-mono); font-size: 15px; }
+
+  .sk-elabel {
+    fill: var(--aios-fg-muted);
+    font-family: var(--aios-font-mono);
+    font-size: 12.5px;
+  }
+  .sk-elabel--share { fill: var(--aios-fg-muted); }
+
+  .sk-tok {
+    fill: url(#sk-token);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--aios-accent) 70%, transparent));
+    offset-path: path('M300,360 L960,360');
+    animation: sk-cross 11s linear infinite;
+  }
+  @keyframes sk-cross {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    7%   { opacity: 1; }
+    40%  { opacity: 1; }
+    48%  { opacity: 0; }          /* into the repo */
+    56%  { opacity: 1; }          /* out to the team */
+    92%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sk-tok { animation: none; offset-distance: 32%; opacity: 1; }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
