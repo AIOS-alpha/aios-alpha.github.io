@@ -40,11 +40,33 @@ const problems = [
       </p>
     </div>
 
-    <div class="space-y-3">
-      {problems.map(({ num, title, body }) => (
-        <article class="feature-card flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8">
-          <span class="text-label text-muted-foreground shrink-0 sm:w-12">{num}</span>
-          <div class="flex-1 min-w-0">
+    {/* Lead problem — full-width featured row, split title / body across the width */}
+    <article class="group border-t border-border pt-8 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12">
+      <div class="lg:col-span-5 flex items-start gap-5">
+        <span
+          class="font-[family-name:var(--font-display)] text-5xl md:text-6xl leading-[0.85] text-muted-foreground/30 tabular-nums select-none"
+          aria-hidden="true"
+        >
+          {problems[0].num}
+        </span>
+        <h3 class="text-heading-3 text-foreground pt-1">{problems[0].title}</h3>
+      </div>
+      <p class="lg:col-span-7 text-body-lg text-muted-foreground max-w-[60ch]">
+        {problems[0].body}
+      </p>
+    </article>
+
+    {/* Remaining problems — 2-column editorial index, hairline dividers, no boxes */}
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-20">
+      {problems.slice(1).map(({ num, title, body }) => (
+        <article class="group border-t border-border pt-7 md:pt-8 pb-2 flex items-start gap-5">
+          <span
+            class="font-[family-name:var(--font-display)] text-4xl md:text-5xl leading-[0.85] text-muted-foreground/30 tabular-nums select-none shrink-0"
+            aria-hidden="true"
+          >
+            {num}
+          </span>
+          <div class="min-w-0">
             <h3 class="text-heading-3 text-foreground mb-2">{title}</h3>
             <p class="text-body text-muted-foreground">{body}</p>
           </div>

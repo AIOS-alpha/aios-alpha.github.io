@@ -83,6 +83,21 @@ const flow = [
         <stop offset="60%" stop-color="var(--aios-violet)" />
         <stop offset="100%" stop-color="var(--aios-violet)" />
       </radialGradient>
+
+      <!-- inner-glow fills for tinted cards: faint wash from the top edge,
+           mirroring the shared .dgm-tint recipe (7% hue → surface) -->
+      <radialGradient id="if-fill-ic" cx="50%" cy="0%" r="120%">
+        <stop offset="0%"  stop-color="color-mix(in srgb, var(--aios-violet) 7%, var(--aios-surface))" />
+        <stop offset="74%" stop-color="var(--aios-surface)" />
+      </radialGradient>
+      <radialGradient id="if-fill-brain" cx="50%" cy="0%" r="120%">
+        <stop offset="0%"  stop-color="color-mix(in srgb, var(--aios-emerald) 8%, var(--aios-surface))" />
+        <stop offset="74%" stop-color="var(--aios-surface)" />
+      </radialGradient>
+      <radialGradient id="if-fill-share" cx="50%" cy="0%" r="120%">
+        <stop offset="0%"  stop-color="color-mix(in srgb, var(--aios-accent) 9%, var(--aios-surface))" />
+        <stop offset="74%" stop-color="var(--aios-surface)" />
+      </radialGradient>
     </defs>
 
     <!-- zone frames + labels -->
@@ -117,7 +132,7 @@ const flow = [
     {nodes.map((n) => (
       <g class="if-node">
         {n.accent && <circle class={`if-dot if-dot--${n.accent}`} cx={cx(n)} cy={n.y - 14} r="5" />}
-        <rect class="if-box" x={n.x} y={n.y} width={n.w} height={n.h} rx="16" />
+        <rect class={`if-box${n.accent ? ` if-box--${n.accent}` : ''}`} x={n.x} y={n.y} width={n.w} height={n.h} rx="16" />
         {lines(n).map((l) => (
           <text class={l.cls} x={cx(n)} y={l.y} text-anchor="middle">{l.t}</text>
         ))}
@@ -173,6 +188,11 @@ const flow = [
 
   /* ---- node cards ---- */
   .if-box { fill: var(--aios-surface); stroke: var(--aios-border); stroke-width: 1; }
+  /* tinted cards share the colour of their legend dot (see .dgm-tint in
+     diagrams.css): a coloured hairline border + the matching inner-glow fill */
+  .if-box--ic    { fill: url(#if-fill-ic);    stroke: color-mix(in srgb, var(--aios-violet) 42%, var(--aios-border));  stroke-width: 1.25; }
+  .if-box--brain { fill: url(#if-fill-brain); stroke: color-mix(in srgb, var(--aios-emerald) 44%, var(--aios-border)); stroke-width: 1.25; }
+  .if-box--share { fill: url(#if-fill-share); stroke: color-mix(in srgb, var(--aios-accent) 44%, var(--aios-border));  stroke-width: 1.25; }
   .if-title {
     fill: var(--aios-fg);
     font-family: var(--aios-font-display);

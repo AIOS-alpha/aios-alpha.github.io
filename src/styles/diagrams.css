@@ -118,6 +118,27 @@
 .dgm-accent--act    { --dgm-dot: var(--aios-cyan); }
 .dgm-accent--stream { --dgm-dot: var(--aios-fg-muted); }
 
+/* ---- Tinted card identity ----------------------------------------- */
+/* When a card belongs to a colour-coded legend group, it carries that
+   group's hue as a tinted border + a faint inner wash (glow from the top
+   edge). This is the ONE reusable recipe — any diagram that has a coloured
+   legend shares it, so a card and its legend dot always read as the same
+   colour. The hue is chosen by a `.dgm-tint--*` class (sets `--dgm-tint`);
+   `.dgm-tint` paints HTML `.dgm-node` cards. SVG diagrams (e.g. InfoFlow)
+   read `--dgm-tint` directly for stroke and mirror the wash with a matching
+   radial fill — same `--aios-*` hue, same 38% border / 7% wash recipe. */
+.dgm-tint--ic     { --dgm-tint: var(--dgm-violet); }
+.dgm-tint--brain  { --dgm-tint: var(--dgm-emerald); }
+.dgm-tint--share  { --dgm-tint: var(--dgm-lime); }
+.dgm-tint--act    { --dgm-tint: var(--aios-cyan); }
+.dgm-tint--stream { --dgm-tint: var(--aios-fg-muted); }
+.dgm-tint {
+  border-color: color-mix(in srgb, var(--dgm-tint) 38%, var(--aios-border));
+  background: radial-gradient(120% 120% at 50% 0%,
+    color-mix(in srgb, var(--dgm-tint) 7%, var(--aios-surface)) 0%,
+    var(--aios-surface) 74%);
+}
+
 /* ---- SVG layer: ring + edges + token ------------------------------ */
 .dgm-svg {
   position: absolute;
