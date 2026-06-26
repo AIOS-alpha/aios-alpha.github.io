@@ -1,0 +1,90 @@
+---
+/* A real product screenshot with light + dark sources that swap on theme.
+   Mirrors Placeholder.astro's API so it drops into the same slots.
+   - `fill`  = absolutely fill the parent `.card-media` box (which owns the
+               aspect ratio + clipping) — the shadcn-style card-image pattern.
+   - `ratio` = own aspect ratio when standalone (ignored when `fill`).
+   Both sources are rendered and cross-toggled via opacity on `data-theme`
+   (Starlight's source of truth, mirrored to `.dark` by the head script). */
+interface Props {
+  light: string;        // e.g. "/screenshots/integrations-light.png"
+  dark: string;
+  alt: string;
+  ratio?: string;       // e.g. "4 / 5" — standalone only
+  fill?: boolean;
+  eager?: boolean;      // above-the-fold (hero) → eager-load
+  class?: string;
+}
+const {
+  light,
+  dark,
+  alt,
+  ratio = '16 / 9',
+  fill = false,
+  eager = false,
+  class: className = '',
+} = Astro.props;
+const loading = eager ? 'eager' : 'lazy';
+const fetchpriority = eager ? 'high' : 'auto';
+---
+
+<div
+  class={`ss${fill ? ' ss--fill' : ''} ${className}`}
+  style={`--ss-ratio:${ratio}`}
+>
+  <img
+    class="ss-img ss-light"
+    src={light}
+    alt={alt}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+  />
+  <img
+    class="ss-img ss-dark"
+    src={dark}
+    alt=""
+    aria-hidden="true"
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+  />
+</div>
+
+<style>
+  .ss {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--ss-ratio);
+    border: 1px solid var(--aios-border);
+    border-radius: var(--aios-radius-xl);
+    overflow: hidden;
+    background: var(--aios-surface);
+    line-height: 0;
+  }
+  /* Fill the parent `.card-media` box (which owns the aspect ratio + clipping). */
+  .ss--fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .ss-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+  /* Light is the default; dark fades in when the theme flips. */
+  .ss-dark { opacity: 0; }
+  :global(:root[data-theme='dark']) .ss-light { opacity: 0; }
+  :global(:root[data-theme='dark']) .ss-dark { opacity: 1; }
+</style>

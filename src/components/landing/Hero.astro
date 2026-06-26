@@ -1,5 +1,5 @@
 ---
-import Placeholder from './Placeholder.astro';
+import Screenshot from './Screenshot.astro';
 ---
 
 <section class="relative min-h-svh flex items-center bg-background">
@@ -69,9 +69,15 @@ import Placeholder from './Placeholder.astro';
 
       </div>
 
-      <!-- Right: product screenshot placeholder (drop the Team Brain UI here) -->
+      <!-- Right: Team Brain home dashboard — light/dark swap on theme -->
       <div class="w-full">
-        <Placeholder variant="screenshot" ratio="4 / 5" label="Team Brain dashboard" />
+        <Screenshot
+          light="/screenshots/team-brain-home-light.png"
+          dark="/screenshots/team-brain-home-dark.png"
+          alt="The AIOS Team Brain home — ask the shared brain in plain English, with KPIs, knowledge growth, and a live activity feed"
+          ratio="4 / 5"
+          eager
+        />
       </div>
 
     </div>
