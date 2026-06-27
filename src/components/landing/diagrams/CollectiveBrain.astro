@@ -51,8 +51,8 @@ const TOOL_GLYPH = {
 };
 const agentUsers = [
   { slug: 'john',   name: 'John',   tool: 'Claude Code', glyph: 'claude', initials: 'J', top: '15.5%' },
-  { slug: 'chetan', name: 'Chetan', tool: 'Conductor',   glyph: 'wave',   initials: 'C', top: '30.5%' },
-  { slug: 'fatma',  name: 'Fatma',  tool: 'Cursor',      glyph: 'cursor', initials: 'F', top: '45.5%' },
+  { slug: 'chetan', name: 'Chetan', tool: 'Conductor',   glyph: 'wave',   initials: 'C', top: '30%' },
+  { slug: 'fatma',  name: 'Fatma',  tool: 'Cursor',      glyph: 'cursor', initials: 'F', top: '44.5%' },
 ];
 ---
 
@@ -110,7 +110,7 @@ const agentUsers = [
   </svg>
 
   <!-- AGENT-USERS — a person + the AI tool they drive -->
-  <span class="cb-label cb-label--agents" style="left:15.2%; top:8.75%;">AGENT-USERS</span>
+  <span class="cb-label cb-label--agents" style="left:15.2%; top:6.5%;">AGENT-USERS</span>
   {agentUsers.map((a) => (
     <div class="cb-node cb-node--agent" style={`left:15.2%; top:${a.top};`}>
       <div class="dgm-node cb-tint--ic cb-agent">
@@ -279,18 +279,24 @@ const agentUsers = [
   .cb-node--more   { width: 13%;  min-width: 130px; }
   .cb-node--agent  { width: 18%;  min-width: 158px; }
 
-  /* agent-user card: a person + the AI tool they drive (headshot + tool glyph) */
-  .cb-agent { gap: 0.45cqw; }
+  /* agent-user card: a person + the AI tool they drive (headshot + tool glyph).
+     Deliberately compact so the three cards never overlap each other or the
+     INTEGRATIONS group below (measured: ~105px between card centres). */
+  .cbrain .cb-node--agent :global(.dgm-node) {
+    padding-top: clamp(8px, 0.85cqw, 12px);
+    padding-bottom: clamp(8px, 0.85cqw, 12px);
+  }
+  .cb-agent { gap: 0.2cqw; }
   .cb-agent__pair {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.55cqw;
-    margin-bottom: 0.3cqw;
+    gap: 0.5cqw;
+    margin-bottom: 0.15cqw;
   }
   .cb-agent__face {
-    width: clamp(30px, 3.2cqw, 42px);
-    height: clamp(30px, 3.2cqw, 42px);
+    width: clamp(24px, 2.5cqw, 32px);
+    height: clamp(24px, 2.5cqw, 32px);
     border-radius: 9999px;
     object-fit: cover;
     object-position: center top;
@@ -318,16 +324,19 @@ const agentUsers = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: clamp(24px, 2.5cqw, 30px);
-    height: clamp(24px, 2.5cqw, 30px);
-    border-radius: 8px;
+    width: clamp(20px, 2.1cqw, 26px);
+    height: clamp(20px, 2.1cqw, 26px);
+    border-radius: 7px;
     border: 1px solid var(--aios-border);
     background: var(--aios-surface);
     color: var(--aios-fg-secondary);
     flex: none;
   }
-  .cb-agent__tool svg { width: 62%; height: 62%; display: block; }
-  .cb-agent__name { margin-top: 0.1cqw; }
+  .cb-agent__tool svg { width: 60%; height: 60%; display: block; }
+  .cbrain .cb-node--agent .cb-agent__name {
+    margin-top: 0;
+    font-size: clamp(0.82rem, 1.05cqw, 1rem);
+  }
 
   .cbrain :global(.dgm-node) {
     position: relative;
