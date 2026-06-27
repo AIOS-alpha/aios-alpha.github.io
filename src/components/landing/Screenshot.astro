@@ -16,7 +16,7 @@
    Both sources are rendered and cross-toggled via opacity on `data-theme`
    (Starlight's source of truth, mirrored to `.dark` by the head script). */
 interface Props {
-  light: string;        // e.g. "/screenshots/integrations-light.png"
+  light: string;        // e.g. "/screenshots/integrations-light.webp" (run `npm run optimize:images`)
   dark: string;
   alt: string;
   ratio?: string;       // e.g. "4 / 5" — standalone only

@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "crosspost": "node scripts/substack-crosspost.mjs",
-    "diagrams": "node scripts/rasterize-diagrams.mjs"
+    "diagrams": "node scripts/rasterize-diagrams.mjs",
+    "optimize:images": "node scripts/optimize-screenshots.mjs"
   },
   "dependencies": {
     "@aios-alpha/design": "^0.3.0",
