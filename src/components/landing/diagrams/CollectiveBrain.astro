@@ -34,6 +34,26 @@ const streams = [
 ];
 const COLS = ['10.9%', '19.9%'];
 const ROWS = ['59.4%', '68.1%', '76.9%'];
+
+/* Agent-users: a real person paired with the AI tool they drive — the
+   "human + AI = agent-user" dynamic. The headshot auto-appears once a square
+   `public/agents/<slug>.webp` is dropped in; until then an initials chip shows.
+   Small monochrome tool glyphs (currentColor) echo the integration logo style. */
+import { existsSync } from 'node:fs';
+const face = (slug) => (existsSync(`public/agents/${slug}.webp`) ? `/agents/${slug}.webp` : null);
+const TOOL_GLYPH = {
+  // Claude — 4-point sparkle
+  claude: '<path d="M12 2c.45 4.7 2.3 6.55 7 7-4.7.45-6.55 2.3-7 7-.45-4.7-2.3-6.55-7-7 4.7-.45 6.55-2.3 7-7Z"/>',
+  // Cursor — pointer
+  cursor: '<path d="M5 3l13.5 7.8-5.7.9-2.2 5.8L5 3Z"/>',
+  // Composer / Conductor — waveform
+  wave: '<g><rect x="3.5" y="9.5" width="2.4" height="5" rx="1.2"/><rect x="8" y="5.5" width="2.4" height="13" rx="1.2"/><rect x="12.5" y="7.5" width="2.4" height="9" rx="1.2"/><rect x="17" y="10" width="2.4" height="4" rx="1.2"/></g>',
+};
+const agentUsers = [
+  { slug: 'john',   name: 'John',   tool: 'Claude Code', glyph: 'claude', initials: 'J', top: '15.5%' },
+  { slug: 'chetan', name: 'Chetan', tool: 'Conductor',   glyph: 'wave',   initials: 'C', top: '30.5%' },
+  { slug: 'fatma',  name: 'Fatma',  tool: 'Cursor',      glyph: 'cursor', initials: 'F', top: '45.5%' },
+];
 ---
 
 <figure class="cbrain dgm" aria-labelledby="cbrain-cap">
@@ -89,17 +109,25 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
     </g>
   </svg>
 
-  <!-- AGENT-USERS -->
+  <!-- AGENT-USERS — a person + the AI tool they drive -->
   <span class="cb-label cb-label--agents" style="left:15.2%; top:8.75%;">AGENT-USERS</span>
-  <div class="cb-node" style="left:15.2%; top:16%;">
-    <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User A</span><span class="dgm-node__meta">Claude Code + MCP</span></div>
-  </div>
-  <div class="cb-node" style="left:15.2%; top:29.75%;">
-    <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User B</span><span class="dgm-node__meta">Cursor + MCP</span></div>
-  </div>
-  <div class="cb-node" style="left:15.2%; top:43.5%;">
-    <div class="dgm-node cb-tint--ic"><span class="dgm-node__title">Agent-User C</span><span class="dgm-node__meta">AIOS Workstation</span></div>
-  </div>
+  {agentUsers.map((a) => (
+    <div class="cb-node cb-node--agent" style={`left:15.2%; top:${a.top};`}>
+      <div class="dgm-node cb-tint--ic cb-agent">
+        <span class="cb-agent__pair">
+          {face(a.slug)
+            ? <img class="cb-agent__face" src={face(a.slug)} alt="" width="40" height="40" loading="lazy" decoding="async" />
+            : <span class="cb-agent__face cb-agent__face--ph" aria-hidden="true">{a.initials}</span>}
+          <span class="cb-agent__plus" aria-hidden="true">+</span>
+          <span class="cb-agent__tool" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><Fragment set:html={TOOL_GLYPH[a.glyph]} /></svg>
+          </span>
+        </span>
+        <span class="dgm-node__title cb-agent__name">{a.name}</span>
+        <span class="dgm-node__meta">{a.tool}</span>
+      </div>
+    </div>
+  ))}
 
   <!-- INTEGRATIONS -->
   <span class="cb-label cb-label--streams" style="left:15.2%; top:53.75%;">INTEGRATIONS</span>
@@ -249,6 +277,57 @@ const ROWS = ['59.4%', '68.1%', '76.9%'];
   .cb-node--engine { width: 19%;  min-width: 180px; }
   .cb-node--stream { width: 8.2%; min-width: 96px; }
   .cb-node--more   { width: 13%;  min-width: 130px; }
+  .cb-node--agent  { width: 18%;  min-width: 158px; }
+
+  /* agent-user card: a person + the AI tool they drive (headshot + tool glyph) */
+  .cb-agent { gap: 0.45cqw; }
+  .cb-agent__pair {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55cqw;
+    margin-bottom: 0.3cqw;
+  }
+  .cb-agent__face {
+    width: clamp(30px, 3.2cqw, 42px);
+    height: clamp(30px, 3.2cqw, 42px);
+    border-radius: 9999px;
+    object-fit: cover;
+    object-position: center top;
+    border: 1px solid var(--aios-border);
+    background: var(--aios-surface);
+    flex: none;
+  }
+  .cb-agent__face--ph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--aios-font-mono);
+    font-size: clamp(0.78rem, 1.1cqw, 1rem);
+    color: var(--aios-violet);
+    background: color-mix(in srgb, var(--aios-violet) 10%, var(--aios-surface));
+    border-color: color-mix(in srgb, var(--aios-violet) 28%, var(--aios-border));
+  }
+  .cb-agent__plus {
+    font-family: var(--aios-font-mono);
+    font-size: clamp(0.7rem, 0.95cqw, 0.85rem);
+    color: var(--aios-fg-muted);
+    flex: none;
+  }
+  .cb-agent__tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(24px, 2.5cqw, 30px);
+    height: clamp(24px, 2.5cqw, 30px);
+    border-radius: 8px;
+    border: 1px solid var(--aios-border);
+    background: var(--aios-surface);
+    color: var(--aios-fg-secondary);
+    flex: none;
+  }
+  .cb-agent__tool svg { width: 62%; height: 62%; display: block; }
+  .cb-agent__name { margin-top: 0.1cqw; }
 
   .cbrain :global(.dgm-node) {
     position: relative;
