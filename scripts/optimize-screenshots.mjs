@@ -23,9 +23,13 @@ import { readdirSync, statSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname, parse } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const selfPath = fileURLToPath(import.meta.url);
+const root = join(dirname(selfPath), '..');
 const SRC = join(root, 'screenshots-src');
 const OUT = join(root, 'public/screenshots');
+// This script runs on every `npm run dev`/`build` (pre-hooks), so skip work when
+// the .webp is already newer than both its source and this script.
+const selfMtime = statSync(selfPath).mtimeMs;
 
 const DEFAULT = { width: 1280, quality: 80 };
 // Per-image tuning, keyed by base filename (no extension). Examples:
@@ -49,11 +53,21 @@ if (files.length === 0) {
 
 let totalIn = 0;
 let totalOut = 0;
+let skipped = 0;
 for (const file of files) {
 	const name = parse(file).name;
 	const cfg = { ...DEFAULT, ...(OVERRIDES[name] || {}) };
 	const inPath = join(SRC, file);
 	const outPath = join(OUT, `${name}.webp`);
+
+	// up-to-date? (output newer than source AND newer than this script's config)
+	if (existsSync(outPath)) {
+		const outM = statSync(outPath).mtimeMs;
+		if (outM >= statSync(inPath).mtimeMs && outM >= selfMtime) {
+			skipped++;
+			continue;
+		}
+	}
 
 	const meta = await sharp(inPath).metadata();
 	const info = await sharp(inPath)
@@ -69,6 +83,9 @@ for (const file of files) {
 		`${name.padEnd(28)} ${meta.width}px → ${info.width}px   ${(inSize / 1024) | 0}KB → ${(info.size / 1024) | 0}KB  (-${pct}%)`,
 	);
 }
-console.log(
-	`\nTotal  ${(totalIn / 1024) | 0}KB → ${(totalOut / 1024) | 0}KB  (-${Math.round((1 - totalOut / totalIn) * 100)}%)`,
-);
+if (totalIn > 0) {
+	console.log(
+		`\nTotal  ${(totalIn / 1024) | 0}KB → ${(totalOut / 1024) | 0}KB  (-${Math.round((1 - totalOut / totalIn) * 100)}%)`,
+	);
+}
+if (skipped > 0) console.log(`${skipped} already up to date.`);

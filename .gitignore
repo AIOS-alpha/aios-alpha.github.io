@@ -2,6 +2,9 @@
 dist/
 # generated types
 .astro/
+# optimized screenshots — generated from screenshots-src/ by `npm run optimize:images`
+# (auto-run on every dev/build via the pre* hooks; raw sources are the source of truth)
+public/screenshots/*.webp
 
 # dependencies
 node_modules/
